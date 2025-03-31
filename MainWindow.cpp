@@ -284,10 +284,10 @@ void MainWindow::HandlePainting()
 		{
 			// Select color for timer 2
 			ID2D1SolidColorBrush* pBrushTimer2;
-			if (timer1.GetTimeInMillis() > 0
-				&& timer1.GetTimeInMillis() - timer2.GetTimeInMillis() <= 20000
-				&& (timer2.GetTimerState() == TimerState::running || timer2.GetTimerState() == TimerState::paused)
-				&& timer1.GetTimeInMillis() - timer2.GetTimeInMillis() > 0)
+			if (timer1.getTimeInMillis() > 0
+				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() <= 20000
+				&& (timer2.getTimerState() == TimerState::running || timer2.getTimerState() == TimerState::paused)
+				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() > 0)
 			{
 				pBrushTimer2 = pBrushLastSeconds;
 			}
@@ -300,17 +300,17 @@ void MainWindow::HandlePainting()
 
 			// Draw timers
 			if (activeTimer == &timer1) {
-				timer1.Draw(pRenderTarget, pTextFormat, rect1, pBrushSelectedTimer);
+				timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushSelectedTimer);
 			}
 			else {
-				timer1.Draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
+				timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
 			}
-			timer2.Draw(pRenderTarget, pTextFormat, rect2, pBrushTimer2);
+			timer2.draw(pRenderTarget, pTextFormat, rect2, pBrushTimer2);
 		}
 		else
 		{
-			timer1.Draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
-			timer2.Draw(pRenderTarget, pTextFormat, rect2, pBrushTimer);
+			timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
+			timer2.draw(pRenderTarget, pTextFormat, rect2, pBrushTimer);
 		}
 	}
 
@@ -616,14 +616,14 @@ void MainWindow::HandleHotKey(int code)
 	case KEY_START: // start key
 		if (activeTimer != NULL)
 		{
-			if (activeTimer->GetTimerState() == TimerState::zero) {
-				activeTimer->StartTimer();
+			if (activeTimer->getTimerState() == TimerState::zero) {
+				activeTimer->startTimer();
 			}
-			else if (activeTimer->GetTimerState() == TimerState::running) {
-				activeTimer->StopTimer();
+			else if (activeTimer->getTimerState() == TimerState::running) {
+				activeTimer->stopTimer();
 			}
 			else {
-				activeTimer->ResetTimer();
+				activeTimer->resetTimer();
 			}
 		}
 		break;

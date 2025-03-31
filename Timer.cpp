@@ -3,7 +3,7 @@
 
 using std::wstring;
 
-int Timer::SubtractTimes(SYSTEMTIME t1, SYSTEMTIME t2)
+int Timer::subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2)
 {
 	int seconds = 0;
 	int minutes = 0;
@@ -22,20 +22,20 @@ int Timer::SubtractTimes(SYSTEMTIME t1, SYSTEMTIME t2)
 }
 
 Timer::Timer() {
-	time = 0;
-	timerState = TimerState::zero;
+	time_ = 0;
+	timerState_ = TimerState::zero;
 }
 
-TimerState Timer::GetTimerState()
+TimerState Timer::getTimerState()
 {
-	return timerState;
+	return timerState_;
 }
 
-wstring Timer::GetTimeAsText()
+wstring Timer::getTimeAsText()
 {
 	int minutesInt = 0;
 	int secondsInt = 0;
-	int millisInt = time;
+	int millisInt = time_;
 
 	secondsInt = millisInt / 1000;
 	minutesInt = secondsInt / 60;
@@ -100,44 +100,44 @@ wstring Timer::GetTimeAsText()
 	return text;
 }
 
-int Timer::GetTimeInMillis()
+int Timer::getTimeInMillis()
 {
-	return time;
+	return time_;
 }
 
-void Timer::StartTimer()
+void Timer::startTimer()
 {
-	timerState = TimerState::running;
-	GetSystemTime(&startTime);
+	timerState_ = TimerState::running;
+	GetSystemTime(&startTime_);
 }
 
-void Timer::StopTimer()
+void Timer::stopTimer()
 {
-	timerState = TimerState::paused;
+	timerState_ = TimerState::paused;
 }
 
-void Timer::ResetTimer()
+void Timer::resetTimer()
 {
-	timerState = TimerState::zero;
-	GetLocalTime(&startTime);
-	GetLocalTime(&updatingTime);
-	time = SubtractTimes(startTime, updatingTime);
+	timerState_ = TimerState::zero;
+	GetLocalTime(&startTime_);
+	GetLocalTime(&updatingTime_);
+	time_ = subtractTimes(startTime_, updatingTime_);
 }
 
-void Timer::UpdateTime()
+void Timer::updateTime()
 {
-	if (timerState == TimerState::running)
+	if (timerState_ == TimerState::running)
 	{
-		GetSystemTime(&updatingTime);
-		time = SubtractTimes(startTime, updatingTime);
+		GetSystemTime(&updatingTime_);
+		time_ = subtractTimes(startTime_, updatingTime_);
 	}
 }
 
-void Timer::Draw(ID2D1HwndRenderTarget* pRenderTarget, IDWriteTextFormat* pTextFormat, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush) // Only call from within an active render target begin draw scope
+void Timer::draw(ID2D1HwndRenderTarget* pRenderTarget, IDWriteTextFormat* pTextFormat, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush) // Only call from within an active render target begin draw scope
 {
 	if (pRenderTarget != NULL)
 	{
-		wstring timeStr = GetTimeAsText();
+		wstring timeStr = getTimeAsText();
 
 		const WCHAR* timeText = timeStr.c_str();
 

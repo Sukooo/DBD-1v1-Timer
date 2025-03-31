@@ -5,21 +5,20 @@
 
 using std::wstring;
 
-enum TimerState
+enum TimerState : std::uint8_t
 {
-	running,
-	paused,
-	zero
+	running = 0,
+	paused = 1,
+	zero = 2
 };
 
 class Timer
 {
 private:
-	// Private fields
-	TimerState timerState;
-	int time = 0; // in milliseconds
-	SYSTEMTIME startTime;
-	SYSTEMTIME updatingTime;
+	TimerState timerState_;
+	int time_ = 0; // in milliseconds
+	SYSTEMTIME startTime_;
+	SYSTEMTIME updatingTime_;
 
 	/*
 	@brief Calculates the difference between two SYSTEMTIMEs.
@@ -30,7 +29,7 @@ private:
 
 	@return The difference between the two SYSTEMTIMEs as an integer.
 	*/
-	int SubtractTimes(SYSTEMTIME t1, SYSTEMTIME t2);
+	int subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2);
 
 public:
 	Timer();
@@ -40,42 +39,42 @@ public:
 	/*
 	@return The TimerState enum value of the current state of the timer.
 	*/
-	TimerState GetTimerState();
+	TimerState getTimerState();
 
 	/*
 	@brief Convert the time from the timer to a wstring format.
 
 	@return A wstring representing the timer's time.
 	*/
-	wstring GetTimeAsText();
+	wstring getTimeAsText();
 
 	/*
 	@return The time that the timer has kept track of in milliseconds.
 	*/
-	int GetTimeInMillis();
+	int getTimeInMillis();
 
 	/*
 	@brief Start the timer.
 	*/
-	void StartTimer();
+	void startTimer();
 
 	/*
 	@brief Stpo the timer.
 	*/
-	void StopTimer();
+	void stopTimer();
 
 	/*
 	@brief Reset the timer.
 	*/
-	void ResetTimer();
+	void resetTimer();
 
 	/*
 	@brief Update the timer's saved time (Increment it).
 	*/
-	void UpdateTime();
+	void updateTime();
 
 	/*
-	@brief Draws the wstring format of the timer's time to a render target.
+	@brief draws the wstring format of the timer's time to a render target.
 	Only call from within an active render target begin draw scope
 
 	@param pRenderTarget The render target to draw to.
@@ -86,5 +85,5 @@ public:
 
 	@param pBrush The brush to draw with.
 	*/
-	void Draw(ID2D1HwndRenderTarget* pRenderTarget, IDWriteTextFormat* pTextFormat, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush);
+	void draw(ID2D1HwndRenderTarget* pRenderTarget, IDWriteTextFormat* pTextFormat, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush);
 };

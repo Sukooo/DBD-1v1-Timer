@@ -33,8 +33,8 @@ void AppLoop(MainWindow* win)
 	while (win->appRunning)
 	{
 		Sleep(1);
-		win->timer1.UpdateTime();
-		win->timer2.UpdateTime();
+		win->timer1.updateTime();
+		win->timer2.updateTime();
 		win->Draw();
 	}
 }
