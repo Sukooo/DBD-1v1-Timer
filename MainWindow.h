@@ -137,7 +137,7 @@ public:
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/
-	LPCWSTR ClassName() const { return L"Main Window"; }
+	LPCWSTR className() const { return L"Main Window"; }
 
 	/*
 	@brief Implements an inherited method responsible for handling messages sent to the window.
@@ -150,7 +150,7 @@ public:
 
 	@return LRESULT
 	*/
-	LRESULT HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
 
 	/*
 	@brief Handle hotkey inputs from the user.

@@ -39,7 +39,7 @@ void SettingsWindow::DisplayBitmaps()
 	COLORREF ignoreColor = RGB(100, 100, 100);
 
 	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(m_hwnd, &ps);
+	HDC hdc = BeginPaint(hwnd_, &ps);
 
 	// Create a compatible device context
 	HDC hMemDC = CreateCompatibleDC(hdc);
@@ -76,7 +76,7 @@ void SettingsWindow::DisplayBitmaps()
 	SelectObject(hMemDC, oldBitmap);
 	DeleteDC(hMemDC);
 
-	EndPaint(m_hwnd, &ps);
+	EndPaint(hwnd_, &ps);
 }
 
 void SettingsWindow::InitializeTextControls()
@@ -113,7 +113,7 @@ void SettingsWindow::InitializeTextControls()
 	HWND hwndCopyright = CreateControl(WC_STATIC, L"© Truueh 2024", 10, SIZE_SETTINGS_HEIGHT - 65, 100, 40);
 
 	// Apply fonts
-	setControlsFont(m_hwnd);
+	setControlsFont(hwnd_);
 	setTitleFont(hwndTitleColors);
 	setTitleFont(hwndTitleHotkeys);
 	SetCopyrightFont(hwndCopyright);
@@ -161,7 +161,7 @@ void SettingsWindow::InitializeButtonControls()
 	HWND hwndCancelButton = CreateControl(WC_BUTTON, L"CANCEL", SIZE_SETTINGS_WIDTH - 100, SIZE_SETTINGS_HEIGHT - 80, 70, 25, CID_CANCEL);
 
 	// Apply font
-	setControlsFont(m_hwnd);
+	setControlsFont(hwnd_);
 	
 	// Apply currently set hotkeys
 	for (HWND hCtrl : hotkeys) {
@@ -174,7 +174,7 @@ void SettingsWindow::InitializeButtonControls()
 }
 
 HWND SettingsWindow::CreateControl(LPCWSTR className, LPCWSTR controlName, int x, int y, int width, int height, int id, long ADDITIONAL_STYLE) {
-	return CreateWindowEx(0, className, controlName, WS_VISIBLE | WS_CHILDWINDOW | ADDITIONAL_STYLE, x, y, width, height, m_hwnd, (HMENU)id, NULL, NULL);
+	return CreateWindowEx(0, className, controlName, WS_VISIBLE | WS_CHILDWINDOW | ADDITIONAL_STYLE, x, y, width, height, hwnd_, (HMENU)id, NULL, NULL);
 }
 
 void SettingsWindow::SetCopyrightFont(HWND hControl)
@@ -198,13 +198,13 @@ void SettingsWindow::HandleControlCommand(LPARAM lParam)
 	// OK
 	case CID_OK:
 		applySettings(tempSettings);
-		SendMessage(GetWindow(m_hwnd, GW_OWNER), REFRESH_BRUSHES, 0, 0);
-		DestroyWindow(m_hwnd);
+		SendMessage(GetWindow(hwnd_, GW_OWNER), REFRESH_BRUSHES, 0, 0);
+		DestroyWindow(hwnd_);
 		break;
 		
 	// Cancel
 	case CID_CANCEL:
-		DestroyWindow(m_hwnd);
+		DestroyWindow(hwnd_);
 		break;
 
 	// Any hotkey control clicked
@@ -217,7 +217,7 @@ void SettingsWindow::HandleControlCommand(LPARAM lParam)
 			hActiveControl = nullptr;
 		}
 
-		SetFocus(m_hwnd);
+		SetFocus(hwnd_);
 		hActiveControl = hwndCtrl;
 		SetWindowText(hActiveControl, L"...");
 		break;
@@ -240,19 +240,19 @@ void SettingsWindow::HandleControlCommand(LPARAM lParam)
 	case COLOR_CTR_BACKGROUND:
 	{
 		// Open a Color Picker window
-		if (pColorPicker->Window() == NULL)
+		if (pColorPicker->window() == NULL)
 		{
 			pColorPicker->controlID = controlID; // Notify Color Picker who called it
 			pColorPicker->pTempSettings = &tempSettings;
 		
-			if (!pColorPicker->Create(L"Color Picker", 850, 300, SIZE_COLORPICKER_WIDTH, SIZE_COLORPICKER_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, m_hwnd, 0, NULL)) {
+			if (!pColorPicker->create(L"Color Picker", 850, 300, SIZE_COLORPICKER_WIDTH, SIZE_COLORPICKER_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, 0, NULL)) {
 				return;
 			}
-			ShowWindow(pColorPicker->Window(), SW_SHOW);
+			ShowWindow(pColorPicker->window(), SW_SHOW);
 		}
 		else
 		{
-			SetForegroundWindow(pColorPicker->Window());
+			SetForegroundWindow(pColorPicker->window());
 		}
 	}
 	break;
@@ -327,7 +327,7 @@ void SettingsWindow::ApplyHotkeySavedKey(HWND hCtrl) {
 	}
 }
 
-LRESULT SettingsWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
+LRESULT SettingsWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 {
 	try
 	{
@@ -339,7 +339,7 @@ LRESULT SettingsWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 		case WM_DESTROY:
-			m_hwnd = NULL;
+			hwnd_ = NULL;
 			return 0;
 		case WM_COMMAND: // Control item clicked
 			HandleControlCommand(lParam);
@@ -376,5 +376,5 @@ LRESULT SettingsWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 	{
 		KillProgram();
 	}
-	return DefWindowProc(Window(), wMsg, wParam, lParam);
+	return DefWindowProc(window(), wMsg, wParam, lParam);
 }

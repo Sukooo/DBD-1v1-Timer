@@ -263,11 +263,11 @@ public:
 
 	@return LRESULT
 	*/
-	LRESULT HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
 
 	/*
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/
-	LPCWSTR ClassName() const { return L"Settings Window"; }
+	LPCWSTR className() const { return L"Settings Window"; }
 };

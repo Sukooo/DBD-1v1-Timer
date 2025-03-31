@@ -23,7 +23,7 @@ HRESULT MainWindow::CreateGraphicsResources()
 	if (pRenderTarget == nullptr)
 	{
 		RECT rc;
-		GetClientRect(m_hwnd, &rc);
+		GetClientRect(hwnd_, &rc);
 
 		D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
 
@@ -37,7 +37,7 @@ HRESULT MainWindow::CreateGraphicsResources()
 
 		hr = pFactory->CreateHwndRenderTarget(
 			rtProperties,
-			D2D1::HwndRenderTargetProperties(m_hwnd, size),
+			D2D1::HwndRenderTargetProperties(hwnd_, size),
 			&pRenderTarget
 		);
 
@@ -164,8 +164,8 @@ int MainWindow::GetLargestFontsizeFit()
 			text,
 			(UINT32)wcslen(text),
 			pTempTextFormat,
-			winSize[0],
-			winSize[1],
+			winSize_[0],
+			winSize_[1],
 			&pTempTextLayout
 		);
 
@@ -181,8 +181,8 @@ int MainWindow::GetLargestFontsizeFit()
 			KillProgram();
 		}
 
-		if (layoutMetrics.width <= winSize[0] &&
-			layoutMetrics.height <= winSize[1])
+		if (layoutMetrics.width <= winSize_[0] &&
+			layoutMetrics.height <= winSize_[1])
 		{
 			conditionMet = true;
 		}
@@ -211,7 +211,7 @@ void MainWindow::DiscardGraphicsResources()
 
 void MainWindow::AdjustRendertargetSize()
 {
-	D2D1_SIZE_U newSize = D2D1::SizeU(winSize[0], winSize[1]);
+	D2D1_SIZE_U newSize = D2D1::SizeU(winSize_[0], winSize_[1]);
 	pRenderTarget->Resize(newSize);
 }
 
@@ -264,7 +264,7 @@ void MainWindow::HandlePainting()
 {
 	HRESULT hr;
 	PAINTSTRUCT ps;
-	BeginPaint(m_hwnd, &ps);
+	BeginPaint(hwnd_, &ps);
 	pRenderTarget->BeginDraw();
 
 	// workaround to visible edges issue while transparent
@@ -275,8 +275,8 @@ void MainWindow::HandlePainting()
 		pRenderTarget->Clear(backgroundColor);
 	}
 
-	D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize[0] / 2, winSize[1]);
-	D2D1_RECT_F rect2 = D2D1::RectF(winSize[0] / 2, 0, winSize[0], winSize[1]);
+	D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize_[0] / 2, winSize_[1]);
+	D2D1_RECT_F rect2 = D2D1::RectF(winSize_[0] / 2, 0, winSize_[0], winSize_[1]);
 
 	if (pWriteFactory != nullptr)
 	{
@@ -320,13 +320,13 @@ void MainWindow::HandlePainting()
 	{
 		DiscardGraphicsResources();
 	}
-	EndPaint(m_hwnd, &ps);
+	EndPaint(hwnd_, &ps);
 }
 
 void MainWindow::HandleMousemovement(LPARAM lParam) {
 	// variables
 	RECT windowPos;
-	GetWindowRect(m_hwnd, &windowPos);
+	GetWindowRect(hwnd_, &windowPos);
 	int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	int width = windowPos.right - windowPos.left;
 	int height = windowPos.bottom - windowPos.top;
@@ -370,13 +370,13 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 			int xToMove = windowPos.left + (currPos[0] - clickMousePos[0]);
 			int yToMove = windowPos.top + (currPos[1] - clickMousePos[1]);
 
-			SetWindowPos(m_hwnd, NULL, xToMove, yToMove, winSize[0], winSize[1], 0);
+			SetWindowPos(hwnd_, NULL, xToMove, yToMove, winSize_[0], winSize_[1], 0);
 		}
 	}
 
 	if (mouseDown && resizing) // if resizing
 	{
-		int newWidth = winSize[0]; int newHeight = winSize[1];
+		int newWidth = winSize_[0]; int newHeight = winSize_[1];
 		int newX = windowPos.left; int newY = windowPos.top;
 
 		// resizing logic
@@ -390,7 +390,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 			}
 			else // resetting size from the bottom side
 			{
-				newHeight = winSize[1] + currPos[1] - clickMousePos[1];
+				newHeight = winSize_[1] + currPos[1] - clickMousePos[1];
 			}
 			break;
 		case 1: // vertical
@@ -402,7 +402,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 			}
 			else // resetting size from the right side
 			{
-				newWidth = winSize[0] + currPos[0] - clickMousePos[0];
+				newWidth = winSize_[0] + currPos[0] - clickMousePos[0];
 			}
 
 		}
@@ -415,7 +415,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 			}
 			else // resetting size from the right side
 			{
-				newWidth = winSize[0] + currPos[0] - clickMousePos[0];
+				newWidth = winSize_[0] + currPos[0] - clickMousePos[0];
 			}
 			if (currPos[1] <= spaceOffset) // resetting size from the top side
 			{
@@ -424,7 +424,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 			}
 			else // resetting size from the bottom side
 			{
-				newHeight = winSize[1] + currPos[1] - clickMousePos[1];
+				newHeight = winSize_[1] + currPos[1] - clickMousePos[1];
 			}
 			break;
 		}
@@ -432,7 +432,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 		if (dir != -1) { // window was resized
 			newWidth = max(25, min(700, newWidth));
 			newHeight = max(25, min(700, newHeight));
-			SetWindowPos(m_hwnd, NULL, newX, newY, newWidth, newHeight, 0);
+			SetWindowPos(hwnd_, NULL, newX, newY, newWidth, newHeight, 0);
 		}
 	}
 }
@@ -466,12 +466,12 @@ void MainWindow::RefreshBrushes()
 	backgroundColor = HBRUSHtoCOLORF(hBrushes[settings.colors.backgroundColor]);
 }
 
-LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
+LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 {
 	try
 	{
 		RECT windowPos;
-		GetWindowRect(m_hwnd, &windowPos);
+		GetWindowRect(hwnd_, &windowPos);
 
 		switch (wMsg)
 		{
@@ -519,7 +519,7 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 				dir = -1;
 			}
 
-			SetCapture(m_hwnd);
+			SetCapture(hwnd_);
 			return 0;
 		}
 		case WM_LBUTTONUP:
@@ -529,14 +529,14 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			dir = -1;
 			ReleaseCapture();
 
-			// update winSize var after resizing
-			if (windowPos.right - windowPos.left != winSize[0]) {
-				winSize[0] = windowPos.right - windowPos.left;
+			// update winSize_ var after resizing
+			if (windowPos.right - windowPos.left != winSize_[0]) {
+				winSize_[0] = windowPos.right - windowPos.left;
 				AdjustRendertargetSize();
 				ChangeFontSize(GetLargestFontsizeFit());
 			}
-			if (windowPos.bottom - windowPos.top != winSize[1]) {
-				winSize[1] = windowPos.bottom - windowPos.top;
+			if (windowPos.bottom - windowPos.top != winSize_[1]) {
+				winSize_[1] = windowPos.bottom - windowPos.top;
 				AdjustRendertargetSize();
 				ChangeFontSize(GetLargestFontsizeFit());
 			}
@@ -552,18 +552,18 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			switch (wParam)
 			{
 			case MENU_SETTINGS:
-				if (pSettingsWindow->Window() == NULL) // dont create multiple settings windows
+				if (pSettingsWindow->window() == NULL) // dont create multiple settings windows
 				{
 					// Create and show settings window
-					if (!pSettingsWindow->Create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, m_hwnd, 0, 0, NULL)) {
+					if (!pSettingsWindow->create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, 0, 0, NULL)) {
 						return 0;
 					}
 
-					ShowWindow(pSettingsWindow->Window(), SW_SHOW);
+					ShowWindow(pSettingsWindow->window(), SW_SHOW);
 				}
 				else
 				{
-					SetForegroundWindow(pSettingsWindow->Window());
+					SetForegroundWindow(pSettingsWindow->window());
 				}
 				return 0;
 			case MENU_QUIT:
@@ -583,8 +583,8 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_QUIT, L"Quit");
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 100, L"");
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_SETTINGS, L"Settings");
-			SetForegroundWindow(m_hwnd);
-			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN, mouseX, mouseY, 0, m_hwnd, NULL);
+			SetForegroundWindow(hwnd_);
+			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN, mouseX, mouseY, 0, hwnd_, NULL);
 			return 0;
 		}
 		case WM_SETCURSOR:
@@ -600,7 +600,7 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		KillProgram();
 	}
 
-	return DefWindowProc(Window(), wMsg, wParam, lParam);
+	return DefWindowProc(window(), wMsg, wParam, lParam);
 }
 
 void MainWindow::HandleHotKey(int code)

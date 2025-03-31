@@ -7,16 +7,16 @@ template <class DERIVED_CLASS> class BaseWindow
 {
 public:
 	// public variables / methods
-	BaseWindow() : m_hwnd(NULL) { };
+	BaseWindow() : hwnd_(nullptr) { };
 
-	HWND Window() const { return m_hwnd; }
+	HWND window() const { return hwnd_; }
 
 	bool appRunning = false; // saves if the main window is running and signal to break the program loop if it's not (exit app)
 
 	// The actual window procedure every message is sent to. responsible for linking windows to class instances and forward messages to their handlers.
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	static LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		DERIVED_CLASS* pThis = NULL;
+		DERIVED_CLASS* pThis = nullptr;
 
 		if (uMsg == WM_NCCREATE) // if a window has just been created, link it to this class instance
 		{
@@ -24,57 +24,57 @@ public:
 			pThis = (DERIVED_CLASS*)cStruct->lpCreateParams;
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pThis);
 
-			pThis->m_hwnd = hwnd;
+			pThis->hwnd_ = hwnd;
 		}
 		else // if it's just another message to an existing window, save it's class instance to this local variable
 		{
 			pThis = (DERIVED_CLASS*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		}
-		if (pThis != NULL) // if the class instance exsists (it should) forward the message to the relevant handler method
+		if (pThis != nullptr) // if the class instance exsists (it should) forward the message to the relevant handler method
 		{
-			return pThis->HandleMessage(uMsg, wParam, lParam);
+			return pThis->handleMessage(uMsg, wParam, lParam);
 		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 
 	// Create an HWND (with the windowproc of basewindow that will link this class instance to the HWND)
-	BOOL Create(
-		LPCWSTR lpWindowName,
-		int x = CW_USEDEFAULT,
-		int y = CW_USEDEFAULT,
-		int width = CW_USEDEFAULT,
-		int height = CW_USEDEFAULT,
-		DWORD dwExStyle = WS_OVERLAPPEDWINDOW,
-		DWORD dwStyle = 0,
-		HWND parent = NULL,
-		HMENU hMenu = NULL,
-		HINSTANCE hInstance = NULL,
-		LPVOID lpParam = 0
+	BOOL create(
+		const LPCWSTR lpWindowName,
+		const int x = CW_USEDEFAULT,
+		const int y = CW_USEDEFAULT,
+		const int width = CW_USEDEFAULT,
+		const int height = CW_USEDEFAULT,
+		const DWORD dwExStyle = WS_OVERLAPPEDWINDOW,
+		const DWORD dwStyle = 0,
+		const HWND parent = nullptr,
+		const HMENU hMenu = nullptr,
+		const HINSTANCE hInstance = nullptr,
+		const LPVOID lpParam = nullptr
 	) {
 		// create a window class
 		WNDCLASS wc = { 0 };
 
-		wc.lpfnWndProc = DERIVED_CLASS::WindowProc;
-		wc.lpszClassName = ClassName();
-		wc.hInstance = NULL;
+		wc.lpfnWndProc = DERIVED_CLASS::windowProc;
+		wc.lpszClassName = className();
+		wc.hInstance = nullptr;
 		wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 
 		RegisterClass(&wc);
 
-		m_hwnd = CreateWindowEx(dwExStyle, ClassName(), lpWindowName, dwStyle, x, y, width, height, parent, hMenu, hInstance, this);
+		hwnd_ = CreateWindowEx(dwExStyle, className(), lpWindowName, dwStyle, x, y, width, height, parent, hMenu, hInstance, this);
 
-		winSize[0] = width; winSize[1] = height;
+		winSize_[0] = width; winSize_[1] = height;
 
-		return (m_hwnd ? TRUE : FALSE);
+		return (hwnd_ ? TRUE : FALSE);
 	}
 
 protected:
-	HWND m_hwnd;
-	int winSize[2] = { 0, 0 };
+	HWND hwnd_;
+	int winSize_[2] = { 0, 0 };
 
 	// protected methods to be rewritten by derived classes
-	virtual LPCWSTR ClassName() const { return 0; }
-	virtual LRESULT HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) = 0;
+	virtual LPCWSTR className() const { return 0; }
+	virtual LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) = 0;
 };

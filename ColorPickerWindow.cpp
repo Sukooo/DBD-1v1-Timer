@@ -20,14 +20,14 @@ void ColorPickerWindow::InitializeColorButtons()
 	{
 		for (size_t col = 0; col < 5; col++)
 		{
-			hColorButtons[i] = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, baseRowPos + offset * col, baseColPos + offset * row, buttonSize, buttonSize, m_hwnd, (HMENU)i, NULL, NULL);
+			hColorButtons[i] = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, baseRowPos + offset * col, baseColPos + offset * row, buttonSize, buttonSize, hwnd_, (HMENU)i, NULL, NULL);
 
 			i++;
 		}
 	}
 
 	// Preview Color
-	hPreviewColorButton = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 105, 210, 40, 40, m_hwnd, (HMENU)COLOR_PREVIEW, NULL, NULL);
+	hPreviewColorButton = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 105, 210, 40, 40, hwnd_, (HMENU)COLOR_PREVIEW, NULL, NULL);
 	switch (controlID)
 	{
 	case COLOR_CTR_TIMER:
@@ -54,10 +54,10 @@ void ColorPickerWindow::InitializeWindow()
 	InitializeColorButtons();
 
 	// Initialize exit controls
-	HWND hwndOKButton = CreateWindowEx(0, WC_BUTTON, L"OK", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 150, SIZE_COLORPICKER_HEIGHT - 70, 50, 25, m_hwnd, (HMENU)CID_OK, NULL, NULL);
-	HWND hwndCancelButton = CreateWindowEx(0, WC_BUTTON, L"CANCEL", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 90, SIZE_COLORPICKER_HEIGHT - 70, 70, 25, m_hwnd, (HMENU)CID_CANCEL, NULL, NULL);
+	HWND hwndOKButton = CreateWindowEx(0, WC_BUTTON, L"OK", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 150, SIZE_COLORPICKER_HEIGHT - 70, 50, 25, hwnd_, (HMENU)CID_OK, NULL, NULL);
+	HWND hwndCancelButton = CreateWindowEx(0, WC_BUTTON, L"CANCEL", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 90, SIZE_COLORPICKER_HEIGHT - 70, 70, 25, hwnd_, (HMENU)CID_CANCEL, NULL, NULL);
 
-	setControlsFont(m_hwnd);
+	setControlsFont(hwnd_);
 }
 
 void ColorPickerWindow::UpdateSettings()
@@ -78,7 +78,7 @@ void ColorPickerWindow::UpdateSettings()
 		break;
 	}
 
-	RedrawWindow(GetWindow(m_hwnd, GW_OWNER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+	RedrawWindow(GetWindow(hwnd_, GW_OWNER), NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void ColorPickerWindow::HandleControlCommand(LPARAM lParam)
@@ -92,7 +92,7 @@ void ColorPickerWindow::HandleControlCommand(LPARAM lParam)
 	{
 		hPreviewColor = hBrushes[CID];
 		previewColorIndex = CID;
-		RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+		RedrawWindow(hwnd_, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 		return;
 	}
 
@@ -101,15 +101,15 @@ void ColorPickerWindow::HandleControlCommand(LPARAM lParam)
 	{
 	case CID_OK:
 		UpdateSettings();
-		DestroyWindow(m_hwnd);
+		DestroyWindow(hwnd_);
 		break;
 	case CID_CANCEL:
-		DestroyWindow(m_hwnd);
+		DestroyWindow(hwnd_);
 		break;
 	}
 }
 
-LRESULT ColorPickerWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
+LRESULT ColorPickerWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 {
 	try
 	{
@@ -121,7 +121,7 @@ LRESULT ColorPickerWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam
 			return 0;
 		}
 		case WM_DESTROY:
-			m_hwnd = NULL;
+			hwnd_ = NULL;
 			return 0;
 		case WM_COMMAND: // Control item clicked
 			HandleControlCommand(lParam);
@@ -146,5 +146,5 @@ LRESULT ColorPickerWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam
 	{
 		KillProgram();
 	}
-	return DefWindowProc(Window(), wMsg, wParam, lParam);
+	return DefWindowProc(window(), wMsg, wParam, lParam);
 }

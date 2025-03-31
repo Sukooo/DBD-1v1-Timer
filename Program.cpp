@@ -101,12 +101,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		// Initialize brushes
 		initializeBrushes();
 
-		if (!win.Create(L"Timer", 0, 0, 285, 40, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
+		if (!win.create(L"Timer", 0, 0, 285, 40, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
 			return 0;
 		}
-		SetLayeredWindowAttributes(win.Window(), 1, 255, LWA_COLORKEY | LWA_ALPHA);
+		SetLayeredWindowAttributes(win.window(), 1, 255, LWA_COLORKEY | LWA_ALPHA);
 
-		ShowWindow(win.Window(), nCmdShow);
+		ShowWindow(win.window(), nCmdShow);
 
 		// Create variables for settings and color picker windows
 		SettingsWindow settings;
@@ -117,7 +117,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 		// global variables for timer
 		pGlobalTimerWindow = &win;
-		hwndMainWindow = win.Window();
+		hwndMainWindow = win.window();
 
 		// Apply saved settings
 		applySettings(appSettings);
