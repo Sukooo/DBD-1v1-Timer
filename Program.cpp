@@ -7,8 +7,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <ShellScalingApi.h>
-#include "globals.h"
-#include "enums.h"
+#include "Globals.h"
 #include "helperFunctions.h"
 #include "BaseWindow.h"
 #include "Timer.h"
@@ -23,7 +22,7 @@
 using std::thread; using std::wstring;
 
 // Global variable assignment (defined in MainWindow.h)
-settingsStruct appSettings;
+SettingsStruct appSettings;
 HBRUSH hBrushes[25];
 HWND hwndMainWindow = nullptr;
 HINSTANCE hInstanceGlobal;
@@ -100,7 +99,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		InitCommonControls();
 
 		// Initialize brushes
-		InitializeBrushes();
+		initializeBrushes();
 
 		if (!win.Create(L"Timer", 0, 0, 285, 40, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
 			return 0;
@@ -121,7 +120,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		hwndMainWindow = win.Window();
 
 		// Apply saved settings
-		ApplySettings(appSettings);
+		applySettings(appSettings);
 
 		// Listen for keys: F1, F2, F While running in the background - Install a hook procedure
 		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &KBHook, 0, 0);

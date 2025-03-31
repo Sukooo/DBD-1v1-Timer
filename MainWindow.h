@@ -5,6 +5,19 @@
 #include "Timer.h"
 #include "SettingsWindow.h"
 
+enum MousePos
+{
+	topLeft,
+	top,
+	topRight,
+	right,
+	bottomRight,
+	bottom,
+	bottomLeft,
+	left,
+	none
+};
+
 // The class responsible for the main window of the app
 class MainWindow : public BaseWindow<MainWindow>
 {

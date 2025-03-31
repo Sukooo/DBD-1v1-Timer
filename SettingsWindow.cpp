@@ -25,8 +25,8 @@ void SettingsWindow::InitializeWindow()
 
 void SettingsWindow::InitializeBitmaps()
 {
-	mouseBitmap = LoadBitmapResource(IDB_MOUSE);
-	controllerBitmap = LoadBitmapResource(IDB_CONTROLLER);
+	mouseBitmap = loadBitmapResource(IDB_MOUSE);
+	controllerBitmap = loadBitmapResource(IDB_CONTROLLER);
 }
 
 void SettingsWindow::DisplayBitmaps()
@@ -113,9 +113,9 @@ void SettingsWindow::InitializeTextControls()
 	HWND hwndCopyright = CreateControl(WC_STATIC, L"© Truueh 2024", 10, SIZE_SETTINGS_HEIGHT - 65, 100, 40);
 
 	// Apply fonts
-	SetControlsFont(m_hwnd);
-	SetTitleFont(hwndTitleColors);
-	SetTitleFont(hwndTitleHotkeys);
+	setControlsFont(m_hwnd);
+	setTitleFont(hwndTitleColors);
+	setTitleFont(hwndTitleHotkeys);
 	SetCopyrightFont(hwndCopyright);
 }
 
@@ -161,7 +161,7 @@ void SettingsWindow::InitializeButtonControls()
 	HWND hwndCancelButton = CreateControl(WC_BUTTON, L"CANCEL", SIZE_SETTINGS_WIDTH - 100, SIZE_SETTINGS_HEIGHT - 80, 70, 25, CID_CANCEL);
 
 	// Apply font
-	SetControlsFont(m_hwnd);
+	setControlsFont(m_hwnd);
 	
 	// Apply currently set hotkeys
 	for (HWND hCtrl : hotkeys) {
@@ -197,7 +197,7 @@ void SettingsWindow::HandleControlCommand(LPARAM lParam)
 	switch (controlID) {
 	// OK
 	case CID_OK:
-		ApplySettings(tempSettings);
+		applySettings(tempSettings);
 		SendMessage(GetWindow(m_hwnd, GW_OWNER), REFRESH_BRUSHES, 0, 0);
 		DestroyWindow(m_hwnd);
 		break;

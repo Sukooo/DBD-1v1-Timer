@@ -1,6 +1,6 @@
 #pragma once
 #include "ColorPickerWindow.h"
-#include "globals.h"
+#include "Globals.h"
 #include <map>
 
 // The class responsible for the settings window
@@ -8,7 +8,7 @@ class SettingsWindow : public BaseWindow<SettingsWindow>
 {
 private:
 	// Fields
-	settingsStruct tempSettings;
+	SettingsStruct tempSettings;
 	HBITMAP mouseBitmap;
 	HBITMAP controllerBitmap;
 	HWND hActiveControl;

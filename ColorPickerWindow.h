@@ -38,7 +38,7 @@ private:
 public:
 	// public variables
 	int controlID; // ID of the control that summoned the color picker window
-	settingsStruct* pTempSettings; // Reference to the settings window's settings struct
+	SettingsStruct* pTempSettings; // Reference to the settings window's settings struct
 
 	/*
 	@brief Implements an inherited method responsible for handling messages sent to the window.

@@ -1,7 +1,6 @@
 #include "MainWindow.h"
-#include "enums.h"
 #include <windowsx.h>
-#include "globals.h"
+#include "Globals.h"
 #include "HelperFunctions.h"
 #include "Program.h"
 
@@ -44,7 +43,7 @@ HRESULT MainWindow::CreateGraphicsResources()
 
 		if (SUCCEEDED(hr)) {
 			// Extract ColorF from HBRUSH
-			settingsStruct settings = getSafeSettingsStruct();
+			SettingsStruct settings = getSafeSettingsStruct();
 
 			D2D1_COLOR_F timerColor = HBRUSHtoCOLORF(hBrushes[settings.colors.timerColor]);
 			D2D1_COLOR_F selectedTimerColor = HBRUSHtoCOLORF(hBrushes[settings.colors.selectedTimerColor]);
@@ -107,7 +106,7 @@ HRESULT MainWindow::CreateDeviceIndependentResources()
 
 HRESULT MainWindow::ChangeFontSize(int fontSize)
 {
-	SafeRelease(&pTextFormat);
+	safeRelease(&pTextFormat);
 
 	static const WCHAR fontName[] = L"Sitka";
 
@@ -192,8 +191,8 @@ int MainWindow::GetLargestFontsizeFit()
 			maxSize--;
 		}
 
-		SafeRelease(&pTempTextFormat);
-		SafeRelease(&pTempTextLayout);
+		safeRelease(&pTempTextFormat);
+		safeRelease(&pTempTextLayout);
 	}
 
 	return maxSize;
@@ -201,13 +200,13 @@ int MainWindow::GetLargestFontsizeFit()
 
 void MainWindow::DiscardGraphicsResources()
 {
-	SafeRelease(&pFactory);
-	SafeRelease(&pRenderTarget);
-	SafeRelease(&pBrushTimer);
-	SafeRelease(&pBrushSelectedTimer);
-	SafeRelease(&pBrushLastSeconds);
-	SafeRelease(&pWriteFactory);
-	SafeRelease(&pTextFormat);
+	safeRelease(&pFactory);
+	safeRelease(&pRenderTarget);
+	safeRelease(&pBrushTimer);
+	safeRelease(&pBrushSelectedTimer);
+	safeRelease(&pBrushLastSeconds);
+	safeRelease(&pWriteFactory);
+	safeRelease(&pTextFormat);
 }
 
 void MainWindow::AdjustRendertargetSize()
@@ -450,7 +449,7 @@ D2D1_COLOR_F MainWindow::HBRUSHtoCOLORF(HBRUSH hBrush) {
 void MainWindow::RefreshBrushes()
 {
 	// retrieve brushes colors
-	settingsStruct settings = getSafeSettingsStruct();
+	SettingsStruct settings = getSafeSettingsStruct();
 
 	LOGBRUSH logBrush;
 
@@ -556,7 +555,7 @@ LRESULT MainWindow::HandleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 				if (pSettingsWindow->Window() == NULL) // dont create multiple settings windows
 				{
 					// Create and show settings window
-					if (!pSettingsWindow->Create(L"Settings - Version 1.1", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, m_hwnd, 0, 0, NULL)) {
+					if (!pSettingsWindow->Create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, m_hwnd, 0, 0, NULL)) {
 						return 0;
 					}
 

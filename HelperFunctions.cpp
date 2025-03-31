@@ -8,12 +8,13 @@
 using namespace std;
 
 // Methods
-settingsStruct getSafeSettingsStruct()
+// SettingsUtils
+SettingsStruct getSafeSettingsStruct()
 {
-	ifstream file("settings.json");
+	ifstream file(SETTINGS_FILE_NAME);
 	Json::Value actualJson;
 	Json::Reader reader;
-	settingsStruct settings;
+	SettingsStruct settings;
 	
 	reader.parse(file, actualJson);
 
@@ -71,9 +72,9 @@ settingsStruct getSafeSettingsStruct()
 	return settings;
 }
 
-void setSettingsStruct(settingsStruct settings)
+void setSettingsStruct(SettingsStruct settings)
 {
-	ifstream file("settings.json");
+	ifstream file(SETTINGS_FILE_NAME);
 
 	// Retrieve existing settings
 	Json::Reader reader; 
@@ -96,13 +97,13 @@ void setSettingsStruct(settingsStruct settings)
 	builder["indentation"] = "   ";
 
 	std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
-	std::ofstream outputFileStream("settings.json");
+	std::ofstream outputFileStream(SETTINGS_FILE_NAME);
 	writer->write(settingsJson, &outputFileStream);
 }
 
 void createSettingsFile()
 {
-	ofstream file("settings.json");
+	ofstream file(SETTINGS_FILE_NAME);
 
 	string json = "{\n   \"colors\" : \n   {\n      \"background\" : 20,\n      \"last seconds\" : 1,\n      \"selected timer\" : 6,\n      \"timer\" : 8\n   },\n   \"optionTransparent\" : false,\n   \"start\" : 70,\n   \"timer1\" : 112,\n   \"timer2\" : 113\n}";
 
@@ -112,47 +113,17 @@ void createSettingsFile()
 }
 
 bool settingsFileExists() {
-	string name = "settings.json";
+	string name = SETTINGS_FILE_NAME;
 
 	ifstream f(name.c_str());
 	return f.good();
 }
 
-BOOL CALLBACK ControlProc(HWND hControl, LPARAM lParam)
-{
-	HFONT hFont = (HFONT)lParam;
-	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
-
-	return true;
-}
-
-void SetTitleFont(HWND hControl)
-{
-	HFONT hFont = CreateFont(
-		16, 0, 0, 0, FW_BLACK, FALSE, FALSE, FALSE,
-		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
-	);
-
-	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
-}
-
-void SetControlsFont(HWND hWnd)
-{
-	HFONT hFont = CreateFont(
-		16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
-	);
-
-	EnumChildWindows(hWnd, ControlProc, (LPARAM)hFont);
-}
-
-void ApplySettings(settingsStruct settings) {
+void applySettings(SettingsStruct settings) {
 	setSettingsStruct(settings); // write to json file (settings.json)
 	appSettings = settings; // save static settings variable
 
-	if (hwndMainWindow != NULL) {
+	if (hwndMainWindow != nullptr) {
 		// transparency
 		if (appSettings.optionTransparent) { // add transparent effect
 			SetLayeredWindowAttributes(hwndMainWindow, 0, 0, LWA_COLORKEY);
@@ -161,8 +132,8 @@ void ApplySettings(settingsStruct settings) {
 			SetLayeredWindowAttributes(hwndMainWindow, 0, 255, LWA_ALPHA);
 		}
 
-		// clickthrough
-		if (appSettings.clickthrough) { // make clickthrough
+		// click through
+		if (appSettings.clickthrough) { // make click through
 			// Get the current window style
 			LONG style = GetWindowLong(hwndMainWindow, GWL_EXSTYLE);
 
@@ -175,7 +146,39 @@ void ApplySettings(settingsStruct settings) {
 	}
 }
 
-HBITMAP LoadBitmapResource(int bitmap) {
+// CommUtils
+BOOL CALLBACK controlProc(HWND hControl, LPARAM lParam)
+{
+	HFONT hFont = (HFONT)lParam;
+	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+	return true;
+}
+
+void setTitleFont(HWND hControl)
+{
+	HFONT hFont = CreateFont(
+		16, 0, 0, 0, FW_BLACK, FALSE, FALSE, FALSE,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
+	);
+
+	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
+}
+
+void setControlsFont(HWND hWnd)
+{
+	HFONT hFont = CreateFont(
+		16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
+	);
+
+	EnumChildWindows(hWnd, controlProc, (LPARAM)hFont);
+}
+
+// ResourceUtils
+HBITMAP loadBitmapResource(int bitmap) {
 	HBITMAP hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmap));
 	if (!hBitmap) {
 		MessageBox(NULL, L"Failed to load bitmap!", L"Error", MB_OK);
@@ -184,7 +187,7 @@ HBITMAP LoadBitmapResource(int bitmap) {
 	return hBitmap;
 }
 
-void InitializeBrushes()
+void initializeBrushes()
 {
 	COLORREF colors[25] = {
 		RGB(255, 0, 0), RGB(255, 77, 0), RGB(255, 116, 0), RGB(255, 154, 0), RGB(255, 193, 0),

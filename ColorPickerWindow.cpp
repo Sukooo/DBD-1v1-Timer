@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <CommCtrl.h>
-#include "globals.h"
+#include "Globals.h"
 #include "HelperFunctions.h"
 #include "ColorPickerWindow.h"
 #include "Program.h"
@@ -57,7 +57,7 @@ void ColorPickerWindow::InitializeWindow()
 	HWND hwndOKButton = CreateWindowEx(0, WC_BUTTON, L"OK", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 150, SIZE_COLORPICKER_HEIGHT - 70, 50, 25, m_hwnd, (HMENU)CID_OK, NULL, NULL);
 	HWND hwndCancelButton = CreateWindowEx(0, WC_BUTTON, L"CANCEL", WS_VISIBLE | WS_CHILDWINDOW, SIZE_COLORPICKER_WIDTH - 90, SIZE_COLORPICKER_HEIGHT - 70, 70, 25, m_hwnd, (HMENU)CID_CANCEL, NULL, NULL);
 
-	SetControlsFont(m_hwnd);
+	setControlsFont(m_hwnd);
 }
 
 void ColorPickerWindow::UpdateSettings()

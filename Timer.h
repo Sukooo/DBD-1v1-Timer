@@ -5,6 +5,13 @@
 
 using std::wstring;
 
+enum TimerState
+{
+	running,
+	paused,
+	zero
+};
+
 class Timer
 {
 private:

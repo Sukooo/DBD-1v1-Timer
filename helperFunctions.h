@@ -1,8 +1,8 @@
 #pragma once
-#include "globals.h"
+#include "Globals.h"
 
 // Release pointers safely
-template <class T> void SafeRelease(T** ppT)
+template <class T> void safeRelease(T** ppT)
 {
 	if (*ppT)
 	{
@@ -14,19 +14,19 @@ template <class T> void SafeRelease(T** ppT)
 // Methods
 
 /*
-@brief Safely retrieves the settingsStruct from the settings.json file.
+@brief Safely retrieves the SettingsStruct from the settings.json file.
 		Handles errors in the settings.json file and resets it if need be.
 
-@return The settingsStruct representing the saved settings from the settings.json file.
+@return The SettingsStruct representing the saved settings from the settings.json file.
 */
-settingsStruct getSafeSettingsStruct();
+SettingsStruct getSafeSettingsStruct();
 
 /*
-@brief Writes the settings from the given settingsStruct to the settings.json file.
+@brief Writes the settings from the given SettingsStruct to the settings.json file.
 
 @param settings The settings struct to save to the file.
 */
-void setSettingsStruct(settingsStruct settings);
+void setSettingsStruct(SettingsStruct settings);
 
 /*
 @brief Initial creation of the settings.json file.
@@ -43,21 +43,21 @@ bool settingsFileExists();
 
 @param hControl The control to change the font of.
 */
-void SetTitleFont(HWND hControl);
+void setTitleFont(HWND hControl);
 
 /*
 @brief Apply the default font to a specific window's child controls.
 
 @param hWnd The handle to the window who's child controls will be affected.
 */
-void SetControlsFont(HWND hWnd);
+void setControlsFont(HWND hWnd);
 
 /*
 @brief Save settings to local variable and json file (also apply temporary settings).
 
 @param settings The settings to be applied.
 */
-void ApplySettings(settingsStruct settings);
+void applySettings(SettingsStruct settings);
 
 /*
 @brief Load a bitmap resource.
@@ -66,12 +66,12 @@ void ApplySettings(settingsStruct settings);
 
 @return A handle to the bitmap loaded.
 */
-HBITMAP LoadBitmapResource(int bitmap);
+HBITMAP loadBitmapResource(int bitmap);
 
 /*
 @brief Initialize the colors that can be chosen (as brushes).
 */
-void InitializeBrushes();
+void initializeBrushes();
 
 /*
 @brief A procedure for windows of type "control", used to assign a font.
@@ -82,4 +82,4 @@ void InitializeBrushes();
 
 @return BOOL
 */
-BOOL CALLBACK ControlProc(HWND hControl, LPARAM lParam);
+BOOL CALLBACK controlProc(HWND hControl, LPARAM lParam);
