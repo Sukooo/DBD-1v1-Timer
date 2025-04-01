@@ -26,12 +26,12 @@ private:
 	/*
 	@brief Displays the bitmaps of the settings window. (controller & mouse images)
 	*/
-	void displayBitmaps();
+	void displayBitmaps() const;
 
 	/*
 	@brief Initializes all the text controls in the settings window.
 	*/
-	void initializeTextControls();
+	void initializeTextControls() const;
 	
 	/*
 	@brief Initializes all the interactable controls in the settings window.
@@ -59,14 +59,18 @@ private:
 
 	@return The HWND control that was created.
 	*/
-	HWND createControl(LPCWSTR className, LPCWSTR controlName, int x, int y, int width, int height, int id = NULL, long ADDITIONAL_STYLE = 0);
+	HWND createControl(
+		LPCWSTR className, LPCWSTR controlName, 
+		int x, int y, int width, int height, 
+		int id = NULL, long additionalStyle = 0
+	) const;
 
 	/*
 	@brief Sets the "copyright" font to a given control.
 
 	@param hControl The handle to the control to set the font of.
 	*/
-	void setCopyrightFont(HWND hControl);
+	static void setCopyrightFont(HWND hControl);
 
 	/*
 	@brief Method that handles interaction with controls.
@@ -248,7 +252,7 @@ public:
 
 	@param lParam should be forwarded from a message handling method.
 	*/
-	void colorHandles(LPARAM lParam);
+	void colorHandles(LPARAM lParam) const;
 
 	/*
 	@brief Implements an inherited method responsible for handling messages sent to the window.
