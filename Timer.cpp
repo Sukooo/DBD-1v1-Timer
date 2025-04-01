@@ -133,18 +133,18 @@ void Timer::updateTime()
 	}
 }
 
-void Timer::draw(ID2D1HwndRenderTarget* pRenderTarget, IDWriteTextFormat* pTextFormat, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush) // Only call from within an active render target begin draw scope
+void Timer::draw(ID2D1HwndRenderTarget* pRenderTarget_, IDWriteTextFormat* pTextFormat_, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush) // Only call from within an active render target begin draw scope
 {
-	if (pRenderTarget != NULL)
+	if (pRenderTarget_ != NULL)
 	{
 		wstring timeStr = getTimeAsText();
 
 		const WCHAR* timeText = timeStr.c_str();
 
-		pRenderTarget->DrawTextW(
+		pRenderTarget_->DrawTextW(
 			timeText,
 			8,
-			pTextFormat,
+			pTextFormat_,
 			rectF,
 			pBrush);
 	}

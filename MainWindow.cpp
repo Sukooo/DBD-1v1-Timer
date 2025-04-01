@@ -5,22 +5,20 @@
 #include "Program.h"
 
 // Constructor
-MainWindow::MainWindow()
-{
-}
+MainWindow::MainWindow() = default;
 
 // Destructor
 MainWindow::~MainWindow() {
-	MainWindow::DiscardGraphicsResources();
+	discardGraphicsResources();
 }
 
 // Method defenitions
-HRESULT MainWindow::CreateGraphicsResources()
+HRESULT MainWindow::createGraphicsResources()
 {
 	HRESULT hr = S_OK;
 
 	// Set up render target and brush
-	if (pRenderTarget == nullptr)
+	if (pRenderTarget_ == nullptr)
 	{
 		RECT rc;
 		GetClientRect(hwnd_, &rc);
@@ -35,53 +33,53 @@ HRESULT MainWindow::CreateGraphicsResources()
 			D2D1_FEATURE_LEVEL_DEFAULT
 		);
 
-		hr = pFactory->CreateHwndRenderTarget(
+		hr = pFactory_->CreateHwndRenderTarget(
 			rtProperties,
 			D2D1::HwndRenderTargetProperties(hwnd_, size),
-			&pRenderTarget
+			&pRenderTarget_
 		);
 
 		if (SUCCEEDED(hr)) {
 			// Extract ColorF from HBRUSH
 			SettingsStruct settings = getSafeSettingsStruct();
 
-			D2D1_COLOR_F timerColor = HBRUSHtoCOLORF(hBrushes[settings.colors.timerColor]);
-			D2D1_COLOR_F selectedTimerColor = HBRUSHtoCOLORF(hBrushes[settings.colors.selectedTimerColor]);
-			D2D1_COLOR_F lastSecondsColor = HBRUSHtoCOLORF(hBrushes[settings.colors.lastSecondsColor]);
-			backgroundColor = HBRUSHtoCOLORF(hBrushes[settings.colors.backgroundColor]);
+			D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
+			D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
+			D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
+			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
 
 			// timer color brush
-			hr = pRenderTarget->CreateSolidColorBrush(timerColor, &pBrushTimer);
+			hr = pRenderTarget_->CreateSolidColorBrush(timerColor, &pBrushTimer_);
 
 			// selected timer color brush
-			hr = pRenderTarget->CreateSolidColorBrush(selectedTimerColor, &pBrushSelectedTimer);
+			hr = pRenderTarget_->CreateSolidColorBrush(selectedTimerColor, &pBrushSelectedTimer_);
 
 			// last seconds color brush
-			hr = pRenderTarget->CreateSolidColorBrush(lastSecondsColor, &pBrushLastSeconds);
+			hr = pRenderTarget_->CreateSolidColorBrush(lastSecondsColor, &pBrushLastSeconds_);
 		}
 	}
 
 	return hr;
 }
 
-HRESULT MainWindow::CreateDeviceIndependentResources()
+HRESULT MainWindow::createDeviceIndependentResources()
 {
 	HRESULT hr = S_OK;
 	// Set up write factory
-	if (pWriteFactory == NULL)
+	if (pWriteFactory_ == NULL)
 	{
-		if (pWriteFactory == nullptr) {
-			hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(pWriteFactory)
-				, reinterpret_cast<IUnknown**>(&pWriteFactory));
+		if (pWriteFactory_ == nullptr) {
+			hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(pWriteFactory_)
+				, reinterpret_cast<IUnknown**>(&pWriteFactory_));
 		}
 
-		if (SUCCEEDED(hr) && pTextFormat == nullptr)
+		if (SUCCEEDED(hr) && pTextFormat_ == nullptr)
 		{
 			// Set up text format
 			static const WCHAR fontName[] = L"Sitka";
 			static const int fontSize = 34;
 
-			hr = pWriteFactory->CreateTextFormat(
+			hr = pWriteFactory_->CreateTextFormat(
 				fontName,
 				NULL,
 				DWRITE_FONT_WEIGHT_BOLD,
@@ -89,14 +87,14 @@ HRESULT MainWindow::CreateDeviceIndependentResources()
 				DWRITE_FONT_STRETCH_EXTRA_EXPANDED,
 				fontSize,
 				L"",
-				&pTextFormat
+				&pTextFormat_
 			);
 
 			if (SUCCEEDED(hr))
 			{
 				// Center the text horizontally and vertically.
-				pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-				pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+				pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+				pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
 			}
 		}
 	}
@@ -104,13 +102,13 @@ HRESULT MainWindow::CreateDeviceIndependentResources()
 	return hr;
 }
 
-HRESULT MainWindow::ChangeFontSize(int fontSize)
+HRESULT MainWindow::changeFontSize(int fontSize)
 {
-	safeRelease(&pTextFormat);
+	safeRelease(&pTextFormat_);
 
 	static const WCHAR fontName[] = L"Sitka";
 
-	HRESULT hr = pWriteFactory->CreateTextFormat(
+	HRESULT hr = pWriteFactory_->CreateTextFormat(
 		fontName,
 		NULL,
 		DWRITE_FONT_WEIGHT_BOLD,
@@ -118,20 +116,20 @@ HRESULT MainWindow::ChangeFontSize(int fontSize)
 		DWRITE_FONT_STRETCH_EXTRA_EXPANDED,
 		fontSize,
 		L"",
-		&pTextFormat
+		&pTextFormat_
 	);
 
 	if (SUCCEEDED(hr))
 	{
 		// Center the text horizontally and vertically.
-		pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+		pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
 	}
 
 	return hr;
 }
 
-int MainWindow::GetLargestFontsizeFit()
+int MainWindow::getLargestFontsizeFit()
 {
 	IDWriteTextFormat* pTempTextFormat;
 	IDWriteTextLayout* pTempTextLayout;
@@ -145,12 +143,12 @@ int MainWindow::GetLargestFontsizeFit()
 	// Iterate through options untill the largest possible font size is found
 	while (!conditionMet)
 	{
-		HRESULT hr = pWriteFactory->CreateTextFormat(
+		HRESULT hr = pWriteFactory_->CreateTextFormat(
 			fontFamily,
 			nullptr,
-			pTextFormat->GetFontWeight(),
-			pTextFormat->GetFontStyle(),
-			pTextFormat->GetFontStretch(),
+			pTextFormat_->GetFontWeight(),
+			pTextFormat_->GetFontStyle(),
+			pTextFormat_->GetFontStretch(),
 			maxSize,
 			L"",
 			&pTempTextFormat
@@ -160,7 +158,7 @@ int MainWindow::GetLargestFontsizeFit()
 			KillProgram();
 		}
 
-		hr = pWriteFactory->CreateTextLayout(
+		hr = pWriteFactory_->CreateTextLayout(
 			text,
 			(UINT32)wcslen(text),
 			pTempTextFormat,
@@ -198,34 +196,34 @@ int MainWindow::GetLargestFontsizeFit()
 	return maxSize;
 }
 
-void MainWindow::DiscardGraphicsResources()
+void MainWindow::discardGraphicsResources()
 {
-	safeRelease(&pFactory);
-	safeRelease(&pRenderTarget);
-	safeRelease(&pBrushTimer);
-	safeRelease(&pBrushSelectedTimer);
-	safeRelease(&pBrushLastSeconds);
-	safeRelease(&pWriteFactory);
-	safeRelease(&pTextFormat);
+	safeRelease(&pFactory_);
+	safeRelease(&pRenderTarget_);
+	safeRelease(&pBrushTimer_);
+	safeRelease(&pBrushSelectedTimer_);
+	safeRelease(&pBrushLastSeconds_);
+	safeRelease(&pWriteFactory_);
+	safeRelease(&pTextFormat_);
 }
 
-void MainWindow::AdjustRendertargetSize()
+void MainWindow::adjustRendertargetSize()
 {
 	D2D1_SIZE_U newSize = D2D1::SizeU(winSize_[0], winSize_[1]);
-	pRenderTarget->Resize(newSize);
+	pRenderTarget_->Resize(newSize);
 }
 
-MousePos MainWindow::GetMouseDir(LPARAM lParam, RECT windowPos) {
+MousePos MainWindow::getMouseDir(LPARAM lParam, RECT windowPos) {
 	int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	int width = windowPos.right - windowPos.left;
 	int height = windowPos.bottom - windowPos.top;
 
-	if (currPos[0] <= spaceOffset) // left
+	if (currPos[0] <= spaceOffset_) // left
 	{
-		if (currPos[1] <= spaceOffset) { // top left
+		if (currPos[1] <= spaceOffset_) { // top left
 			return MousePos::topLeft;
 		}
-		else if (currPos[1] >= height - spaceOffset) { // bottom left
+		else if (currPos[1] >= height - spaceOffset_) { // bottom left
 			SetCursor(LoadCursor(NULL, IDC_SIZENESW));
 			return MousePos::bottomLeft;
 		}
@@ -234,12 +232,12 @@ MousePos MainWindow::GetMouseDir(LPARAM lParam, RECT windowPos) {
 			return MousePos::left;
 		}
 	}
-	else if (currPos[0] >= width - spaceOffset) { // right
-		if (currPos[1] <= spaceOffset) { // top right
+	else if (currPos[0] >= width - spaceOffset_) { // right
+		if (currPos[1] <= spaceOffset_) { // top right
 			SetCursor(LoadCursor(NULL, IDC_SIZENESW));
 			return MousePos::topRight;
 		}
-		else if (currPos[1] >= height - spaceOffset) { // bottom right
+		else if (currPos[1] >= height - spaceOffset_) { // bottom right
 			SetCursor(LoadCursor(NULL, IDC_SIZENWSE));
 			return MousePos::bottomRight;
 		}
@@ -248,11 +246,11 @@ MousePos MainWindow::GetMouseDir(LPARAM lParam, RECT windowPos) {
 			return MousePos::right;
 		}
 	}
-	else if (currPos[1] >= height - spaceOffset) { // bottom
+	else if (currPos[1] >= height - spaceOffset_) { // bottom
 		SetCursor(LoadCursor(NULL, IDC_SIZENS));
 		return MousePos::bottom;
 	}
-	else if (currPos[1] <= spaceOffset) // top
+	else if (currPos[1] <= spaceOffset_) // top
 	{
 		return MousePos::top;
 	}
@@ -260,70 +258,70 @@ MousePos MainWindow::GetMouseDir(LPARAM lParam, RECT windowPos) {
 	return MousePos::none;
 }
 
-void MainWindow::HandlePainting()
+void MainWindow::handlePainting()
 {
 	HRESULT hr;
 	PAINTSTRUCT ps;
 	BeginPaint(hwnd_, &ps);
-	pRenderTarget->BeginDraw();
+	pRenderTarget_->BeginDraw();
 
 	// workaround to visible edges issue while transparent
 	if (appSettings.optionTransparent) {
-		pRenderTarget->Clear(D2D1::ColorF(0, 0, 0));
+		pRenderTarget_->Clear(D2D1::ColorF(0, 0, 0));
 	}
 	else {
-		pRenderTarget->Clear(backgroundColor);
+		pRenderTarget_->Clear(backgroundColor_);
 	}
 
 	D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize_[0] / 2, winSize_[1]);
 	D2D1_RECT_F rect2 = D2D1::RectF(winSize_[0] / 2, 0, winSize_[0], winSize_[1]);
 
-	if (pWriteFactory != nullptr)
+	if (pWriteFactory_ != nullptr)
 	{
-		if (activeTimer != NULL)
+		if (activeTimer_ != NULL)
 		{
 			// Select color for timer 2
-			ID2D1SolidColorBrush* pBrushTimer2;
+			ID2D1SolidColorBrush* pBrushTimer_2;
 			if (timer1.getTimeInMillis() > 0
 				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() <= 20000
 				&& (timer2.getTimerState() == TimerState::running || timer2.getTimerState() == TimerState::paused)
 				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() > 0)
 			{
-				pBrushTimer2 = pBrushLastSeconds;
+				pBrushTimer_2 = pBrushLastSeconds_;
 			}
-			else if (activeTimer == &timer2) {
-				pBrushTimer2 = pBrushSelectedTimer;
+			else if (activeTimer_ == &timer2) {
+				pBrushTimer_2 = pBrushSelectedTimer_;
 			}
 			else {
-				pBrushTimer2 = pBrushTimer;
+				pBrushTimer_2 = pBrushTimer_;
 			}
 
-			// Draw timers
-			if (activeTimer == &timer1) {
-				timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushSelectedTimer);
+			// draw timers
+			if (activeTimer_ == &timer1) {
+				timer1.draw(pRenderTarget_, pTextFormat_, rect1, pBrushSelectedTimer_);
 			}
 			else {
-				timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
+				timer1.draw(pRenderTarget_, pTextFormat_, rect1, pBrushTimer_);
 			}
-			timer2.draw(pRenderTarget, pTextFormat, rect2, pBrushTimer2);
+			timer2.draw(pRenderTarget_, pTextFormat_, rect2, pBrushTimer_2);
 		}
 		else
 		{
-			timer1.draw(pRenderTarget, pTextFormat, rect1, pBrushTimer);
-			timer2.draw(pRenderTarget, pTextFormat, rect2, pBrushTimer);
+			timer1.draw(pRenderTarget_, pTextFormat_, rect1, pBrushTimer_);
+			timer2.draw(pRenderTarget_, pTextFormat_, rect2, pBrushTimer_);
 		}
 	}
 
-	hr = pRenderTarget->EndDraw();
+	hr = pRenderTarget_->EndDraw();
 
 	if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
 	{
-		DiscardGraphicsResources();
+		discardGraphicsResources();
 	}
 	EndPaint(hwnd_, &ps);
 }
 
-void MainWindow::HandleMousemovement(LPARAM lParam) {
+void MainWindow::handleMouseMovement(LPARAM lParam) {
 	// variables
 	RECT windowPos;
 	GetWindowRect(hwnd_, &windowPos);
@@ -331,7 +329,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 	int width = windowPos.right - windowPos.left;
 	int height = windowPos.bottom - windowPos.top;
 
-	switch (GetMouseDir(lParam, windowPos))
+	switch (getMouseDir(lParam, windowPos))
 	{
 	case MousePos::topLeft:
 		SetCursor(LoadCursor(NULL, IDC_SIZENWSE));
@@ -362,74 +360,74 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 		break;
 	}
 
-	if (dir == -1) // if not hovering resize area:
+	if (dir_ == -1) // if not hovering resize area:
 	{
-		if (mouseDown && !resizing) // dragging the window
+		if (mouseDown_ && !isResizing_) // dragging the window
 		{
 			// drag window
-			int xToMove = windowPos.left + (currPos[0] - clickMousePos[0]);
-			int yToMove = windowPos.top + (currPos[1] - clickMousePos[1]);
+			int xToMove = windowPos.left + (currPos[0] - clickMousePos_[0]);
+			int yToMove = windowPos.top + (currPos[1] - clickMousePos_[1]);
 
 			SetWindowPos(hwnd_, NULL, xToMove, yToMove, winSize_[0], winSize_[1], 0);
 		}
 	}
 
-	if (mouseDown && resizing) // if resizing
+	if (mouseDown_ && isResizing_) // if isResizing_
 	{
 		int newWidth = winSize_[0]; int newHeight = winSize_[1];
 		int newX = windowPos.left; int newY = windowPos.top;
 
-		// resizing logic
-		switch (dir)
+		// isResizing_ logic
+		switch (dir_)
 		{
 		case 0: // horizontal
-			if (currPos[1] <= spaceOffset) // resetting size from the top side
+			if (currPos[1] <= spaceOffset_) // resetting size from the top side
 			{
-				newY = windowPos.top + (currPos[1] - clickMousePos[1]);
-				newHeight = windowPos.bottom - windowPos.top - (currPos[1] - clickMousePos[1]);
+				newY = windowPos.top + (currPos[1] - clickMousePos_[1]);
+				newHeight = windowPos.bottom - windowPos.top - (currPos[1] - clickMousePos_[1]);
 			}
 			else // resetting size from the bottom side
 			{
-				newHeight = winSize_[1] + currPos[1] - clickMousePos[1];
+				newHeight = winSize_[1] + currPos[1] - clickMousePos_[1];
 			}
 			break;
 		case 1: // vertical
 		{
-			if (currPos[0] <= spaceOffset) // resetting size from the left side
+			if (currPos[0] <= spaceOffset_) // resetting size from the left side
 			{
-				newX = windowPos.left + (currPos[0] - clickMousePos[0]);
-				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos[0]);
+				newX = windowPos.left + (currPos[0] - clickMousePos_[0]);
+				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos_[0]);
 			}
 			else // resetting size from the right side
 			{
-				newWidth = winSize_[0] + currPos[0] - clickMousePos[0];
+				newWidth = winSize_[0] + currPos[0] - clickMousePos_[0];
 			}
 
 		}
 		break;
 		case 2:
-			if (currPos[0] <= spaceOffset) // resetting size from the left side
+			if (currPos[0] <= spaceOffset_) // resetting size from the left side
 			{
-				newX = windowPos.left + (currPos[0] - clickMousePos[0]);
-				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos[0]);
+				newX = windowPos.left + (currPos[0] - clickMousePos_[0]);
+				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos_[0]);
 			}
 			else // resetting size from the right side
 			{
-				newWidth = winSize_[0] + currPos[0] - clickMousePos[0];
+				newWidth = winSize_[0] + currPos[0] - clickMousePos_[0];
 			}
-			if (currPos[1] <= spaceOffset) // resetting size from the top side
+			if (currPos[1] <= spaceOffset_) // resetting size from the top side
 			{
-				newY = windowPos.top + (currPos[1] - clickMousePos[1]);
-				newHeight = (windowPos.bottom - windowPos.top) - (currPos[1] - clickMousePos[1]);
+				newY = windowPos.top + (currPos[1] - clickMousePos_[1]);
+				newHeight = (windowPos.bottom - windowPos.top) - (currPos[1] - clickMousePos_[1]);
 			}
 			else // resetting size from the bottom side
 			{
-				newHeight = winSize_[1] + currPos[1] - clickMousePos[1];
+				newHeight = winSize_[1] + currPos[1] - clickMousePos_[1];
 			}
 			break;
 		}
 
-		if (dir != -1) { // window was resized
+		if (dir_ != -1) { // window was resized
 			newWidth = max(25, min(700, newWidth));
 			newHeight = max(25, min(700, newHeight));
 			SetWindowPos(hwnd_, NULL, newX, newY, newWidth, newHeight, 0);
@@ -437,7 +435,7 @@ void MainWindow::HandleMousemovement(LPARAM lParam) {
 	}
 }
 
-D2D1_COLOR_F MainWindow::HBRUSHtoCOLORF(HBRUSH hBrush) {
+D2D1_COLOR_F MainWindow::hBrushToColorf(HBRUSH hBrush) {
 	LOGBRUSH logBrush;
 
 	// timer color
@@ -446,7 +444,7 @@ D2D1_COLOR_F MainWindow::HBRUSHtoCOLORF(HBRUSH hBrush) {
 	return D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f);
 }
 
-void MainWindow::RefreshBrushes()
+void MainWindow::refreshBrushes()
 {
 	// retrieve brushes colors
 	SettingsStruct settings = getSafeSettingsStruct();
@@ -454,16 +452,16 @@ void MainWindow::RefreshBrushes()
 	LOGBRUSH logBrush;
 
 	// timer color
-	pBrushTimer->SetColor(HBRUSHtoCOLORF(hBrushes[settings.colors.timerColor]));
+	pBrushTimer_->SetColor(hBrushToColorf(hBrushes[settings.colors.timerColor]));
 
 	// selected timer color
-	pBrushSelectedTimer->SetColor(HBRUSHtoCOLORF(hBrushes[settings.colors.selectedTimerColor]));
+	pBrushSelectedTimer_->SetColor(hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]));
 
 	// last seconds color
-	pBrushLastSeconds->SetColor(HBRUSHtoCOLORF(hBrushes[settings.colors.lastSecondsColor]));
+	pBrushLastSeconds_->SetColor(hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]));
 
 	// background color
-	backgroundColor = HBRUSHtoCOLORF(hBrushes[settings.colors.backgroundColor]);
+	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
 }
 
 LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
@@ -477,12 +475,12 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_CREATE:
 		{
-			if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &pFactory))) {
+			if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &pFactory_))) {
 				return -1;
 			}
 			else {
-				CreateGraphicsResources();
-				CreateDeviceIndependentResources();
+				createGraphicsResources();
+				createDeviceIndependentResources();
 			}
 			appSettings = getSafeSettingsStruct();
 			appRunning = true;
@@ -495,28 +493,28 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_LBUTTONDOWN:
 		{
-			mouseDown = true;
-			clickMousePos[0] = GET_X_LPARAM(lParam); clickMousePos[1] = GET_Y_LPARAM(lParam);
-			resizing = (GetCursor() != LoadCursor(NULL, IDC_ARROW));
-			MousePos mPos = GetMouseDir(lParam, windowPos);
+			mouseDown_ = true;
+			clickMousePos_[0] = GET_X_LPARAM(lParam); clickMousePos_[1] = GET_Y_LPARAM(lParam);
+			isResizing_ = (GetCursor() != LoadCursor(NULL, IDC_ARROW));
+			MousePos mPos = getMouseDir(lParam, windowPos);
 
 			// set drag direction according to mouse position
 			if (mPos == MousePos::topRight || mPos == MousePos::topLeft ||
 				mPos == MousePos::bottomLeft || mPos == MousePos::bottomRight)
 			{
-				dir = 2;
+				dir_ = 2;
 			}
 			else if (mPos == MousePos::right || mPos == MousePos::left)
 			{
-				dir = 1;
+				dir_ = 1;
 			}
 			else if (mPos == MousePos::top || mPos == MousePos::bottom)
 			{
-				dir = 0;
+				dir_ = 0;
 			}
 			else
 			{
-				dir = -1;
+				dir_ = -1;
 			}
 
 			SetCapture(hwnd_);
@@ -524,27 +522,27 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_LBUTTONUP:
 		{
-			mouseDown = false;
-			resizing = false;
-			dir = -1;
+			mouseDown_ = false;
+			isResizing_ = false;
+			dir_ = -1;
 			ReleaseCapture();
 
-			// update winSize_ var after resizing
+			// update winSize_ var after isResizing_
 			if (windowPos.right - windowPos.left != winSize_[0]) {
 				winSize_[0] = windowPos.right - windowPos.left;
-				AdjustRendertargetSize();
-				ChangeFontSize(GetLargestFontsizeFit());
+				adjustRendertargetSize();
+				changeFontSize(getLargestFontsizeFit());
 			}
 			if (windowPos.bottom - windowPos.top != winSize_[1]) {
 				winSize_[1] = windowPos.bottom - windowPos.top;
-				AdjustRendertargetSize();
-				ChangeFontSize(GetLargestFontsizeFit());
+				adjustRendertargetSize();
+				changeFontSize(getLargestFontsizeFit());
 			}
 			return 0;
 		}
 		case WM_MOUSEMOVE:
 		{
-			HandleMousemovement(lParam);
+			handleMouseMovement(lParam);
 			return 0;
 		}
 		case WM_COMMAND:
@@ -591,7 +589,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			// disable default automatic cursor change (only manually set it)
 			return 0;
 		case REFRESH_BRUSHES:
-			RefreshBrushes();
+			refreshBrushes();
 			break;
 		}
 	}
@@ -603,33 +601,33 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(window(), wMsg, wParam, lParam);
 }
 
-void MainWindow::HandleHotKey(int code)
+void MainWindow::handleHotKey(int code)
 {
 	switch (code)
 	{
 	case KEY_TIMER1: // timer1 key
-		activeTimer = &timer1;
+		activeTimer_ = &timer1;
 		break;
 	case KEY_TIMER2: // timer2 key
-		activeTimer = &timer2;
+		activeTimer_ = &timer2;
 		break;
 	case KEY_START: // start key
-		if (activeTimer != NULL)
+		if (activeTimer_ != NULL)
 		{
-			if (activeTimer->getTimerState() == TimerState::zero) {
-				activeTimer->startTimer();
+			if (activeTimer_->getTimerState() == TimerState::zero) {
+				activeTimer_->startTimer();
 			}
-			else if (activeTimer->getTimerState() == TimerState::running) {
-				activeTimer->stopTimer();
+			else if (activeTimer_->getTimerState() == TimerState::running) {
+				activeTimer_->stopTimer();
 			}
 			else {
-				activeTimer->resetTimer();
+				activeTimer_->resetTimer();
 			}
 		}
 		break;
 	}
 }
 
-void MainWindow::Draw() {
-	HandlePainting();
+void MainWindow::draw() {
+	handlePainting();
 }

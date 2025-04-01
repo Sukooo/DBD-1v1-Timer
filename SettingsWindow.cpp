@@ -8,7 +8,7 @@
 
 // Methods
 
-void SettingsWindow::InitializeWindow()
+void SettingsWindow::initializeWindow()
 {
 	// retrieve settings
 	SettingsWindow::tempSettings = getSafeSettingsStruct();
@@ -188,7 +188,7 @@ void SettingsWindow::SetCopyrightFont(HWND hControl)
 	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
-void SettingsWindow::HandleControlCommand(LPARAM lParam)
+void SettingsWindow::handleControlCommand(LPARAM lParam)
 {
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam); // clicked item handle
 	int controlID = GetDlgCtrlID(hwndCtrl); // retrieve control ID
@@ -281,7 +281,7 @@ void SettingsWindow::ColorHandles(LPARAM lParam)
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings.colors.lastSecondsColor]);
 		break;
 	case COLOR_CTR_BACKGROUND:
-		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings.colors.backgroundColor]);
+		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings.colors.backgroundColor_]);
 		break;
 	}
 }
@@ -335,14 +335,14 @@ LRESULT SettingsWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_CREATE:
 		{
-			InitializeWindow();
+			initializeWindow();
 			return 0;
 		}
 		case WM_DESTROY:
 			hwnd_ = NULL;
 			return 0;
 		case WM_COMMAND: // Control item clicked
-			HandleControlCommand(lParam);
+			handleControlCommand(lParam);
 			return 0;
 		case WM_DRAWITEM: // Color controls
 		{

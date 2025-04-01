@@ -6,34 +6,34 @@ class ColorPickerWindow : public BaseWindow<ColorPickerWindow>
 {
 private:
 	// Variables
-	HWND hColorButtons[25];
-	HBRUSH hPreviewColor;
-	HWND hPreviewColorButton;
-	int previewColorIndex;
+	HWND hColorButtons_[25] = {};
+	HBRUSH hPreviewColor_ = nullptr;
+	HWND hPreviewColorButton_ = nullptr;
+	int previewColorIndex_ = NULL;
 
 	// Methods
 	
 	/*
 	@brief Creates and stores the squared controls that represent selectable colors.
 	*/
-	void InitializeColorButtons();
+	void initializeColorButtons();
 
 	/*
 	@brief Calls required methods to initialize the settings window.
 	*/
-	void InitializeWindow();
+	void initializeWindow();
 
 	/*
 	@brief Apply changes to the temporary struct the settings window is using
 	*/
-	void UpdateSettings();
+	void updateSettings();
 
 	/*
 	@brief Method that handles interaction with controls.
 
 	@param lParam should be forwarded from a message handling method.
 	*/
-	void HandleControlCommand(LPARAM lParam);
+	void handleControlCommand(LPARAM lParam);
 
 public:
 	// public variables
@@ -51,11 +51,11 @@ public:
 
 	@return LRESULT
 	*/
-	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
 	/*
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/
-	LPCWSTR className() const { return L"Settings Window"; }
+	LPCWSTR className() const override { return L"Settings Window"; }
 };

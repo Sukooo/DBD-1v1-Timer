@@ -75,6 +75,6 @@ protected:
 	int winSize_[2] = { 0, 0 };
 
 	// protected methods to be rewritten by derived classes
-	virtual LPCWSTR className() const { return 0; }
+	virtual LPCWSTR className() const { return nullptr; }
 	virtual LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) = 0;
 };

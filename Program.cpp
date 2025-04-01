@@ -35,7 +35,7 @@ void AppLoop(MainWindow* win)
 		Sleep(1);
 		win->timer1.updateTime();
 		win->timer2.updateTime();
-		win->Draw();
+		win->draw();
 	}
 }
 
@@ -64,15 +64,15 @@ LRESULT CALLBACK KBHook(int nCode, WPARAM wParam, LPARAM lParam)
 		// Take action according to hit hotkey
 		if (hitKey == appSettings.startKey)
 		{
-			pGlobalTimerWindow->HandleHotKey(KEY_START);
+			pGlobalTimerWindow->handleHotKey(KEY_START);
 		}
 		else if (hitKey == appSettings.timer1Key)
 		{
-			pGlobalTimerWindow->HandleHotKey(KEY_TIMER1);
+			pGlobalTimerWindow->handleHotKey(KEY_TIMER1);
 		}
 		else if (hitKey == appSettings.timer2Key)
 		{
-			pGlobalTimerWindow->HandleHotKey(KEY_TIMER2);
+			pGlobalTimerWindow->handleHotKey(KEY_TIMER2);
 		}
 	}
 

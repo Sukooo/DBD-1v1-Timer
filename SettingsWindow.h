@@ -18,7 +18,7 @@ private:
 	/*
 	@brief Calls required methods to initialize the settings window.
 	*/
-	void InitializeWindow();
+	void initializeWindow();
 
 	/*
 	@brief Initializes the bitmaps for the settings window.
@@ -75,7 +75,7 @@ private:
 
 	@param lParam should be forwarded from a message handling method.
 	*/
-	void HandleControlCommand(LPARAM lParam);
+	void handleControlCommand(LPARAM lParam);
 
 	/*
 	@brief Called from a WM_KEYDOWN event. Saves the hit key to the tempSettings struct (as the currently selected control).
