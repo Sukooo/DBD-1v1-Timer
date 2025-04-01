@@ -9,7 +9,7 @@
 void SettingsWindow::initializeWindow()
 {
 	// retrieve settings
-	SettingsWindow::tempSettings_ = getSafeSettingsStruct();
+	tempSettings_ = getSafeSettingsStruct();
 
 	// Set up text
 	initializeTextControls();
@@ -290,7 +290,7 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.lastSecondsColor]);
 		break;
 	case CID_BACKGROUND_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.backgroundColor]);
+		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.backgroundColor_]);
 		break;
 	default:
 		break;

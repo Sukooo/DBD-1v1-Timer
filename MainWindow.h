@@ -28,7 +28,7 @@ private:
 	ID2D1SolidColorBrush* pBrushTimer_;
 	ID2D1SolidColorBrush* pBrushSelectedTimer_;
 	ID2D1SolidColorBrush* pBrushLastSeconds_;
-	D2D1_COLOR_F backgroundColor;
+	D2D1_COLOR_F backgroundColor_;
 	
 	// Writing Resources
 	IDWriteFactory* pWriteFactory_;
@@ -61,12 +61,12 @@ private:
 
 	@return HRESULT representing the success of the operation.
 	*/
-	HRESULT changeFontSize(int fontSize);
+	HRESULT changeFontSize(float fontSize);
 
 	/*
 	@return The largest font size that can fit the window in it's current proportions.
 	*/
-	int getLargestFontsizeFit();
+	float getLargestFontsizeFit() const;
 
 	/*
 	@brief Dispose of graphic resources.
@@ -75,8 +75,10 @@ private:
 
 	/*
 	@brief Adjust the render target's size after the window has been resized.
+
+	@return HRESULT representing the success of the operation.
 	*/
-	void adjustRendertargetSize();
+	HRESULT adjustRendertargetSize() const;
 
 	/*
 	@brief Get the MousePos enum value of the mouse's direction.
@@ -87,7 +89,7 @@ private:
 
 	@return The MousePos enum value of the mouse's direction.
 	*/
-	MousePos getMouseDir(LPARAM lParam, RECT windowPos);
+	MousePos getMouseDir(LPARAM lParam, RECT windowPos) const;
 
 	/*
 	@brief The method responsible for drawing to the main window and invoking the timer to draw to it aswell.
@@ -101,7 +103,7 @@ private:
 	@param lParam Contains information on the mouse's state and position. 
 	This argument should be forwarded to this function by the message handler.
 	*/
-	void handleMouseMovement(LPARAM lParam);
+	void handleMouseMovement(LPARAM lParam) const;
 
 	/*
 	@brief Get the COLORF value of an HBRUSH type.
@@ -110,7 +112,7 @@ private:
 
 	@return D2D1_COLOR_F value of the given HBRUSH.
 	*/
-	D2D1_COLOR_F hBrushToColorf(HBRUSH hBrush);
+	static D2D1_COLOR_F hBrushToColorf(HBRUSH hBrush);
 	
 	/*
 	@brief Retrieve and apply the colors from the settings file to the timer brushes.

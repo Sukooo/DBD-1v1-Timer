@@ -4,15 +4,12 @@
 #include "HelperFunctions.h"
 #include "Program.h"
 
-// Constructor
 MainWindow::MainWindow() = default;
 
-// Destructor
 MainWindow::~MainWindow() {
 	discardGraphicsResources();
 }
 
-// Method defenitions
 HRESULT MainWindow::createGraphicsResources()
 {
 	HRESULT hr = S_OK;
@@ -23,9 +20,9 @@ HRESULT MainWindow::createGraphicsResources()
 		RECT rc;
 		GetClientRect(hwnd_, &rc);
 
-		D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
+		const D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
 
-		D2D1_RENDER_TARGET_PROPERTIES rtProperties = D2D1::RenderTargetProperties(
+		const D2D1_RENDER_TARGET_PROPERTIES rtProperties = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
 			96.0f, 96.0f,
@@ -41,12 +38,12 @@ HRESULT MainWindow::createGraphicsResources()
 
 		if (SUCCEEDED(hr)) {
 			// Extract ColorF from HBRUSH
-			SettingsStruct settings = getSafeSettingsStruct();
+			const SettingsStruct settings = getSafeSettingsStruct();
 
-			D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
-			D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
-			D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
-			backgroundColor = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
+			const D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
+			const D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
+			const D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
+			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
 
 			// timer color brush
 			hr = pRenderTarget_->CreateSolidColorBrush(timerColor, &pBrushTimer_);
@@ -66,7 +63,7 @@ HRESULT MainWindow::createDeviceIndependentResources()
 {
 	HRESULT hr = S_OK;
 	// Set up write factory
-	if (pWriteFactory_ == NULL)
+	if (pWriteFactory_ == nullptr)
 	{
 		if (pWriteFactory_ == nullptr) {
 			hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(pWriteFactory_)
@@ -76,12 +73,12 @@ HRESULT MainWindow::createDeviceIndependentResources()
 		if (SUCCEEDED(hr) && pTextFormat_ == nullptr)
 		{
 			// Set up text format
-			static const WCHAR fontName[] = L"Sitka";
-			static const int fontSize = 34;
+			static constexpr WCHAR fontName[] = L"Sitka";
+			static constexpr int fontSize = 34;
 
 			hr = pWriteFactory_->CreateTextFormat(
 				fontName,
-				NULL,
+				nullptr,
 				DWRITE_FONT_WEIGHT_BOLD,
 				DWRITE_FONT_STYLE_NORMAL,
 				DWRITE_FONT_STRETCH_EXTRA_EXPANDED,
@@ -93,8 +90,12 @@ HRESULT MainWindow::createDeviceIndependentResources()
 			if (SUCCEEDED(hr))
 			{
 				// Center the text horizontally and vertically.
-				pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-				pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+				hr = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+				if (SUCCEEDED(hr))
+				{
+					hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+				}
 			}
 		}
 	}
@@ -102,15 +103,15 @@ HRESULT MainWindow::createDeviceIndependentResources()
 	return hr;
 }
 
-HRESULT MainWindow::changeFontSize(int fontSize)
+HRESULT MainWindow::changeFontSize(const float fontSize)
 {
 	safeRelease(&pTextFormat_);
 
-	static const WCHAR fontName[] = L"Sitka";
+	static constexpr WCHAR fontName[] = L"Sitka";
 
 	HRESULT hr = pWriteFactory_->CreateTextFormat(
 		fontName,
-		NULL,
+		nullptr,
 		DWRITE_FONT_WEIGHT_BOLD,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_EXTRA_EXPANDED,
@@ -122,23 +123,27 @@ HRESULT MainWindow::changeFontSize(int fontSize)
 	if (SUCCEEDED(hr))
 	{
 		// Center the text horizontally and vertically.
-		pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+		hr = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+		if (SUCCEEDED(hr))
+		{
+			hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+		}
 	}
 
 	return hr;
 }
 
-int MainWindow::getLargestFontsizeFit()
+float MainWindow::getLargestFontsizeFit() const
 {
 	IDWriteTextFormat* pTempTextFormat;
 	IDWriteTextLayout* pTempTextLayout;
 
-	int minSize = 10; int maxSize = 100;
-	WCHAR fontFamily[] = L"Sitka";
+	float maxSize = 100;
+	constexpr WCHAR fontFamily[] = L"Sitka";
 	bool conditionMet = false;
 
-	wchar_t text[] = L"";
+	constexpr wchar_t text[] = L"";
 
 	// Iterate through options untill the largest possible font size is found
 	while (!conditionMet)
@@ -207,16 +212,16 @@ void MainWindow::discardGraphicsResources()
 	safeRelease(&pTextFormat_);
 }
 
-void MainWindow::adjustRendertargetSize()
+HRESULT MainWindow::adjustRendertargetSize() const
 {
-	D2D1_SIZE_U newSize = D2D1::SizeU(winSize_[0], winSize_[1]);
-	pRenderTarget_->Resize(newSize);
+	const D2D1_SIZE_U newSize = D2D1::SizeU(winSize_[0], winSize_[1]);
+	return pRenderTarget_->Resize(newSize);
 }
 
-MousePos MainWindow::getMouseDir(LPARAM lParam, RECT windowPos) {
-	int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	int width = windowPos.right - windowPos.left;
-	int height = windowPos.bottom - windowPos.top;
+MousePos MainWindow::getMouseDir(const LPARAM lParam, const RECT windowPos) const {
+	const int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+	const int width = windowPos.right - windowPos.left;
+	const int height = windowPos.bottom - windowPos.top;
 
 	if (currPos[0] <= spaceOffset_) // left
 	{
@@ -224,30 +229,30 @@ MousePos MainWindow::getMouseDir(LPARAM lParam, RECT windowPos) {
 			return MousePos::topLeft;
 		}
 		else if (currPos[1] >= height - spaceOffset_) { // bottom left
-			SetCursor(LoadCursor(NULL, IDC_SIZENESW));
+			SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 			return MousePos::bottomLeft;
 		}
 		else { // left
-			SetCursor(LoadCursor(NULL, IDC_SIZEWE));
+			SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 			return MousePos::left;
 		}
 	}
 	else if (currPos[0] >= width - spaceOffset_) { // right
 		if (currPos[1] <= spaceOffset_) { // top right
-			SetCursor(LoadCursor(NULL, IDC_SIZENESW));
+			SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 			return MousePos::topRight;
 		}
 		else if (currPos[1] >= height - spaceOffset_) { // bottom right
-			SetCursor(LoadCursor(NULL, IDC_SIZENWSE));
+			SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
 			return MousePos::bottomRight;
 		}
 		else { // right
-			SetCursor(LoadCursor(NULL, IDC_SIZEWE));
+			SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 			return MousePos::right;
 		}
 	}
 	else if (currPos[1] >= height - spaceOffset_) { // bottom
-		SetCursor(LoadCursor(NULL, IDC_SIZENS));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
 		return MousePos::bottom;
 	}
 	else if (currPos[1] <= spaceOffset_) // top
@@ -260,7 +265,6 @@ MousePos MainWindow::getMouseDir(LPARAM lParam, RECT windowPos) {
 
 void MainWindow::handlePainting()
 {
-	HRESULT hr;
 	PAINTSTRUCT ps;
 	BeginPaint(hwnd_, &ps);
 	pRenderTarget_->BeginDraw();
@@ -270,15 +274,15 @@ void MainWindow::handlePainting()
 		pRenderTarget_->Clear(D2D1::ColorF(0, 0, 0));
 	}
 	else {
-		pRenderTarget_->Clear(backgroundColor);
+		pRenderTarget_->Clear(backgroundColor_);
 	}
 
-	D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize_[0] / 2, winSize_[1]);
-	D2D1_RECT_F rect2 = D2D1::RectF(winSize_[0] / 2, 0, winSize_[0], winSize_[1]);
+	const D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize_[0] / 2, winSize_[1]);
+	const D2D1_RECT_F rect2 = D2D1::RectF(winSize_[0] / 2, 0, winSize_[0], winSize_[1]);
 
 	if (pWriteFactory_ != nullptr)
 	{
-		if (activeTimer_ != NULL)
+		if (activeTimer_ != nullptr)
 		{
 			// Select color for timer 2
 			ID2D1SolidColorBrush* pBrushTimer_2;
@@ -312,7 +316,7 @@ void MainWindow::handlePainting()
 		}
 	}
 
-	hr = pRenderTarget_->EndDraw();
+	const HRESULT hr = pRenderTarget_->EndDraw();
 
 	if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
 	{
@@ -321,42 +325,40 @@ void MainWindow::handlePainting()
 	EndPaint(hwnd_, &ps);
 }
 
-void MainWindow::handleMouseMovement(LPARAM lParam) {
+void MainWindow::handleMouseMovement(const LPARAM lParam) const {
 	// variables
 	RECT windowPos;
 	GetWindowRect(hwnd_, &windowPos);
-	int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	int width = windowPos.right - windowPos.left;
-	int height = windowPos.bottom - windowPos.top;
+	const int currPos[2] = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 
 	switch (getMouseDir(lParam, windowPos))
 	{
 	case MousePos::topLeft:
-		SetCursor(LoadCursor(NULL, IDC_SIZENWSE));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
 		break;
 	case MousePos::top:
-		SetCursor(LoadCursor(NULL, IDC_SIZENS));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
 		break;
 	case MousePos::topRight:
-		SetCursor(LoadCursor(NULL, IDC_SIZENESW));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 		break;
 	case MousePos::right:
-		SetCursor(LoadCursor(NULL, IDC_SIZEWE));
+		SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 		break;
 	case MousePos::bottomRight:
-		SetCursor(LoadCursor(NULL, IDC_SIZENWSE));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
 		break;
 	case MousePos::bottom:
-		SetCursor(LoadCursor(NULL, IDC_SIZENS));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
 		break;
 	case MousePos::bottomLeft:
-		SetCursor(LoadCursor(NULL, IDC_SIZENESW));
+		SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 		break;
 	case MousePos::left:
-		SetCursor(LoadCursor(NULL, IDC_SIZEWE));
+		SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 		break;
 	case MousePos::none:
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		break;
 	}
 
@@ -365,10 +367,10 @@ void MainWindow::handleMouseMovement(LPARAM lParam) {
 		if (mouseDown_ && !isResizing_) // dragging the window
 		{
 			// drag window
-			int xToMove = windowPos.left + (currPos[0] - clickMousePos_[0]);
-			int yToMove = windowPos.top + (currPos[1] - clickMousePos_[1]);
+			const int xToMove = windowPos.left + (currPos[0] - clickMousePos_[0]);
+			const int yToMove = windowPos.top + (currPos[1] - clickMousePos_[1]);
 
-			SetWindowPos(hwnd_, NULL, xToMove, yToMove, winSize_[0], winSize_[1], 0);
+			SetWindowPos(hwnd_, nullptr, xToMove, yToMove, winSize_[0], winSize_[1], 0);
 		}
 	}
 
@@ -402,7 +404,6 @@ void MainWindow::handleMouseMovement(LPARAM lParam) {
 			{
 				newWidth = winSize_[0] + currPos[0] - clickMousePos_[0];
 			}
-
 		}
 		break;
 		case 2:
@@ -425,29 +426,31 @@ void MainWindow::handleMouseMovement(LPARAM lParam) {
 				newHeight = winSize_[1] + currPos[1] - clickMousePos_[1];
 			}
 			break;
+		default:
+			return;
 		}
 
 		if (dir_ != -1) { // window was resized
 			newWidth = max(25, min(700, newWidth));
 			newHeight = max(25, min(700, newHeight));
-			SetWindowPos(hwnd_, NULL, newX, newY, newWidth, newHeight, 0);
+			SetWindowPos(hwnd_, nullptr, newX, newY, newWidth, newHeight, 0);
 		}
 	}
 }
 
-D2D1_COLOR_F MainWindow::hBrushToColorf(HBRUSH hBrush) {
+D2D1_COLOR_F MainWindow::hBrushToColorf(const HBRUSH hBrush) {
 	LOGBRUSH logBrush;
 
 	// timer color
 	GetObject(hBrush, sizeof(LOGBRUSH), &logBrush);
-	COLORREF color = logBrush.lbColor; // Extract COLORREF
+	const COLORREF color = logBrush.lbColor; // Extract COLORREF
 	return D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f);
 }
 
 void MainWindow::refreshBrushes()
 {
 	// retrieve brushes colors
-	SettingsStruct settings = getSafeSettingsStruct();
+	const SettingsStruct settings = getSafeSettingsStruct();
 
 	LOGBRUSH logBrush;
 
@@ -461,10 +464,10 @@ void MainWindow::refreshBrushes()
 	pBrushLastSeconds_->SetColor(hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]));
 
 	// background color
-	backgroundColor = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
+	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
 }
 
-LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
+LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LPARAM lParam)
 {
 	try
 	{
@@ -550,10 +553,10 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			switch (wParam)
 			{
 			case MENU_SETTINGS:
-				if (pSettingsWindow->window() == NULL) // dont create multiple settings windows
+				if (pSettingsWindow->window() == nullptr) // dont create multiple settings windows
 				{
 					// Create and show settings window
-					if (!pSettingsWindow->create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, 0, 0, NULL)) {
+					if (!pSettingsWindow->create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, nullptr	, nullptr, nullptr)) {
 						return 0;
 					}
 
@@ -567,14 +570,16 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			case MENU_QUIT:
 				exitApp();
 				return 0;
+			default:
+				break;
 			}
 			return 0;
 		}
 		case WM_CONTEXTMENU:
 		{
 			// mouse pos
-			int mouseX = GET_X_LPARAM(lParam);
-			int mouseY = GET_Y_LPARAM(lParam);
+			const int mouseX = GET_X_LPARAM(lParam);
+			const int mouseY = GET_Y_LPARAM(lParam);
 
 			// create popup menu
 			HMENU hMenu = CreatePopupMenu();
@@ -582,7 +587,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 100, L"");
 			InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, MENU_SETTINGS, L"Settings");
 			SetForegroundWindow(hwnd_);
-			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN, mouseX, mouseY, 0, hwnd_, NULL);
+			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN, mouseX, mouseY, 0, hwnd_, nullptr);
 			return 0;
 		}
 		case WM_SETCURSOR:
@@ -591,9 +596,11 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		case REFRESH_BRUSHES:
 			refreshBrushes();
 			break;
+		default:
+			break;
 		}
 	}
-	catch (const std::exception e) // End the program in case of exceptions
+	catch (const std::exception &e) // End the program in case of exceptions
 	{
 		exitApp();
 	}
@@ -601,7 +608,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(window(), wMsg, wParam, lParam);
 }
 
-void MainWindow::handleHotKey(int code)
+void MainWindow::handleHotKey(const int code)
 {
 	switch (code)
 	{
@@ -612,7 +619,7 @@ void MainWindow::handleHotKey(int code)
 		activeTimer_ = &timer2;
 		break;
 	case KEY_START: // start key
-		if (activeTimer_ != NULL)
+		if (activeTimer_ != nullptr)
 		{
 			if (activeTimer_->getTimerState() == TimerState::zero) {
 				activeTimer_->startTimer();
@@ -624,6 +631,8 @@ void MainWindow::handleHotKey(int code)
 				activeTimer_->resetTimer();
 			}
 		}
+		break;
+	default:
 		break;
 	}
 }

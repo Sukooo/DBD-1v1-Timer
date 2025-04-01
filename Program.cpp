@@ -23,7 +23,7 @@ SettingsStruct appSettings;
 HBRUSH hBrushes[25];
 HWND hwndMainWindow = nullptr;
 HINSTANCE hInstanceGlobal;
-MainWindow* pGlobalTimerWindow = NULL; // used for the hook procedure
+MainWindow* pGlobalTimerWindow = nullptr; // used by the hook procedure
 
 void appLoop(MainWindow* win)
 {
@@ -42,20 +42,23 @@ void exitApp()
 	PostQuitMessage(0);
 }
 
-LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lParam)
 {
-	if (wParam == WM_KEYDOWN && pGlobalTimerWindow != NULL && appSettings.startKey != NULL)
+	if (wParam == WM_KEYDOWN && pGlobalTimerWindow != nullptr && appSettings.startKey != NULL)
 	{
-		KBDLLHOOKSTRUCT* pKbdHookStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
-		const int startKey = appSettings.startKey;
+		const KBDLLHOOKSTRUCT* pKbdHookStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
 		int hitKey = pKbdHookStruct->vkCode;
 
-		// If the hit key is Alt or Control, set it to not matter if it was right or left.
+		// If the hit key is Alt, Control or Shift, set it to not matter if it was right or left.
 		if (hitKey == VK_LMENU || hitKey == VK_RMENU) {
 			hitKey = VK_MENU;
 		}
 		else if (hitKey == VK_LCONTROL || hitKey == VK_RCONTROL) {
 			hitKey = VK_CONTROL;
+		}
+		else if (hitKey == VK_LSHIFT || hitKey == VK_RSHIFT)
+		{
+			hitKey = VK_SHIFT;
 		}
 		
 		// Take action according to hit hotkey
@@ -73,10 +76,10 @@ LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam)
 		}
 	}
 
-	return CallNextHookEx(NULL, nCode, wParam, lParam);
+	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd)
 {
 	// Create the main window
 	MainWindow win;
@@ -103,7 +106,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		}
 		SetLayeredWindowAttributes(win.window(), 1, 255, LWA_COLORKEY | LWA_ALPHA);
 
-		ShowWindow(win.window(), nCmdShow);
+		ShowWindow(win.window(), nShowCmd);
 
 		// Create variables for settings and color picker windows
 		SettingsWindow settings;
@@ -120,14 +123,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		applySettings(appSettings);
 
 		// Listen for keys: F1, F2, F While running in the background - Install a hook procedure
-		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, 0, 0);
+		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
 
 		// Create a thread for the app loop (ticks)
 		thread t1(appLoop, &win);
 
 		// Handle messages
 		MSG msg = { };
-		while (GetMessage(&msg, NULL, 0, 0)) {
+		while (GetMessage(&msg, nullptr, 0, 0)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
