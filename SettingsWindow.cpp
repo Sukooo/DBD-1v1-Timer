@@ -281,7 +281,7 @@ void SettingsWindow::colorHandles(LPARAM lParam)
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.lastSecondsColor]);
 		break;
 	case COLOR_CTR_BACKGROUND:
-		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.backgroundColor_]);
+		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.backgroundColor]);
 		break;
 	}
 }
@@ -374,7 +374,7 @@ LRESULT SettingsWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 	}
 	catch (const std::exception e)
 	{
-		KillProgram();
+		exitApp();
 	}
 	return DefWindowProc(window(), wMsg, wParam, lParam);
 }

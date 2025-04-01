@@ -49,15 +49,15 @@ SettingsStruct getSafeSettingsStruct()
 		settings.colors.timerColor = colors["timer"].asInt();
 		settings.colors.selectedTimerColor = colors["selected timer"].asInt();
 		settings.colors.lastSecondsColor = colors["last seconds"].asInt();
-		settings.colors.backgroundColor_ = colors["background"].asInt();
+		settings.colors.backgroundColor = colors["background"].asInt();
 
 		if (settings.colors.timerColor > 24 || settings.colors.selectedTimerColor > 24 ||
-			settings.colors.lastSecondsColor > 24 || settings.colors.backgroundColor_ > 24)
+			settings.colors.lastSecondsColor > 24 || settings.colors.backgroundColor > 24)
 		{
 			settings.colors.timerColor = 8;
 			settings.colors.selectedTimerColor = 6;
 			settings.colors.lastSecondsColor = 1;
-			settings.colors.backgroundColor_ = 20;
+			settings.colors.backgroundColor = 20;
 		}
 	}
 	else 
@@ -65,7 +65,7 @@ SettingsStruct getSafeSettingsStruct()
 		settings.colors.timerColor = 8;
 		settings.colors.selectedTimerColor = 6;
 		settings.colors.lastSecondsColor = 1;
-		settings.colors.backgroundColor_ = 20;
+		settings.colors.backgroundColor = 20;
 	}
 
 
@@ -89,7 +89,7 @@ void setSettingsStruct(SettingsStruct settings)
 	settingsJson["colors"]["timer"] = settings.colors.timerColor;
 	settingsJson["colors"]["selected timer"] = settings.colors.selectedTimerColor;
 	settingsJson["colors"]["last seconds"] = settings.colors.lastSecondsColor;
-	settingsJson["colors"]["background"] = settings.colors.backgroundColor_;
+	settingsJson["colors"]["background"] = settings.colors.backgroundColor;
 
 	// Write to file
 	Json::StreamWriterBuilder builder;

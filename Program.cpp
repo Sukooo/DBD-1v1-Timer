@@ -1,12 +1,9 @@
 #include <windows.h>
 #include <d2d1.h>
 #include <string>
-#include <wchar.h>
 #include <thread>
 #include <dwrite.h>
-#include <windowsx.h>
 #include <commctrl.h>
-#include <ShellScalingApi.h>
 #include "Globals.h"
 #include "helperFunctions.h"
 #include "BaseWindow.h"
@@ -28,7 +25,7 @@ HWND hwndMainWindow = nullptr;
 HINSTANCE hInstanceGlobal;
 MainWindow* pGlobalTimerWindow = NULL; // used for the hook procedure
 
-void AppLoop(MainWindow* win)
+void appLoop(MainWindow* win)
 {
 	while (win->appRunning)
 	{
@@ -39,13 +36,13 @@ void AppLoop(MainWindow* win)
 	}
 }
 
-void KillProgram()
+void exitApp()
 {
 	if (pGlobalTimerWindow) pGlobalTimerWindow->appRunning = false;
 	PostQuitMessage(0);
 }
 
-LRESULT CALLBACK KBHook(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == WM_KEYDOWN && pGlobalTimerWindow != NULL && appSettings.startKey != NULL)
 	{
@@ -123,10 +120,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		applySettings(appSettings);
 
 		// Listen for keys: F1, F2, F While running in the background - Install a hook procedure
-		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &KBHook, 0, 0);
+		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, 0, 0);
 
 		// Create a thread for the app loop (ticks)
-		thread t1(AppLoop, &win);
+		thread t1(appLoop, &win);
 
 		// Handle messages
 		MSG msg = { };
@@ -140,6 +137,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	}
 	catch (const std::exception& e)
 	{
-		KillProgram();
+		exitApp();
 	}
 }

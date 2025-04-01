@@ -46,7 +46,7 @@ HRESULT MainWindow::createGraphicsResources()
 			D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
 			D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
 			D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
-			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
+			backgroundColor = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
 
 			// timer color brush
 			hr = pRenderTarget_->CreateSolidColorBrush(timerColor, &pBrushTimer_);
@@ -155,7 +155,7 @@ int MainWindow::getLargestFontsizeFit()
 		);
 
 		if (FAILED(hr)) {
-			KillProgram();
+			exitApp();
 		}
 
 		hr = pWriteFactory_->CreateTextLayout(
@@ -168,7 +168,7 @@ int MainWindow::getLargestFontsizeFit()
 		);
 
 		if (FAILED(hr)) {
-			KillProgram();
+			exitApp();
 		}
 
 		// retrieve text size
@@ -176,7 +176,7 @@ int MainWindow::getLargestFontsizeFit()
 		hr = pTempTextLayout->GetMetrics(&layoutMetrics);
 
 		if (FAILED(hr)) {
-			KillProgram();
+			exitApp();
 		}
 
 		if (layoutMetrics.width <= winSize_[0] &&
@@ -270,7 +270,7 @@ void MainWindow::handlePainting()
 		pRenderTarget_->Clear(D2D1::ColorF(0, 0, 0));
 	}
 	else {
-		pRenderTarget_->Clear(backgroundColor_);
+		pRenderTarget_->Clear(backgroundColor);
 	}
 
 	D2D1_RECT_F rect1 = D2D1::RectF(0, 0, winSize_[0] / 2, winSize_[1]);
@@ -461,7 +461,7 @@ void MainWindow::refreshBrushes()
 	pBrushLastSeconds_->SetColor(hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]));
 
 	// background color
-	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
+	backgroundColor = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
 }
 
 LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
@@ -488,7 +488,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_DESTROY:
 		{
-			KillProgram();
+			exitApp();
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
@@ -565,7 +565,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 				}
 				return 0;
 			case MENU_QUIT:
-				KillProgram();
+				exitApp();
 				return 0;
 			}
 			return 0;
@@ -595,7 +595,7 @@ LRESULT MainWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam)
 	}
 	catch (const std::exception e) // End the program in case of exceptions
 	{
-		KillProgram();
+		exitApp();
 	}
 
 	return DefWindowProc(window(), wMsg, wParam, lParam);

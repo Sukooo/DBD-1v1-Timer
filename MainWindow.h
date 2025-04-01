@@ -28,7 +28,7 @@ private:
 	ID2D1SolidColorBrush* pBrushTimer_;
 	ID2D1SolidColorBrush* pBrushSelectedTimer_;
 	ID2D1SolidColorBrush* pBrushLastSeconds_;
-	D2D1_COLOR_F backgroundColor_;
+	D2D1_COLOR_F backgroundColor;
 	
 	// Writing Resources
 	IDWriteFactory* pWriteFactory_;

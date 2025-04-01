@@ -7,12 +7,12 @@ extern MainWindow* pGlobalTimerWindow;
 /*
 @brief A method running an infinite loop, responsible for updating the timers.
 */
-extern void AppLoop(MainWindow* win);
+extern void appLoop(MainWindow* win);
 
 /*
 @brief End the process of the program safely.
 */
-extern void KillProgram();
+extern void exitApp();
 
 /*
 @brief The hook procedure to listen for key strokes of the active HOTKEYS.
@@ -25,4 +25,4 @@ extern void KillProgram();
 
 @return Forwards to the next hook.
 */
-LRESULT CALLBACK KBHook(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam);

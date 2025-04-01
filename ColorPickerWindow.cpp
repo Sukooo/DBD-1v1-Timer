@@ -45,8 +45,8 @@ void ColorPickerWindow::initializeColorButtons()
 		previewColorIndex_ = pTempSettings->colors.lastSecondsColor;
 		break;
 	case COLOR_CTR_BACKGROUND:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor_];
-		previewColorIndex_ = pTempSettings->colors.backgroundColor_;
+		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor];
+		previewColorIndex_ = pTempSettings->colors.backgroundColor;
 		break;
 	}
 }
@@ -76,7 +76,7 @@ void ColorPickerWindow::updateSettings()
 		pTempSettings->colors.lastSecondsColor = previewColorIndex_;
 		break;
 	case COLOR_CTR_BACKGROUND:
-		pTempSettings->colors.backgroundColor_ = previewColorIndex_;
+		pTempSettings->colors.backgroundColor = previewColorIndex_;
 		break;
 	}
 
@@ -146,7 +146,7 @@ LRESULT ColorPickerWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam
 	}
 	catch (const std::exception e)
 	{
-		KillProgram();
+		exitApp();
 	}
 	return DefWindowProc(window(), wMsg, wParam, lParam);
 }

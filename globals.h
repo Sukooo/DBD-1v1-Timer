@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 // HWND Control IDs
-#define CID_OK						100
+constexpr byte CID_OK = 100;
 #define CID_CANCEL					101
 #define CID_START					103
 #define CID_TIMER1					104
@@ -46,7 +46,7 @@ struct ColorsStruct
 	int timerColor;
 	int selectedTimerColor;
 	int lastSecondsColor;
-	int backgroundColor_;
+	int backgroundColor;
 };
 
 struct SettingsStruct
