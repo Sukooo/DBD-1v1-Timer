@@ -1,3 +1,5 @@
 - Make milliseconds text smaller
 - Add controller support.
-- Add special keys support (space bar, tab, etc..)
+- Add ability to bind mouse buttons (mwheel, mbuttons, etc..)
+- Add option to start a timer directly with a bind.
+- Implement state machine pattern for app state.
