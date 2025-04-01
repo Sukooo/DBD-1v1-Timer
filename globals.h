@@ -1,44 +1,45 @@
 #pragma once
+#include <string>
 #include <Windows.h>
 
 // HWND Control IDs
 constexpr byte CID_OK = 100;
-#define CID_CANCEL					101
-#define CID_START					103
-#define CID_TIMER1					104
-#define CID_TIMER2					105
-#define CID_TRANSPARENT_CB			106
-#define CID_CLICKTHROUGH			107
-#define MENU_QUIT					1
-#define MENU_SETTINGS				0
-#define KEY_START					0
-#define KEY_TIMER1					1
-#define KEY_TIMER2					2
-#define OPTION_TRANSPARENT			3
-#define OPTION_CLICKTHROUGH			4
+constexpr byte CID_CANCEL = 101;
+constexpr byte CID_START = 103;
+constexpr byte CID_TIMER1 = 104;
+constexpr byte CID_TIMER2 = 105;
+constexpr byte CID_TRANSPARENT_CB = 106;
+constexpr byte CID_CLICKTHROUGH	= 107;
+constexpr byte MENU_QUIT = 1;
+constexpr byte MENU_SETTINGS = 0;
+constexpr byte KEY_START = 0;
+constexpr byte KEY_TIMER1 = 1;
+constexpr byte KEY_TIMER2 = 2;
+constexpr byte OPTION_TRANSPARENT = 3;
+constexpr byte OPTION_CLICKTHROUGH = 4;
 
 // HWND Color Control IDs
-#define COLOR_CTR_TIMER				108
-#define COLOR_CTR_SELECTED_TIMER	109
-#define COLOR_CTR_LAST_SECONDS		110
-#define COLOR_CTR_BACKGROUND		111
-#define COLOR_PREVIEW				25
+constexpr byte CID_TIMER_COLOR = 108;
+constexpr byte CID_SELECTED_TIMER_COLOR = 109;
+constexpr byte CID_LAST_SECONDS_COLOR = 110;
+constexpr byte CID_BACKGROUND_COLOR = 111;
+constexpr byte CID_COLOR_PREVIEW = 25;
 
 // Global Sizes
-#define SIZE_SETTINGS_WIDTH			400
-#define SIZE_SETTINGS_HEIGHT		590
-#define SIZE_COLORPICKER_WIDTH		270
-#define SIZE_COLORPICKER_HEIGHT		350
+constexpr UINT16 SIZE_SETTINGS_WIDTH = 400;
+constexpr UINT16 SIZE_SETTINGS_HEIGHT = 590;
+constexpr UINT16 SIZE_COLORPICKER_WIDTH = 270;
+constexpr UINT16 SIZE_COLORPICKER_HEIGHT = 350;
 
 // Bitmaps
-#define IDB_MOUSE					110
-#define IDB_CONTROLLER				111
+constexpr byte IDB_MOUSE = 110;
+constexpr byte IDB_CONTROLLER = 111;
 
 // Custom HWND messages
-#define REFRESH_BRUSHES				(WM_APP + 1)
+constexpr int REFRESH_BRUSHES(WM_APP + 1);
 
 // Configuration File Names
-#define SETTINGS_FILE_NAME			"Settings.json"
+#define SETTINGS_FILE_NAME "Settings.json"
 
 // Structs
 struct ColorsStruct

@@ -151,10 +151,10 @@ void SettingsWindow::initializeButtonControls()
 	HWND hCbClickthrough = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 8 - 30, sizeCheckbox, sizeCheckbox, CID_CLICKTHROUGH, BS_CHECKBOX | BS_AUTOCHECKBOX);
 
 	// Color buttons
-	colorButtons[0] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 11 - 20, 100, 15, COLOR_CTR_TIMER, BS_OWNERDRAW);
-	colorButtons[1] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 12 - 20, 100, 15, COLOR_CTR_SELECTED_TIMER, BS_OWNERDRAW);
-	colorButtons[2] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 13 - 20, 100, 15, COLOR_CTR_LAST_SECONDS, BS_OWNERDRAW);
-	colorButtons[3] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 14 - 20, 100, 15, COLOR_CTR_BACKGROUND, BS_OWNERDRAW);
+	colorButtons[0] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 11 - 20, 100, 15, CID_TIMER_COLOR, BS_OWNERDRAW);
+	colorButtons[1] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 12 - 20, 100, 15, CID_SELECTED_TIMER_COLOR, BS_OWNERDRAW);
+	colorButtons[2] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 13 - 20, 100, 15, CID_LAST_SECONDS_COLOR, BS_OWNERDRAW);
+	colorButtons[3] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 14 - 20, 100, 15, CID_BACKGROUND_COLOR, BS_OWNERDRAW);
 
 	// Initialize exit controls
 	HWND hwndOKButton = createControl(WC_BUTTON, L"OK", SIZE_SETTINGS_WIDTH - 160, SIZE_SETTINGS_HEIGHT - 80, 50, 25, CID_OK);
@@ -234,10 +234,10 @@ void SettingsWindow::handleControlCommand(LPARAM lParam)
 		break;
 
 	// Any color control clicked
-	case COLOR_CTR_TIMER:
-	case COLOR_CTR_SELECTED_TIMER:
-	case COLOR_CTR_LAST_SECONDS:
-	case COLOR_CTR_BACKGROUND:
+	case CID_TIMER_COLOR:
+	case CID_SELECTED_TIMER_COLOR:
+	case CID_LAST_SECONDS_COLOR:
+	case CID_BACKGROUND_COLOR:
 	{
 		// Open a Color Picker window
 		if (pColorPicker->window() == NULL)
@@ -271,16 +271,16 @@ void SettingsWindow::colorHandles(LPARAM lParam)
 	// Apply saved color to the color controls in the setting's window
 	switch (pDIS->CtlID)
 	{
-	case COLOR_CTR_TIMER:
+	case CID_TIMER_COLOR:
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.timerColor]);
 		break;
-	case COLOR_CTR_SELECTED_TIMER:
+	case CID_SELECTED_TIMER_COLOR:
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.selectedTimerColor]);
 		break;
-	case COLOR_CTR_LAST_SECONDS:
+	case CID_LAST_SECONDS_COLOR:
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.lastSecondsColor]);
 		break;
-	case COLOR_CTR_BACKGROUND:
+	case CID_BACKGROUND_COLOR:
 		FillRect(pDIS->hDC, &pDIS->rcItem, hBrushes[tempSettings_.colors.backgroundColor]);
 		break;
 	}

@@ -26,7 +26,7 @@ SettingsStruct getSafeSettingsStruct();
 
 @param settings The settings struct to save to the file.
 */
-void setSettingsStruct(SettingsStruct settings);
+void setSettingsStruct(const SettingsStruct &settings);
 
 /*
 @brief Initial creation of the settings.json file.
@@ -43,21 +43,21 @@ bool settingsFileExists();
 
 @param hControl The control to change the font of.
 */
-void setTitleFont(HWND hControl);
+void setTitleFont(const HWND hControl);
 
 /*
 @brief Apply the default font to a specific window's child controls.
 
 @param hWnd The handle to the window who's child controls will be affected.
 */
-void setControlsFont(HWND hWnd);
+void setControlsFont(const HWND hWnd);
 
 /*
 @brief Save settings to local variable and json file (also apply temporary settings).
 
 @param settings The settings to be applied.
 */
-void applySettings(SettingsStruct settings);
+void applySettings(const SettingsStruct &settings);
 
 /*
 @brief Load a bitmap resource.
@@ -82,4 +82,4 @@ void initializeBrushes();
 
 @return BOOL
 */
-BOOL CALLBACK controlProc(HWND hControl, LPARAM lParam);
+BOOL CALLBACK controlProc(const HWND hControl, const LPARAM lParam);

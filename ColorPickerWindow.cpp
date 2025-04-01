@@ -29,22 +29,22 @@ void ColorPickerWindow::initializeColorButtons()
 	}
 
 	// Preview Color
-	hPreviewColorButton_ = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 105, 210, 40, 40, hwnd_, (HMENU)COLOR_PREVIEW, NULL, NULL);
+	hPreviewColorButton_ = CreateWindowEx(0, WC_BUTTON, L"", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 105, 210, 40, 40, hwnd_, (HMENU)CID_COLOR_PREVIEW, NULL, NULL);
 	switch (controlID)
 	{
-	case COLOR_CTR_TIMER:
+	case CID_TIMER_COLOR:
 		hPreviewColor_ = hBrushes[pTempSettings->colors.timerColor];
 		previewColorIndex_ = pTempSettings->colors.timerColor;
 		break;
-	case COLOR_CTR_SELECTED_TIMER:
+	case CID_SELECTED_TIMER_COLOR:
 		hPreviewColor_ = hBrushes[pTempSettings->colors.selectedTimerColor];
 		previewColorIndex_ = pTempSettings->colors.selectedTimerColor;
 		break;
-	case COLOR_CTR_LAST_SECONDS:
+	case CID_LAST_SECONDS_COLOR:
 		hPreviewColor_ = hBrushes[pTempSettings->colors.lastSecondsColor];
 		previewColorIndex_ = pTempSettings->colors.lastSecondsColor;
 		break;
-	case COLOR_CTR_BACKGROUND:
+	case CID_BACKGROUND_COLOR:
 		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor];
 		previewColorIndex_ = pTempSettings->colors.backgroundColor;
 		break;
@@ -66,16 +66,16 @@ void ColorPickerWindow::updateSettings()
 {
 	switch (controlID)
 	{
-	case COLOR_CTR_TIMER:
+	case CID_TIMER_COLOR:
 		pTempSettings->colors.timerColor = previewColorIndex_;
 		break;
-	case COLOR_CTR_SELECTED_TIMER:
+	case CID_SELECTED_TIMER_COLOR:
 		pTempSettings->colors.selectedTimerColor = previewColorIndex_;
 		break;
-	case COLOR_CTR_LAST_SECONDS:
+	case CID_LAST_SECONDS_COLOR:
 		pTempSettings->colors.lastSecondsColor = previewColorIndex_;
 		break;
-	case COLOR_CTR_BACKGROUND:
+	case CID_BACKGROUND_COLOR:
 		pTempSettings->colors.backgroundColor = previewColorIndex_;
 		break;
 	}
@@ -131,7 +131,7 @@ LRESULT ColorPickerWindow::handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam
 		case WM_DRAWITEM:
 		{
 			LPDRAWITEMSTRUCT pDIS = (LPDRAWITEMSTRUCT)lParam;
-			if (pDIS->CtlID == COLOR_PREVIEW)
+			if (pDIS->CtlID == CID_COLOR_PREVIEW)
 			{
 				FillRect(pDIS->hDC, &pDIS->rcItem, hPreviewColor_);
 			}

@@ -72,7 +72,7 @@ SettingsStruct getSafeSettingsStruct()
 	return settings;
 }
 
-void setSettingsStruct(SettingsStruct settings)
+void setSettingsStruct(const SettingsStruct &settings)
 {
 	ifstream file(SETTINGS_FILE_NAME);
 
@@ -105,21 +105,19 @@ void createSettingsFile()
 {
 	ofstream file(SETTINGS_FILE_NAME);
 
-	string json = "{\n   \"colors\" : \n   {\n      \"background\" : 20,\n      \"last seconds\" : 1,\n      \"selected timer\" : 6,\n      \"timer\" : 8\n   },\n   \"optionTransparent\" : false,\n   \"start\" : 70,\n   \"timer1\" : 112,\n   \"timer2\" : 113\n}";
+	const string json = "{\n   \"colors\" : \n   {\n      \"background\" : 20,\n      \"last seconds\" : 1,\n      \"selected timer\" : 6,\n      \"timer\" : 8\n   },\n   \"optionTransparent\" : false,\n   \"start\" : 70,\n   \"timer1\" : 112,\n   \"timer2\" : 113\n}";
 
 	file << json;
-
-	file.close();
 }
 
 bool settingsFileExists() {
-	string name = SETTINGS_FILE_NAME;
+	const string name = SETTINGS_FILE_NAME;
 
-	ifstream f(name.c_str());
+	const ifstream f(name.c_str());
 	return f.good();
 }
 
-void applySettings(SettingsStruct settings) {
+void applySettings(const SettingsStruct &settings) {
 	setSettingsStruct(settings); // write to json file (settings.json)
 	appSettings = settings; // save static settings variable
 
@@ -147,7 +145,7 @@ void applySettings(SettingsStruct settings) {
 }
 
 // CommUtils
-BOOL CALLBACK controlProc(HWND hControl, LPARAM lParam)
+BOOL CALLBACK controlProc(const HWND hControl, const LPARAM lParam)
 {
 	HFONT hFont = (HFONT)lParam;
 	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
@@ -155,9 +153,9 @@ BOOL CALLBACK controlProc(HWND hControl, LPARAM lParam)
 	return true;
 }
 
-void setTitleFont(HWND hControl)
+void setTitleFont(const HWND hControl)
 {
-	HFONT hFont = CreateFont(
+	const HFONT hFont = CreateFont(
 		16, 0, 0, 0, FW_BLACK, FALSE, FALSE, FALSE,
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
@@ -166,9 +164,9 @@ void setTitleFont(HWND hControl)
 	SendMessage(hControl, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
-void setControlsFont(HWND hWnd)
+void setControlsFont(const HWND hWnd)
 {
-	HFONT hFont = CreateFont(
+	const HFONT hFont = CreateFont(
 		16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial"
@@ -178,10 +176,10 @@ void setControlsFont(HWND hWnd)
 }
 
 // ResourceUtils
-HBITMAP loadBitmapResource(int bitmap) {
-	HBITMAP hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(bitmap));
+HBITMAP loadBitmapResource(const int bitmap) {
+	const HBITMAP hBitmap = LoadBitmap(GetModuleHandle(nullptr), MAKEINTRESOURCE(bitmap));
 	if (!hBitmap) {
-		MessageBox(NULL, L"Failed to load bitmap!", L"Error", MB_OK);
+		MessageBox(nullptr, L"Failed to load bitmap!", L"Error", MB_OK);
 	}
 
 	return hBitmap;
@@ -189,7 +187,7 @@ HBITMAP loadBitmapResource(int bitmap) {
 
 void initializeBrushes()
 {
-	COLORREF colors[25] = {
+	constexpr COLORREF colors[25] = {
 		RGB(255, 0, 0), RGB(255, 77, 0), RGB(255, 116, 0), RGB(255, 154, 0), RGB(255, 193, 0),
 		RGB(1, 55, 125), RGB(0, 157, 209), RGB(151, 231, 245), RGB(115, 211, 72), RGB(38, 177, 112),
 		RGB(49, 0, 74), RGB(51, 0, 123), RGB(76, 0, 164), RGB(131, 0, 196), RGB(171, 0, 255),
