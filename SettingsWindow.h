@@ -8,13 +8,11 @@ class SettingsWindow : public BaseWindow<SettingsWindow>
 {
 private:
 	// Fields
-	SettingsStruct tempSettings;
-	HBITMAP mouseBitmap;
-	HBITMAP controllerBitmap;
-	HWND hActiveControl;
+	SettingsStruct tempSettings_ = {};
+	HBITMAP mouseBitmap_ = nullptr;
+	HBITMAP controllerBitmap_ = nullptr;
+	HWND hActiveControl_ = nullptr;
 
-	// Methods
-	
 	/*
 	@brief Calls required methods to initialize the settings window.
 	*/
@@ -23,22 +21,22 @@ private:
 	/*
 	@brief Initializes the bitmaps for the settings window.
 	*/
-	void InitializeBitmaps();
+	void initializeBitmaps();
 
 	/*
 	@brief Displays the bitmaps of the settings window. (controller & mouse images)
 	*/
-	void DisplayBitmaps();
+	void displayBitmaps();
 
 	/*
 	@brief Initializes all the text controls in the settings window.
 	*/
-	void InitializeTextControls();
+	void initializeTextControls();
 	
 	/*
 	@brief Initializes all the interactable controls in the settings window.
 	*/
-	void InitializeButtonControls();
+	void initializeButtonControls();
 
 	/*
 	@brief Creates a control and returns it.
@@ -61,14 +59,14 @@ private:
 
 	@return The HWND control that was created.
 	*/
-	HWND CreateControl(LPCWSTR className, LPCWSTR controlName, int x, int y, int width, int height, int id = NULL, long ADDITIONAL_STYLE = 0);
+	HWND createControl(LPCWSTR className, LPCWSTR controlName, int x, int y, int width, int height, int id = NULL, long ADDITIONAL_STYLE = 0);
 
 	/*
 	@brief Sets the "copyright" font to a given control.
 
 	@param hControl The handle to the control to set the font of.
 	*/
-	void SetCopyrightFont(HWND hControl);
+	void setCopyrightFont(HWND hControl);
 
 	/*
 	@brief Method that handles interaction with controls.
@@ -78,21 +76,21 @@ private:
 	void handleControlCommand(LPARAM lParam);
 
 	/*
-	@brief Called from a WM_KEYDOWN event. Saves the hit key to the tempSettings struct (as the currently selected control).
+	@brief Called from a WM_KEYDOWN event. Saves the hit key to the tempSettings_ struct (as the currently selected control).
 
 	@param key The key that the user hit.
 	*/
-	void ApplyTempHotkey(UINT key);
+	void applyTempHotkey(UINT key);
 
 	/*
-	@brief Set the text of the given control to it's saved value in the tempSettings struct.
+	@brief Set the text of the given control to it's saved value in the tempSettings_ struct.
 
 	@param hCtrl The HWND instance to set the text of.
 	*/
-	void ApplyHotkeySavedKey(HWND hCtrl);
+	void applyHotkeySavedKey(HWND hCtrl);
 
 	// Map VirtualKey codes to wstrings representing them.
-	std::map<UINT, LPCWSTR> KeyboardMap = {
+	std::map<UINT, LPCWSTR> keyboardMap_ = {
 		{VK_SPACE, L"Space"},
 		{VK_MENU, L"ALT"},
 		{VK_CONTROL, L"CTRL"},
@@ -250,7 +248,7 @@ public:
 
 	@param lParam should be forwarded from a message handling method.
 	*/
-	void ColorHandles(LPARAM lParam);
+	void colorHandles(LPARAM lParam);
 
 	/*
 	@brief Implements an inherited method responsible for handling messages sent to the window.
@@ -263,11 +261,11 @@ public:
 
 	@return LRESULT
 	*/
-	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
 	/*
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/
-	LPCWSTR className() const { return L"Settings Window"; }
+	LPCWSTR className() const override { return L"Settings Window"; }
 };
