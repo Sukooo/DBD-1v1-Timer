@@ -29,7 +29,7 @@ private:
 
 	@return The difference between the two SYSTEMTIMEs as an integer.
 	*/
-	int subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2);
+	static int subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2);
 
 public:
 	Timer();
@@ -39,19 +39,19 @@ public:
 	/*
 	@return The TimerState enum value of the current state of the timer.
 	*/
-	TimerState getTimerState();
+	TimerState getTimerState() const;
 
 	/*
 	@brief Convert the time from the timer to a wstring format.
 
 	@return A wstring representing the timer's time.
 	*/
-	wstring getTimeAsText();
+	wstring getTimeAsText() const;
 
 	/*
 	@return The time that the timer has kept track of in milliseconds.
 	*/
-	int getTimeInMillis();
+	int getTimeInMillis() const;
 
 	/*
 	@brief Start the timer.
@@ -85,5 +85,10 @@ public:
 
 	@param pBrush The brush to draw with.
 	*/
-	void draw(ID2D1HwndRenderTarget* pRenderTarget_, IDWriteTextFormat* pTextFormat_, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush);
+	void draw(
+		ID2D1HwndRenderTarget* pRenderTarget, 
+		IDWriteTextFormat* pTextFormat, 
+		D2D1_RECT_F rectF, 
+		ID2D1SolidColorBrush* pBrush
+	) const;
 };

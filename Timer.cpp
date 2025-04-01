@@ -3,13 +3,13 @@
 
 using std::wstring;
 
-int Timer::subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2)
+int Timer::subtractTimes(const SYSTEMTIME t1, const SYSTEMTIME t2)
 {
 	int seconds = 0;
 	int minutes = 0;
 	int millis = 0;
 
-	int t1Millis = (t1.wMinute * 60 * 1000) + (t1.wSecond * 1000) + t1.wMilliseconds;
+	const int t1Millis = (t1.wMinute * 60 * 1000) + (t1.wSecond * 1000) + t1.wMilliseconds;
 	int t2Millis = (t2.wMinute * 60 * 1000) + (t2.wSecond * 1000) + t2.wMilliseconds;
 
 	if (t1Millis > t2Millis) {
@@ -21,29 +21,28 @@ int Timer::subtractTimes(SYSTEMTIME t1, SYSTEMTIME t2)
 	return millis;
 }
 
-Timer::Timer() {
-	time_ = 0;
-	timerState_ = TimerState::zero;
-}
+Timer::Timer():
+	timerState_(TimerState::zero),
+	time_(0),
+	startTime_(),
+	updatingTime_() { }
 
-TimerState Timer::getTimerState()
+TimerState Timer::getTimerState() const
 {
 	return timerState_;
 }
 
-wstring Timer::getTimeAsText()
+wstring Timer::getTimeAsText() const
 {
-	int minutesInt = 0;
-	int secondsInt = 0;
 	int millisInt = time_;
 
-	secondsInt = millisInt / 1000;
-	minutesInt = secondsInt / 60;
+	int secondsInt = millisInt / 1000;
+	const int minutesInt = secondsInt / 60;
 	millisInt = millisInt % 1000;
 	secondsInt = secondsInt % 60;
 
-	wstring secondsStr = std::to_wstring(secondsInt);
-	wstring minutesStr = std::to_wstring(minutesInt);
+	const wstring secondsStr = std::to_wstring(secondsInt);
+	const wstring minutesStr = std::to_wstring(minutesInt);
 	wstring millisStr = std::to_wstring(millisInt);
 
 	if (millisStr.size() == 1) {
@@ -100,7 +99,7 @@ wstring Timer::getTimeAsText()
 	return text;
 }
 
-int Timer::getTimeInMillis()
+int Timer::getTimeInMillis() const
 {
 	return time_;
 }
@@ -133,18 +132,23 @@ void Timer::updateTime()
 	}
 }
 
-void Timer::draw(ID2D1HwndRenderTarget* pRenderTarget_, IDWriteTextFormat* pTextFormat_, D2D1_RECT_F rectF, ID2D1SolidColorBrush* pBrush) // Only call from within an active render target begin draw scope
+void Timer::draw(
+	ID2D1HwndRenderTarget* pRenderTarget, 
+	IDWriteTextFormat* pTextFormat, 
+	const D2D1_RECT_F rectF, 
+	ID2D1SolidColorBrush* pBrush
+) const
 {
-	if (pRenderTarget_ != NULL)
+	if (pRenderTarget != nullptr)
 	{
-		wstring timeStr = getTimeAsText();
+		const wstring timeStr = getTimeAsText();
 
 		const WCHAR* timeText = timeStr.c_str();
 
-		pRenderTarget_->DrawTextW(
+		pRenderTarget->DrawTextW(
 			timeText,
 			8,
-			pTextFormat_,
+			pTextFormat,
 			rectF,
 			pBrush);
 	}
