@@ -1,12 +1,11 @@
 #include <Windows.h>
 #include <CommCtrl.h>
 #include "Globals.h"
-#include "HelperFunctions.h"
+#include "CommCtrlUtils.h"
 #include "ColorPickerWindow.h"
 #include "Program.h"
 #include <exception>
 
-// Methods
 // Create and store the squared controls that represent selectable colors
 void ColorPickerWindow::initializeColorButtons()
 {

@@ -133,18 +133,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ColorPickerWindow.cpp" />
+    <ClCompile Include="CommCtrlUtils.cpp" />
     <ClCompile Include="dist\JsonCpp.cpp" />
-    <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="ResourceUtils.cpp" />
+    <ClCompile Include="SettingsUtils.cpp" />
     <ClCompile Include="SettingsWindow.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseWindow.h" />
     <ClInclude Include="ColorPickerWindow.h" />
+    <ClInclude Include="CommCtrlUtils.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />
@@ -157,6 +159,8 @@
     <ClInclude Include="resource7.h" />
     <ClInclude Include="resource8.h" />
     <ClInclude Include="resource9.h" />
+    <ClInclude Include="ResourceUtils.h" />
+    <ClInclude Include="SettingsUtils.h" />
     <ClInclude Include="SettingsWindow.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

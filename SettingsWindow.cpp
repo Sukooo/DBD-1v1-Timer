@@ -1,10 +1,13 @@
 #include "SettingsWindow.h"
-#include "HelperFunctions.h"
+#include "ResourceUtils.h"
+#include "CommCtrlUtils.h"
+#include "SettingsUtils.h"
 #include "BaseWindow.h"
 #include "Program.h"
 #include <CommCtrl.h>
 #include <windowsx.h>
 #include <exception>
+
 
 void SettingsWindow::initializeWindow()
 {

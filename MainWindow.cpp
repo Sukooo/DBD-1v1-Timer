@@ -1,7 +1,8 @@
 #include "MainWindow.h"
 #include <windowsx.h>
 #include "Globals.h"
-#include "HelperFunctions.h"
+#include "ResourceUtils.h"
+#include "SettingsUtils.h"
 #include "Program.h"
 
 MainWindow::MainWindow() = default;

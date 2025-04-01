@@ -1,13 +1,6 @@
-#include "HelperFunctions.h"
-#include "dist/json/json.h"
-#include <fstream>
-#include <Windows.h>
+#include "BaseWindow.h"
+#include "CommCtrlUtils.h"
 
-using namespace std;
-
-// Methods
-// SettingsUtils
-// CommUtils
 BOOL CALLBACK controlProc(const HWND hControl, const LPARAM lParam)
 {
 	HFONT hFont = (HFONT)lParam;

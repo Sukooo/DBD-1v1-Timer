@@ -48,11 +48,17 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="HelperFunctions.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="dist\JsonCpp.cpp">
       <Filter>Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsUtils.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceUtils.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="CommCtrlUtils.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,9 +76,6 @@
     </ClInclude>
     <ClInclude Include="SettingsWindow.h">
       <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="HelperFunctions.h">
-      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Utilities</Filter>
@@ -109,6 +112,15 @@
     </ClInclude>
     <ClInclude Include="resource9.h">
       <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsUtils.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceUtils.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="CommCtrlUtils.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,8 @@
 #include <dwrite.h>
 #include <commctrl.h>
 #include "Globals.h"
-#include "helperFunctions.h"
+#include "ResourceUtils.h"
+#include "SettingsUtils.h"
 #include "BaseWindow.h"
 #include "Timer.h"
 #include "SettingsWindow.h"
