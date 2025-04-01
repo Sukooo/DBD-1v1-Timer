@@ -191,10 +191,10 @@ void SettingsWindow::setCopyrightFont(HWND hControl)
 void SettingsWindow::handleControlCommand(LPARAM lParam)
 {
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam); // clicked item handle
-	int controlID = GetDlgCtrlID(hwndCtrl); // retrieve control ID
+	int controlId = GetDlgCtrlID(hwndCtrl); // retrieve control ID
 
 	// Clicked control
-	switch (controlID) {
+	switch (controlId) {
 	// OK
 	case CID_OK:
 		applySettings(tempSettings_);
@@ -242,7 +242,7 @@ void SettingsWindow::handleControlCommand(LPARAM lParam)
 		// Open a Color Picker window
 		if (pColorPicker->window() == NULL)
 		{
-			pColorPicker->controlID = controlID; // Notify Color Picker who called it
+			pColorPicker->controlId = controlId; // Notify Color Picker who called it
 			pColorPicker->pTempSettings = &tempSettings_;
 		
 			if (!pColorPicker->create(L"Color Picker", 850, 300, SIZE_COLORPICKER_WIDTH, SIZE_COLORPICKER_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, 0, NULL)) {
@@ -287,9 +287,9 @@ void SettingsWindow::colorHandles(LPARAM lParam)
 }
 
 void SettingsWindow::applyTempHotkey(UINT key) {
-	int controlID = GetDlgCtrlID(hActiveControl_); // retrieve control ID
+	int controlId = GetDlgCtrlID(hActiveControl_); // retrieve control ID
 
-	switch (controlID) {
+	switch (controlId) {
 	case CID_START:
 		tempSettings_.startKey = key;
 		break;
@@ -306,9 +306,9 @@ void SettingsWindow::applyTempHotkey(UINT key) {
 }
 
 void SettingsWindow::applyHotkeySavedKey(HWND hCtrl) {
-	int controlID = GetDlgCtrlID(hCtrl); // retrieve control ID
+	int controlId = GetDlgCtrlID(hCtrl); // retrieve control ID
 
-	switch (controlID) {
+	switch (controlId) {
 	case CID_START:
 		if (keyboardMap_.count(tempSettings_.startKey)) { // Verify key exists
 			SetWindowText(hCtrl, keyboardMap_[tempSettings_.startKey]);

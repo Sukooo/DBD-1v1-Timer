@@ -11,8 +11,6 @@ private:
 	HWND hPreviewColorButton_ = nullptr;
 	int previewColorIndex_ = NULL;
 
-	// Methods
-	
 	/*
 	@brief Creates and stores the squared controls that represent selectable colors.
 	*/
@@ -26,7 +24,7 @@ private:
 	/*
 	@brief Apply changes to the temporary struct the settings window is using
 	*/
-	void updateSettings();
+	void updateSettings() const;
 
 	/*
 	@brief Method that handles interaction with controls.
@@ -37,7 +35,7 @@ private:
 
 public:
 	// public variables
-	int controlID; // ID of the control that summoned the color picker window
+	int controlId; // ID of the control that summoned the color picker window
 	SettingsStruct* pTempSettings; // Reference to the settings window's settings struct
 
 	/*
