@@ -180,11 +180,17 @@ HWND SettingsWindow::createControl(
 	const LPCWSTR className, const LPCWSTR controlName, 
 	const int x, const int y, const int width, const int height, 
 	const int id,const long additionalStyle
-) const {
-	return CreateWindowEx(
+) const
+{
+	const HWND ctrlHwnd = CreateWindowEx(
 		0, className, controlName, 
 		WS_VISIBLE | WS_CHILDWINDOW | additionalStyle, x,
 		y, width, height, hwnd_, (HMENU)id, nullptr, nullptr);
+
+	// Add custom control window proc
+	SetWindowSubclass(ctrlHwnd, ctrlWndProc, 1, 0);
+
+	return ctrlHwnd;
 }
 
 void SettingsWindow::setCopyrightFont(const HWND hControl)
@@ -370,10 +376,28 @@ LRESULT SettingsWindow::handleMessage(const UINT wMsg, const WPARAM wParam, cons
 		case WM_PAINT:
 			displayBitmaps();
 			break;
+		case WM_XBUTTONDOWN:
+			if (hActiveControl_)
+			{
+				const UINT key = HIWORD(wParam) == 1 ? VK_XBUTTON1 : VK_XBUTTON2;
+				applyTempHotkey(key);
+			}
+			break;
+		case WM_MBUTTONDOWN:
+			if (hActiveControl_)
+			{
+				applyTempHotkey(VK_MBUTTON);
+			}
+			break;
+		case WM_RBUTTONDOWN:
+			if (hActiveControl_)
+			{
+				applyTempHotkey(VK_RBUTTON);
+			}
+			break;
 		case WM_LBUTTONDOWN:
 			if (hActiveControl_) {
-				applyHotkeySavedKey(hActiveControl_);
-				hActiveControl_ = nullptr;
+				applyTempHotkey(VK_LBUTTON);
 			}
 			break;
 		case WM_KEYDOWN:
@@ -397,4 +421,38 @@ LRESULT SettingsWindow::handleMessage(const UINT wMsg, const WPARAM wParam, cons
 		exitApp();
 	}
 	return DefWindowProc(window(), wMsg, wParam, lParam);
+}
+
+LRESULT CALLBACK SettingsWindow::ctrlWndProc(
+	const HWND hwnd, 
+	const UINT uMsg, 
+	const WPARAM wParam, 
+	const LPARAM lParam, 
+	const UINT_PTR uIdSubclass,
+	const DWORD_PTR dwRefData)
+{
+	switch (uMsg)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_XBUTTONDOWN:
+		{
+			const HWND &settingsHwnd = pGlobalTimerWindow->pSettingsWindow->window();
+			const bool isCtrlActive = pGlobalTimerWindow->pSettingsWindow->hActiveControl_ != nullptr;
+			if (settingsHwnd != nullptr && isCtrlActive)
+			{
+				SendMessage(settingsHwnd, uMsg, wParam, lParam);
+				return 0;
+			}
+		}
+		break;
+	case WM_LBUTTONDBLCLK:
+		SendMessage(hwnd, WM_LBUTTONDOWN, wParam, lParam);
+		return 0;
+	default: 
+		break;
+	}
+
+	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }

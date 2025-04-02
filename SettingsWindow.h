@@ -93,9 +93,21 @@ private:
 	*/
 	void applyHotkeySavedKey(HWND hCtrl);
 
+	static LRESULT CALLBACK ctrlWndProc(
+		HWND hwnd, 
+		const UINT uMsg, 
+		const WPARAM wParam, 
+		const LPARAM lParam,
+		const UINT_PTR uIdSubclass,
+		const DWORD_PTR dwRefData);
+
 	// Map VirtualKey codes to wstrings representing them.
 	std::map<UINT, LPCWSTR> keyboardMap_ = {
-		{VK_SPACE, L"Space"},
+		{VK_LBUTTON, L"LButton"},
+		{VK_RBUTTON, L"RButton"},
+		{VK_MBUTTON, L"MWheel"},
+		{VK_XBUTTON1, L"MBack"},
+		{VK_XBUTTON2, L"MForward"},
 		{VK_MENU, L"ALT"},
 		{VK_CONTROL, L"CTRL"},
 		{VK_SHIFT, L"Shift"},
