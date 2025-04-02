@@ -7,9 +7,9 @@ using std::wstring;
 
 enum TimerState : std::uint8_t
 {
-	running = 0,
-	paused = 1,
-	zero = 2
+	Running = 0,
+	Paused = 1,
+	Zero = 2
 };
 
 class Timer

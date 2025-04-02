@@ -5,7 +5,7 @@
 extern MainWindow* pGlobalTimerWindow;
 
 /*
-@brief A method running an infinite loop, responsible for updating the timers.
+@brief A method Running an infinite loop, responsible for updating the timers.
 */
 extern void appLoop(MainWindow* win);
 

@@ -224,44 +224,44 @@ MousePos MainWindow::getMouseDir(const LPARAM lParam, const RECT windowPos) cons
 	const int width = windowPos.right - windowPos.left;
 	const int height = windowPos.bottom - windowPos.top;
 
-	if (currPos[0] <= spaceOffset_) // left
+	if (currPos[0] <= spaceOffset_) // Left
 	{
-		if (currPos[1] <= spaceOffset_) { // top left
-			return MousePos::topLeft;
+		if (currPos[1] <= spaceOffset_) { // Top Left
+			return MousePos::TopLeft;
 		}
-		else if (currPos[1] >= height - spaceOffset_) { // bottom left
+		else if (currPos[1] >= height - spaceOffset_) { // Bottom Left
 			SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
-			return MousePos::bottomLeft;
+			return MousePos::BottomLeft;
 		}
-		else { // left
+		else { // Left
 			SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
-			return MousePos::left;
+			return MousePos::Left;
 		}
 	}
-	else if (currPos[0] >= width - spaceOffset_) { // right
-		if (currPos[1] <= spaceOffset_) { // top right
+	else if (currPos[0] >= width - spaceOffset_) { // Right
+		if (currPos[1] <= spaceOffset_) { // Top Right
 			SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
-			return MousePos::topRight;
+			return MousePos::TopRight;
 		}
-		else if (currPos[1] >= height - spaceOffset_) { // bottom right
+		else if (currPos[1] >= height - spaceOffset_) { // Bottom Right
 			SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
-			return MousePos::bottomRight;
+			return MousePos::BottomRight;
 		}
-		else { // right
+		else { // Right
 			SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
-			return MousePos::right;
+			return MousePos::Right;
 		}
 	}
-	else if (currPos[1] >= height - spaceOffset_) { // bottom
+	else if (currPos[1] >= height - spaceOffset_) { // Bottom
 		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
-		return MousePos::bottom;
+		return MousePos::Bottom;
 	}
-	else if (currPos[1] <= spaceOffset_) // top
+	else if (currPos[1] <= spaceOffset_) // Top
 	{
-		return MousePos::top;
+		return MousePos::Top;
 	}
 
-	return MousePos::none;
+	return MousePos::None;
 }
 
 void MainWindow::handlePainting()
@@ -289,7 +289,7 @@ void MainWindow::handlePainting()
 			ID2D1SolidColorBrush* pBrushTimer_2;
 			if (timer1.getTimeInMillis() > 0
 				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() <= 20000
-				&& (timer2.getTimerState() == TimerState::running || timer2.getTimerState() == TimerState::paused)
+				&& (timer2.getTimerState() == TimerState::Running || timer2.getTimerState() == TimerState::Paused)
 				&& timer1.getTimeInMillis() - timer2.getTimeInMillis() > 0)
 			{
 				pBrushTimer_2 = pBrushLastSeconds_;
@@ -334,31 +334,31 @@ void MainWindow::handleMouseMovement(const LPARAM lParam) const {
 
 	switch (getMouseDir(lParam, windowPos))
 	{
-	case MousePos::topLeft:
+	case MousePos::TopLeft:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
 		break;
-	case MousePos::top:
+	case MousePos::Top:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
 		break;
-	case MousePos::topRight:
+	case MousePos::TopRight:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 		break;
-	case MousePos::right:
+	case MousePos::Right:
 		SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 		break;
-	case MousePos::bottomRight:
+	case MousePos::BottomRight:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
 		break;
-	case MousePos::bottom:
+	case MousePos::Bottom:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
 		break;
-	case MousePos::bottomLeft:
+	case MousePos::BottomLeft:
 		SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
 		break;
-	case MousePos::left:
+	case MousePos::Left:
 		SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
 		break;
-	case MousePos::none:
+	case MousePos::None:
 		SetCursor(LoadCursor(nullptr, IDC_ARROW));
 		break;
 	}
@@ -384,45 +384,45 @@ void MainWindow::handleMouseMovement(const LPARAM lParam) const {
 		switch (dir_)
 		{
 		case 0: // horizontal
-			if (currPos[1] <= spaceOffset_) // resetting size from the top side
+			if (currPos[1] <= spaceOffset_) // resetting size from the Top side
 			{
 				newY = windowPos.top + (currPos[1] - clickMousePos_[1]);
 				newHeight = windowPos.bottom - windowPos.top - (currPos[1] - clickMousePos_[1]);
 			}
-			else // resetting size from the bottom side
+			else // resetting size from the Bottom side
 			{
 				newHeight = winSize_[1] + currPos[1] - clickMousePos_[1];
 			}
 			break;
 		case 1: // vertical
 		{
-			if (currPos[0] <= spaceOffset_) // resetting size from the left side
+			if (currPos[0] <= spaceOffset_) // resetting size from the Left side
 			{
 				newX = windowPos.left + (currPos[0] - clickMousePos_[0]);
 				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos_[0]);
 			}
-			else // resetting size from the right side
+			else // resetting size from the Right side
 			{
 				newWidth = winSize_[0] + currPos[0] - clickMousePos_[0];
 			}
 		}
 		break;
 		case 2:
-			if (currPos[0] <= spaceOffset_) // resetting size from the left side
+			if (currPos[0] <= spaceOffset_) // resetting size from the Left side
 			{
 				newX = windowPos.left + (currPos[0] - clickMousePos_[0]);
 				newWidth = (windowPos.right - windowPos.left) - (currPos[0] - clickMousePos_[0]);
 			}
-			else // resetting size from the right side
+			else // resetting size from the Right side
 			{
 				newWidth = winSize_[0] + currPos[0] - clickMousePos_[0];
 			}
-			if (currPos[1] <= spaceOffset_) // resetting size from the top side
+			if (currPos[1] <= spaceOffset_) // resetting size from the Top side
 			{
 				newY = windowPos.top + (currPos[1] - clickMousePos_[1]);
 				newHeight = (windowPos.bottom - windowPos.top) - (currPos[1] - clickMousePos_[1]);
 			}
-			else // resetting size from the bottom side
+			else // resetting size from the Bottom side
 			{
 				newHeight = winSize_[1] + currPos[1] - clickMousePos_[1];
 			}
@@ -503,16 +503,16 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			MousePos mPos = getMouseDir(lParam, windowPos);
 
 			// set drag direction according to mouse position
-			if (mPos == MousePos::topRight || mPos == MousePos::topLeft ||
-				mPos == MousePos::bottomLeft || mPos == MousePos::bottomRight)
+			if (mPos == MousePos::TopRight || mPos == MousePos::TopLeft ||
+				mPos == MousePos::BottomLeft || mPos == MousePos::BottomRight)
 			{
 				dir_ = 2;
 			}
-			else if (mPos == MousePos::right || mPos == MousePos::left)
+			else if (mPos == MousePos::Right || mPos == MousePos::Left)
 			{
 				dir_ = 1;
 			}
-			else if (mPos == MousePos::top || mPos == MousePos::bottom)
+			else if (mPos == MousePos::Top || mPos == MousePos::Bottom)
 			{
 				dir_ = 0;
 			}
@@ -622,10 +622,10 @@ void MainWindow::handleHotKey(const int code)
 	case KEY_START: // start key
 		if (activeTimer_ != nullptr)
 		{
-			if (activeTimer_->getTimerState() == TimerState::zero) {
+			if (activeTimer_->getTimerState() == TimerState::Zero) {
 				activeTimer_->startTimer();
 			}
-			else if (activeTimer_->getTimerState() == TimerState::running) {
+			else if (activeTimer_->getTimerState() == TimerState::Running) {
 				activeTimer_->stopTimer();
 			}
 			else {

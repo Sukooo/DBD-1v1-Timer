@@ -50,7 +50,7 @@ LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lPara
 		const KBDLLHOOKSTRUCT* pKbdHookStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
 		int hitKey = pKbdHookStruct->vkCode;
 
-		// If the hit key is Alt, Control or Shift, set it to not matter if it was right or left.
+		// If the hit key is Alt, Control or Shift, set it to not matter if it was Right or Left.
 		if (hitKey == VK_LMENU || hitKey == VK_RMENU) {
 			hitKey = VK_MENU;
 		}
@@ -123,7 +123,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		// Apply saved settings
 		applySettings(appSettings);
 
-		// Listen for keys: F1, F2, F While running in the background - Install a hook procedure
+		// Listen for keys: F1, F2, F While Running in the background - Install a hook procedure
 		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
 
 		// Create a thread for the app loop (ticks)

@@ -7,15 +7,15 @@
 
 enum MousePos : uint8_t
 {
-	topLeft,
-	top,
-	topRight,
-	right,
-	bottomRight,
-	bottom,
-	bottomLeft,
-	left,
-	none
+	TopLeft,
+	Top,
+	TopRight,
+	Right,
+	BottomRight,
+	Bottom,
+	BottomLeft,
+	Left,
+	None
 };
 
 // The class responsible for the main window of the app

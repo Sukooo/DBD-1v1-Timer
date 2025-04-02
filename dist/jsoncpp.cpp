@@ -200,7 +200,7 @@ template <typename Iter> void fixNumericLocaleInput(Iter begin, Iter end) {
 
 /**
  * Return iterator that would be the new end of the range [begin,end), if we
- * were to delete zeros in the end of string, but not the last zero before '.'.
+ * were to delete zeros in the end of string, but not the last Zero before '.'.
  */
 template <typename Iter>
 Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
@@ -208,7 +208,7 @@ Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
     if (*(end - 1) != '0') {
       return end;
     }
-    // Don't delete the last zero before the decimal point.
+    // Don't delete the last Zero before the decimal point.
     if (begin != (end - 1) && begin != (end - 2) && *(end - 2) == '.') {
       if (precision) {
         return end;
@@ -2532,7 +2532,7 @@ static inline bool InRange(double d, T min, U max) {
 #endif // if !defined(JSON_USE_INT64_DOUBLE_CONVERSION)
 
 /** Duplicates the specified string value.
- * @param value Pointer to the string to duplicate. Must be zero-terminated if
+ * @param value Pointer to the string to duplicate. Must be Zero-terminated if
  *              length is "unknown".
  * @param length Length of the value. if equals to unknown, then it will be
  *               computed using strlen(value).
@@ -3238,7 +3238,7 @@ bool Value::asBool() const {
   case uintValue:
     return value_.uint_ != 0;
   case realValue: {
-    // According to JavaScript language zero or NaN is regarded as false
+    // According to JavaScript language Zero or NaN is regarded as false
     const auto value_classification = std::fpclassify(value_.real_);
     return value_classification != FP_ZERO && value_classification != FP_NAN;
   }
@@ -3633,7 +3633,7 @@ bool Value::removeIndex(ArrayIndex index, Value* removed) {
   if (removed)
     *removed = it->second;
   ArrayIndex oldSize = size();
-  // shift left all items left, into the place of the "removed"
+  // shift Left all items Left, into the place of the "removed"
   for (ArrayIndex i = index; i < (oldSize - 1); ++i) {
     CZString keey(i);
     (*value_.map_)[keey] = (*this)[i + 1];
@@ -4234,7 +4234,7 @@ String valueToString(double value, bool useSpecialFloats,
     buffer += ".0";
   }
 
-  // strip the zero padding from the right
+  // strip the Zero padding from the Right
   if (precisionType == PrecisionType::decimalPlaces) {
     buffer.erase(fixZerosInTheEnd(buffer.begin(), buffer.end(), precision),
                  buffer.end());

@@ -5,10 +5,6 @@ using std::wstring;
 
 int Timer::subtractTimes(const SYSTEMTIME t1, const SYSTEMTIME t2)
 {
-	int seconds = 0;
-	int minutes = 0;
-	int millis = 0;
-
 	const int t1Millis = (t1.wMinute * 60 * 1000) + (t1.wSecond * 1000) + t1.wMilliseconds;
 	int t2Millis = (t2.wMinute * 60 * 1000) + (t2.wSecond * 1000) + t2.wMilliseconds;
 
@@ -16,13 +12,13 @@ int Timer::subtractTimes(const SYSTEMTIME t1, const SYSTEMTIME t2)
 		t2Millis += (60 * 60 * 1000);
 	}
 
-	millis = t2Millis - t1Millis;
+	const int millis = t2Millis - t1Millis;
 
 	return millis;
 }
 
 Timer::Timer():
-	timerState_(TimerState::zero),
+	timerState_(TimerState::Zero),
 	time_(0),
 	startTime_(),
 	updatingTime_() { }
@@ -106,18 +102,18 @@ int Timer::getTimeInMillis() const
 
 void Timer::startTimer()
 {
-	timerState_ = TimerState::running;
+	timerState_ = TimerState::Running;
 	GetSystemTime(&startTime_);
 }
 
 void Timer::stopTimer()
 {
-	timerState_ = TimerState::paused;
+	timerState_ = TimerState::Paused;
 }
 
 void Timer::resetTimer()
 {
-	timerState_ = TimerState::zero;
+	timerState_ = TimerState::Zero;
 	GetLocalTime(&startTime_);
 	GetLocalTime(&updatingTime_);
 	time_ = subtractTimes(startTime_, updatingTime_);
@@ -125,7 +121,7 @@ void Timer::resetTimer()
 
 void Timer::updateTime()
 {
-	if (timerState_ == TimerState::running)
+	if (timerState_ == TimerState::Running)
 	{
 		GetSystemTime(&updatingTime_);
 		time_ = subtractTimes(startTime_, updatingTime_);
