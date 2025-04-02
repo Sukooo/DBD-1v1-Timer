@@ -1,5 +1,9 @@
+add:
 - Make milliseconds text smaller
 - Add controller support.
 - Add ability to bind mouse buttons (mwheel, mbuttons, etc..)
 - Add option to start a timer directly with a bind.
 - Implement state machine pattern for app state.
+
+fix:
+- keyboard hook should queue a message when a hotkey is hit, mainwindow should catch that message and handle it. (currently keyboardhook directly calls a mainwindow method).
