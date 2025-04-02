@@ -47,30 +47,33 @@ void exitApp()
 
 LRESULT CALLBACK mouseHook(const int nCode, const WPARAM wParam, const LPARAM lParam)
 {
-	const MSLLHOOKSTRUCT* pMsHookStruct = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
-	int key = 0;
-
-	switch (wParam)
+	if (nCode >= 0)
 	{
-	case WM_LBUTTONDOWN:
-		key = VK_LBUTTON;
-		break;
-	case WM_RBUTTONDOWN:
-		key = VK_RBUTTON;
-		break;
-	case WM_MBUTTONDOWN:
-		key = VK_MBUTTON;
-		break;
-	case WM_XBUTTONDOWN:
-		key = HIWORD(pMsHookStruct->mouseData) == 1 ? VK_XBUTTON1 : VK_XBUTTON2;
-		break;
-	default:
-		break;
-	}
+		const MSLLHOOKSTRUCT* pMsHookStruct = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
+		int key = 0;
 
-	if (key != 0)
-	{
-		HotkeyManager::execute(key);
+		switch (wParam)
+		{
+		case WM_LBUTTONDOWN:
+			key = VK_LBUTTON;
+			break;
+		case WM_RBUTTONDOWN:
+			key = VK_RBUTTON;
+			break;
+		case WM_MBUTTONDOWN:
+			key = VK_MBUTTON;
+			break;
+		case WM_XBUTTONDOWN:
+			key = HIWORD(pMsHookStruct->mouseData) == 1 ? VK_XBUTTON1 : VK_XBUTTON2;
+			break;
+		default:
+			break;
+		}
+
+		if (key != 0)
+		{
+			HotkeyManager::execute(key);
+		}
 	}
 
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
@@ -78,7 +81,9 @@ LRESULT CALLBACK mouseHook(const int nCode, const WPARAM wParam, const LPARAM lP
 
 LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lParam)
 {
-	if (wParam == WM_KEYDOWN && pGlobalTimerWindow != nullptr && appSettings.startKey != NULL)
+	if (
+		nCode >= 0 &&
+		wParam == WM_KEYDOWN)
 	{
 		const KBDLLHOOKSTRUCT* pKbdHookStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
 		int hitKey = pKbdHookStruct->vkCode;
