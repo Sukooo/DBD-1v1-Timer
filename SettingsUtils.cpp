@@ -1,5 +1,7 @@
 #include <fstream>
 #include "SettingsUtils.h"
+
+#include "HotkeyManager.h"
 #include "dist/json/json.h"
 
 using namespace std;
@@ -115,6 +117,7 @@ bool settingsFileExists() {
 void applySettings(const SettingsStruct& settings) {
 	setSettingsStruct(settings); // write to json file (settings.json)
 	appSettings = settings; // save static settings variable
+	HotkeyManager::setHotkeysMap(appSettings); // initialize hotkeys map
 
 	if (hwndMainWindow != nullptr) {
 		// transparency

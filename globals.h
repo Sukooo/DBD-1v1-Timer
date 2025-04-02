@@ -37,6 +37,7 @@ constexpr byte IDB_CONTROLLER = 111;
 
 // Custom HWND messages
 constexpr int REFRESH_BRUSHES(WM_APP + 1);
+constexpr int HOTKEY_HIT(WM_APP + 2);
 
 // Configuration File Names
 #define SETTINGS_FILE_NAME "Settings.json"

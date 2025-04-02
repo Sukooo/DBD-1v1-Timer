@@ -14,6 +14,8 @@
 #include "MainWindow.h"
 #include "Program.h"
 
+#include "HotkeyManager.h"
+
 #pragma comment(lib, "Msimg32.lib")
 #pragma comment (lib, "d2d1")
 
@@ -24,7 +26,7 @@ SettingsStruct appSettings;
 HBRUSH hBrushes[25];
 HWND hwndMainWindow = nullptr;
 HINSTANCE hInstanceGlobal;
-MainWindow* pGlobalTimerWindow = nullptr; // used by the hook procedure
+MainWindow* pGlobalTimerWindow = nullptr;
 
 void appLoop(MainWindow* win)
 {
@@ -41,6 +43,37 @@ void exitApp()
 {
 	if (pGlobalTimerWindow) pGlobalTimerWindow->appRunning = false;
 	PostQuitMessage(0);
+}
+
+LRESULT CALLBACK mouseHook(const int nCode, const WPARAM wParam, const LPARAM lParam)
+{
+	const MSLLHOOKSTRUCT* pMsHookStruct = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
+	int key = 0;
+
+	switch (wParam)
+	{
+	case WM_LBUTTONDOWN:
+		key = VK_LBUTTON;
+		break;
+	case WM_RBUTTONDOWN:
+		key = VK_RBUTTON;
+		break;
+	case WM_MBUTTONDOWN:
+		key = VK_MBUTTON;
+		break;
+	case WM_XBUTTONDOWN:
+		key = HIWORD(pMsHookStruct->mouseData) == 1 ? VK_XBUTTON1 : VK_XBUTTON2;
+		break;
+	default:
+		break;
+	}
+
+	if (key != 0)
+	{
+		HotkeyManager::execute(key);
+	}
+
+	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
 LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lParam)
@@ -62,19 +95,7 @@ LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lPara
 			hitKey = VK_SHIFT;
 		}
 		
-		// Take action according to hit hotkey
-		if (hitKey == appSettings.startKey)
-		{
-			pGlobalTimerWindow->handleHotKey(KEY_START);
-		}
-		else if (hitKey == appSettings.timer1Key)
-		{
-			pGlobalTimerWindow->handleHotKey(KEY_TIMER1);
-		}
-		else if (hitKey == appSettings.timer2Key)
-		{
-			pGlobalTimerWindow->handleHotKey(KEY_TIMER2);
-		}
+		HotkeyManager::execute(hitKey);
 	}
 
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
@@ -123,8 +144,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		// Apply saved settings
 		applySettings(appSettings);
 
-		// Listen for keys: F1, F2, F While Running in the background - Install a hook procedure
-		HHOOK kbd = SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
+		// Listen for hotkeys While Running in the background - Install a hook procedure
+		SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
+		SetWindowsHookEx(WH_MOUSE_LL, &mouseHook, nullptr, NULL);
 
 		// Create a thread for the app loop (ticks)
 		thread t1(appLoop, &win);

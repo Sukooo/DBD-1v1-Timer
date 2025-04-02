@@ -438,7 +438,7 @@ LRESULT CALLBACK SettingsWindow::ctrlWndProc(
 	case WM_MBUTTONDOWN:
 	case WM_XBUTTONDOWN:
 		{
-			const HWND &settingsHwnd = pGlobalTimerWindow->pSettingsWindow->window();
+			const HWND settingsHwnd = pGlobalTimerWindow->pSettingsWindow->window();
 			const bool isCtrlActive = pGlobalTimerWindow->pSettingsWindow->hActiveControl_ != nullptr;
 			if (settingsHwnd != nullptr && isCtrlActive)
 			{
@@ -447,7 +447,7 @@ LRESULT CALLBACK SettingsWindow::ctrlWndProc(
 			}
 		}
 		break;
-	case WM_LBUTTONDBLCLK:
+	case WM_LBUTTONDBLCLK: // Redirect double clicks into normal clicks
 		SendMessage(hwnd, WM_LBUTTONDOWN, wParam, lParam);
 		return 0;
 	default: 

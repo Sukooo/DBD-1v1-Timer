@@ -135,6 +135,7 @@
     <ClCompile Include="ColorPickerWindow.cpp" />
     <ClCompile Include="CommCtrlUtils.cpp" />
     <ClCompile Include="dist\JsonCpp.cpp" />
+    <ClCompile Include="HotkeyManager.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="ResourceUtils.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="ColorPickerWindow.h" />
     <ClInclude Include="CommCtrlUtils.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="HotkeyManager.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />

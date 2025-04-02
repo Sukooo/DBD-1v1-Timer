@@ -26,3 +26,16 @@ extern void exitApp();
 @return Forwards to the next hook.
 */
 LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam);
+
+/*
+@brief The hook procedure to listen for key strokes of the active HOTKEYS.
+
+@param nCode Has no effect in this function but is part of the syntax.
+
+@param wParam Contains the window message that was triggered.
+
+@param lParam A pointer to a CWPRETSTRUCT structure that contains details about the message.
+
+@return Forwards to the next hook.
+*/
+LRESULT CALLBACK mouseHook(int nCode, WPARAM wParam, LPARAM lParam);

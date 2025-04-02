@@ -482,10 +482,9 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &pFactory_))) {
 				return -1;
 			}
-			else {
-				createGraphicsResources();
-				createDeviceIndependentResources();
-			}
+			createGraphicsResources();
+			createDeviceIndependentResources();
+
 			appSettings = getSafeSettingsStruct();
 			appRunning = true;
 			return 0;
@@ -596,6 +595,12 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			return 0;
 		case REFRESH_BRUSHES:
 			refreshBrushes();
+			break;
+		case HOTKEY_HIT:
+			{
+				const int key = (int)wParam;
+				handleHotKey(key);
+			}
 			break;
 		default:
 			break;

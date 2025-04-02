@@ -93,6 +93,19 @@ private:
 	*/
 	void applyHotkeySavedKey(HWND hCtrl);
 
+	/*
+	 @brief WindowProcedure for CommonControls controls.
+
+	@param uMsg The WindowMessage
+
+	@param wParam WPARAM argument
+
+	@param lParam LPARAM argument
+
+	@uIdSubclass A pointer to uniquely identify this subclass callback
+
+	@param dwRefData A pointer to a DWORD which will return the reference data
+	*/
 	static LRESULT CALLBACK ctrlWndProc(
 		HWND hwnd, 
 		const UINT uMsg, 
@@ -107,7 +120,7 @@ private:
 		{VK_RBUTTON, L"RButton"},
 		{VK_MBUTTON, L"MWheel"},
 		{VK_XBUTTON1, L"MBack"},
-		{VK_XBUTTON2, L"MForward"},
+		{VK_XBUTTON2, L"MFront"},
 		{VK_MENU, L"ALT"},
 		{VK_CONTROL, L"CTRL"},
 		{VK_SHIFT, L"Shift"},
