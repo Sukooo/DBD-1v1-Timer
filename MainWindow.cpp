@@ -44,7 +44,7 @@ HRESULT MainWindow::createGraphicsResources()
 			const D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
 			const D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
 			const D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
-			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
+			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
 
 			// timer color brush
 			hr = pRenderTarget_->CreateSolidColorBrush(timerColor, &pBrushTimer_);
@@ -465,7 +465,7 @@ void MainWindow::refreshBrushes()
 	pBrushLastSeconds_->SetColor(hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]));
 
 	// background color
-	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor_]);
+	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
 }
 
 LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LPARAM lParam)

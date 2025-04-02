@@ -47,7 +47,7 @@ struct ColorsStruct
 	int timerColor;
 	int selectedTimerColor;
 	int lastSecondsColor;
-	int backgroundColor_;
+	int backgroundColor;
 };
 
 struct SettingsStruct

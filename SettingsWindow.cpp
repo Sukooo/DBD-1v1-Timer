@@ -293,7 +293,7 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.lastSecondsColor]);
 		break;
 	case CID_BACKGROUND_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.backgroundColor_]);
+		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.backgroundColor]);
 		break;
 	default:
 		break;

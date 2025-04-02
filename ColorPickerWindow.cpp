@@ -52,8 +52,8 @@ void ColorPickerWindow::initializeColorButtons()
 		previewColorIndex_ = pTempSettings->colors.lastSecondsColor;
 		break;
 	case CID_BACKGROUND_COLOR:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor_];
-		previewColorIndex_ = pTempSettings->colors.backgroundColor_;
+		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor];
+		previewColorIndex_ = pTempSettings->colors.backgroundColor;
 		break;
 	default:
 		break;
@@ -96,7 +96,7 @@ void ColorPickerWindow::updateSettings() const
 		pTempSettings->colors.lastSecondsColor = previewColorIndex_;
 		break;
 	case CID_BACKGROUND_COLOR:
-		pTempSettings->colors.backgroundColor_ = previewColorIndex_;
+		pTempSettings->colors.backgroundColor = previewColorIndex_;
 		break;
 	default:
 		break;
