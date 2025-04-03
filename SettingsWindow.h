@@ -13,6 +13,12 @@ private:
 	HBITMAP controllerBitmap_ = nullptr;
 	HWND hActiveControl_ = nullptr;
 
+	byte rows_ = 16;
+	byte cols_ = 11;
+
+	int tileHeight_ = SIZE_SETTINGS_HEIGHT / rows_;
+	int tileWidth_ = SIZE_SETTINGS_WIDTH / cols_;
+
 	/*
 	@brief Calls required methods to initialize the settings window.
 	*/
