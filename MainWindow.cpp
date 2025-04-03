@@ -616,6 +616,8 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 
 void MainWindow::handleHotKey(const int code)
 {
+	bool activateTimer = appSettings.optionStartOnChange;
+
 	switch (code)
 	{
 	case KEY_TIMER1: // timer1 key
@@ -625,21 +627,23 @@ void MainWindow::handleHotKey(const int code)
 		activeTimer_ = &timer2;
 		break;
 	case KEY_START: // start key
-		if (activeTimer_ != nullptr)
-		{
-			if (activeTimer_->getTimerState() == TimerState::Zero) {
-				activeTimer_->startTimer();
-			}
-			else if (activeTimer_->getTimerState() == TimerState::Running) {
-				activeTimer_->stopTimer();
-			}
-			else {
-				activeTimer_->resetTimer();
-			}
-		}
+		activateTimer = true;
 		break;
 	default:
 		break;
+	}
+
+	if (activateTimer && activeTimer_ != nullptr)
+	{
+		if (activeTimer_->getTimerState() == TimerState::Zero) {
+			activeTimer_->startTimer();
+		}
+		else if (activeTimer_->getTimerState() == TimerState::Running) {
+			activeTimer_->stopTimer();
+		}
+		else {
+			activeTimer_->resetTimer();
+		}
 	}
 }
 

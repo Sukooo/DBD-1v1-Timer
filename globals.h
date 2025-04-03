@@ -9,7 +9,7 @@ constexpr byte CID_START = 103;
 constexpr byte CID_TIMER1 = 104;
 constexpr byte CID_TIMER2 = 105;
 constexpr byte CID_TRANSPARENT_CB = 106;
-constexpr byte CID_CLICKTHROUGH = 107;
+constexpr byte CID_CLICKTHROUGH_CB = 107;
 constexpr byte CID_STARTONCHANGE_CB = 112;
 constexpr byte MENU_QUIT = 1;
 constexpr byte MENU_SETTINGS = 0;
@@ -59,7 +59,7 @@ struct SettingsStruct // With default values
 	int timer2Key = 113;
 	bool optionStartOnChange = false;
 	bool optionTransparent = false;
-	bool clickthrough = false;
+	bool optionClickThrough = false;
 	ColorsStruct colors;
 };
 

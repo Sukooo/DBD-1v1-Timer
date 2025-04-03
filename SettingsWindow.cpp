@@ -153,7 +153,7 @@ void SettingsWindow::initializeButtonControls()
 	// Checkbox buttons
 	const HWND hCbStartOnChange = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 7 - 30, sizeCheckbox, sizeCheckbox, CID_STARTONCHANGE_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
 	const HWND hCbTransparentBg = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 8 - 30, sizeCheckbox, sizeCheckbox, CID_TRANSPARENT_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
-	const HWND hCbClickthrough = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 9 - 30, sizeCheckbox, sizeCheckbox, CID_CLICKTHROUGH, BS_CHECKBOX | BS_AUTOCHECKBOX);
+	const HWND hCbClickthrough = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 9 - 30, sizeCheckbox, sizeCheckbox, CID_CLICKTHROUGH_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
 
 	// Color buttons
 	colorButtons[0] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 12 - 20, 100, 15, CID_TIMER_COLOR, BS_OWNERDRAW);
@@ -176,7 +176,7 @@ void SettingsWindow::initializeButtonControls()
 	// Apply currently set options
 	SendMessage(hCbStartOnChange, BM_SETCHECK, appSettings.optionStartOnChange, 0);
 	SendMessage(hCbTransparentBg, BM_SETCHECK, appSettings.optionTransparent, 0);
-	SendMessage(hCbClickthrough, BM_SETCHECK, appSettings.clickthrough, 0);
+	SendMessage(hCbClickthrough, BM_SETCHECK, appSettings.optionClickThrough, 0);
 }
 
 HWND SettingsWindow::createControl(
@@ -253,8 +253,8 @@ void SettingsWindow::handleControlCommand(const LPARAM lParam)
 		break;
 
 	// Clickthrough checkbox
-	case CID_CLICKTHROUGH:
-		tempSettings_.clickthrough = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
+	case CID_CLICKTHROUGH_CB:
+		tempSettings_.optionClickThrough = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
 		break;
 
 	// Any color control clicked

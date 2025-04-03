@@ -29,7 +29,7 @@ SettingsStruct getSafeSettingsStruct()
 		settings.optionStartOnChange = actualJson["optionStartOnChange"].asBool();
 	}
 
-	settings.clickthrough = false;
+	settings.optionClickThrough = false;
 
 	// colors
 	Json::Value colors = actualJson["colors"];
@@ -137,7 +137,7 @@ void applySettings(const SettingsStruct& settings) {
 		}
 
 		// click through
-		if (appSettings.clickthrough) { // make click through
+		if (appSettings.optionClickThrough) { // make click through
 			// Get the current window style
 			LONG style = GetWindowLong(hwndMainWindow, GWL_EXSTYLE);
 
