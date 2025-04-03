@@ -1,4 +1,3 @@
 add:
 - Make milliseconds text smaller
-- Add controller support.
-- Add option to start a timer directly with a bind.
+- Add controller support
