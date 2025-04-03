@@ -9,7 +9,8 @@ constexpr byte CID_START = 103;
 constexpr byte CID_TIMER1 = 104;
 constexpr byte CID_TIMER2 = 105;
 constexpr byte CID_TRANSPARENT_CB = 106;
-constexpr byte CID_CLICKTHROUGH	= 107;
+constexpr byte CID_CLICKTHROUGH = 107;
+constexpr byte CID_STARTONCHANGE_CB = 112;
 constexpr byte MENU_QUIT = 1;
 constexpr byte MENU_SETTINGS = 0;
 constexpr byte KEY_START = 0;
@@ -27,7 +28,7 @@ constexpr byte CID_COLOR_PREVIEW = 25;
 
 // Global Sizes
 constexpr UINT16 SIZE_SETTINGS_WIDTH = 400;
-constexpr UINT16 SIZE_SETTINGS_HEIGHT = 590;
+constexpr UINT16 SIZE_SETTINGS_HEIGHT = 630;
 constexpr UINT16 SIZE_COLORPICKER_WIDTH = 270;
 constexpr UINT16 SIZE_COLORPICKER_HEIGHT = 350;
 
@@ -43,21 +44,22 @@ constexpr int HOTKEY_HIT(WM_APP + 2);
 #define SETTINGS_FILE_NAME "Settings.json"
 
 // Structs
-struct ColorsStruct
+struct ColorsStruct // With default values
 {
-	int timerColor;
-	int selectedTimerColor;
-	int lastSecondsColor;
-	int backgroundColor;
+	int timerColor = 9;
+	int selectedTimerColor = 6;
+	int lastSecondsColor = 1;
+	int backgroundColor = 20;
 };
 
-struct SettingsStruct
+struct SettingsStruct // With default values
 {
-	int startKey;
-	int timer1Key;
-	int timer2Key;
-	bool optionTransparent;
-	bool clickthrough;
+	int startKey = 70;
+	int timer1Key = 112;
+	int timer2Key = 113;
+	bool optionStartOnChange = false;
+	bool optionTransparent = false;
+	bool clickthrough = false;
 	ColorsStruct colors;
 };
 

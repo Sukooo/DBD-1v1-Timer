@@ -22,20 +22,13 @@ SettingsStruct getSafeSettingsStruct()
 		settings.timer1Key = actualJson["timer1"].asInt();
 		settings.timer2Key = actualJson["timer2"].asInt();
 	}
-	else
-	{
-		settings.startKey = 70;
-		settings.timer1Key = 112;
-		settings.timer2Key = 113;
-	}
 
 	// options
-	if (actualJson["optionTransparent"].isBool()) {
+	if (actualJson["optionTransparent"].isBool() && actualJson["optionStartOnChange"].isBool()) {
 		settings.optionTransparent = actualJson["optionTransparent"].asBool();
+		settings.optionStartOnChange = actualJson["optionStartOnChange"].asBool();
 	}
-	else {
-		settings.optionTransparent = false;
-	}
+
 	settings.clickthrough = false;
 
 	// colors
@@ -51,20 +44,12 @@ SettingsStruct getSafeSettingsStruct()
 		if (settings.colors.timerColor > 24 || settings.colors.selectedTimerColor > 24 ||
 			settings.colors.lastSecondsColor > 24 || settings.colors.backgroundColor > 24)
 		{
-			settings.colors.timerColor = 8;
+			settings.colors.timerColor = 9;
 			settings.colors.selectedTimerColor = 6;
 			settings.colors.lastSecondsColor = 1;
 			settings.colors.backgroundColor = 20;
 		}
 	}
-	else
-	{
-		settings.colors.timerColor = 8;
-		settings.colors.selectedTimerColor = 6;
-		settings.colors.lastSecondsColor = 1;
-		settings.colors.backgroundColor = 20;
-	}
-
 
 	return settings;
 }
@@ -83,6 +68,7 @@ void setSettingsStruct(const SettingsStruct& settings)
 	settingsJson["timer1"] = settings.timer1Key;
 	settingsJson["timer2"] = settings.timer2Key;
 	settingsJson["optionTransparent"] = settings.optionTransparent;
+	settingsJson["optionStartOnChange"] = settings.optionStartOnChange;
 	settingsJson["colors"]["timer"] = settings.colors.timerColor;
 	settingsJson["colors"]["selected timer"] = settings.colors.selectedTimerColor;
 	settingsJson["colors"]["last seconds"] = settings.colors.lastSecondsColor;
@@ -102,9 +88,31 @@ void createSettingsFile()
 {
 	ofstream file(SETTINGS_FILE_NAME);
 
-	const string json = "{\n   \"colors\" : \n   {\n      \"background\" : 20,\n      \"last seconds\" : 1,\n      \"selected timer\" : 6,\n      \"timer\" : 9\n   },\n   \"optionTransparent\" : false,\n   \"start\" : 70,\n   \"timer1\" : 112,\n   \"timer2\" : 113\n}";
+	ColorsStruct defaultColors;
 
-	file << json;
+	SettingsStruct defaultSettings;
+	defaultSettings.colors = defaultColors;
+
+	Json::Value settingsJson;
+	
+	settingsJson["start"] = defaultSettings.startKey;
+	settingsJson["timer1"] = defaultSettings.timer1Key;
+	settingsJson["timer2"] = defaultSettings.timer2Key;
+	settingsJson["optionTransparent"] = defaultSettings.optionTransparent;
+	settingsJson["optionStartOnChange"] = defaultSettings.optionStartOnChange;
+	settingsJson["colors"]["timer"] = defaultSettings.colors.timerColor;
+	settingsJson["colors"]["selected timer"] = defaultSettings.colors.selectedTimerColor;
+	settingsJson["colors"]["last seconds"] = defaultSettings.colors.lastSecondsColor;
+	settingsJson["colors"]["background"] = defaultSettings.colors.backgroundColor;
+
+	// Write to file
+	Json::StreamWriterBuilder builder;
+
+	builder["commentStyle"] = "None";
+	builder["indentation"] = "   ";
+	std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+	std::ofstream outputFileStream(SETTINGS_FILE_NAME);
+	writer->write(settingsJson, &outputFileStream);
 }
 
 bool settingsFileExists() {

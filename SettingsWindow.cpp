@@ -91,7 +91,7 @@ void SettingsWindow::initializeTextControls() const
 	// Initialize headers
 	const HWND hwndTitleHotkeys = createControl(WC_STATIC, L"Hotkeys", SIZE_SETTINGS_WIDTH / 2 - 40, 5, 60, 40);
 	const HWND hwndTitleOptions = createControl(WC_STATIC, L"Options", SIZE_SETTINGS_WIDTH / 2 - 40, yOffset * 6 - 20, 80, 40);
-	const HWND hwndTitleColors = createControl(WC_STATIC, L"Colors", SIZE_SETTINGS_WIDTH / 2 - 40, yOffset * 10 - 20, 60, 40);
+	const HWND hwndTitleColors = createControl(WC_STATIC, L"Colors", SIZE_SETTINGS_WIDTH / 2 - 40, yOffset * 11 - 30, 60, 40);
 
 	// Hotkey titles
 	const HWND hwndTextStart = createControl(WC_STATIC, L"Start / Stop / Reset", xTitle, yOffset * 2, 150, 40);
@@ -99,21 +99,22 @@ void SettingsWindow::initializeTextControls() const
 	const HWND hwndTextTimer2 = createControl(WC_STATIC, L"Timer 2", xTitle, yOffset * 4, 150, 20);
 
 	// Checkbox titles
-	const HWND hwndTextTransparentBackground = createControl(WC_STATIC, L"Transparent Background", xTitle, yOffset * 7 - 20, 150, 20);
-	const HWND hwndTextCheckboxClickthrough = createControl(WC_STATIC, L"Clickthrough (resets when app is closed)", xTitle, yOffset * 8 - 20, 150, 40);
+	const HWND hwndTextStartOnChange = createControl(WC_STATIC, L"Start On Change", xTitle, yOffset * 7 - 20, 150, 20);
+	const HWND hwndTextTransparentBackground = createControl(WC_STATIC, L"Transparent Background", xTitle, yOffset * 8 - 20, 150, 20);
+	const HWND hwndTextCheckboxClickthrough = createControl(WC_STATIC, L"Clickthrough (resets when app is closed)", xTitle, yOffset * 9 - 20, 150, 40);
 
 	// Break lines
-	const HWND hwndBreakLine1 = createControl(WC_STATIC, nullptr, 15, yOffset * 5, SIZE_SETTINGS_WIDTH - 40, 5, NULL, SS_ETCHEDHORZ);
-	const HWND hwndBreakLine2 = createControl(WC_STATIC, nullptr, 15, yOffset * 9, SIZE_SETTINGS_WIDTH - 40, 5, NULL, SS_ETCHEDHORZ);
+	const HWND hwndBreakLine1 = createControl(WC_STATIC, nullptr, 15, yOffset * 6, SIZE_SETTINGS_WIDTH - 40, 5, NULL, SS_ETCHEDHORZ);
+	const HWND hwndBreakLine2 = createControl(WC_STATIC, nullptr, 15, yOffset * 11 - 10, SIZE_SETTINGS_WIDTH - 40, 5, NULL, SS_ETCHEDHORZ);
 
 	// Color options names
-	const HWND hwndTextColorTimer = createControl(WC_STATIC, L"Timer", xTitle, yOffset * 11 - 20, 150, 40);
-	const HWND hwndTextColorSelectedTimer = createControl(WC_STATIC, L"Selected Timer", xTitle, yOffset * 12 - 20, 150, 40);
-	const HWND hwndTextColorWinCon = createControl(WC_STATIC, L"Last 20 Seconds", xTitle, yOffset * 13 - 20, 150, 40);
-	const HWND hwndTextColorBackground = createControl(WC_STATIC, L"Background", xTitle, yOffset * 14 - 20, 150, 40);
+	const HWND hwndTextColorTimer = createControl(WC_STATIC, L"Timer", xTitle, yOffset * 12 - 20, 150, 40);
+	const HWND hwndTextColorSelectedTimer = createControl(WC_STATIC, L"Selected Timer", xTitle, yOffset * 13 - 20, 150, 40);
+	const HWND hwndTextColorWinCon = createControl(WC_STATIC, L"Last 20 Seconds", xTitle, yOffset * 14 - 20, 150, 40);
+	const HWND hwndTextColorBackground = createControl(WC_STATIC, L"Background", xTitle, yOffset * 15 - 20, 150, 40);
 
 	// Copyright text
-	const HWND hwndCopyright = createControl(WC_STATIC, L"© Truueh 2024", 10, SIZE_SETTINGS_HEIGHT - 65, 100, 40);
+	const HWND hwndCopyright = createControl(WC_STATIC, L"© Truueh 2025", 10, SIZE_SETTINGS_HEIGHT - 65, 100, 40);
 
 	// Apply fonts
 	setControlsFont(hwnd_);
@@ -150,14 +151,15 @@ void SettingsWindow::initializeButtonControls()
 	hotkeys[5] = createControl(WC_BUTTON, L"test", xHotkeyCon, yOffset * 4, widthHotkey, heightHotkey, 0, BS_FLAT); // Timer 2 key
 
 	// Checkbox buttons
-	const HWND hCbTransparentBg = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 7 - 30, sizeCheckbox, sizeCheckbox, CID_TRANSPARENT_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
-	const HWND hCbClickthrough = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 8 - 30, sizeCheckbox, sizeCheckbox, CID_CLICKTHROUGH, BS_CHECKBOX | BS_AUTOCHECKBOX);
+	const HWND hCbStartOnChange = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 7 - 30, sizeCheckbox, sizeCheckbox, CID_STARTONCHANGE_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
+	const HWND hCbTransparentBg = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 8 - 30, sizeCheckbox, sizeCheckbox, CID_TRANSPARENT_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
+	const HWND hCbClickthrough = createControl(WC_BUTTON, L"", xCheckbox, yOffset * 9 - 30, sizeCheckbox, sizeCheckbox, CID_CLICKTHROUGH, BS_CHECKBOX | BS_AUTOCHECKBOX);
 
 	// Color buttons
-	colorButtons[0] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 11 - 20, 100, 15, CID_TIMER_COLOR, BS_OWNERDRAW);
-	colorButtons[1] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 12 - 20, 100, 15, CID_SELECTED_TIMER_COLOR, BS_OWNERDRAW);
-	colorButtons[2] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 13 - 20, 100, 15, CID_LAST_SECONDS_COLOR, BS_OWNERDRAW);
-	colorButtons[3] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 14 - 20, 100, 15, CID_BACKGROUND_COLOR, BS_OWNERDRAW);
+	colorButtons[0] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 12 - 20, 100, 15, CID_TIMER_COLOR, BS_OWNERDRAW);
+	colorButtons[1] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 13 - 20, 100, 15, CID_SELECTED_TIMER_COLOR, BS_OWNERDRAW);
+	colorButtons[2] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 14 - 20, 100, 15, CID_LAST_SECONDS_COLOR, BS_OWNERDRAW);
+	colorButtons[3] = createControl(WC_BUTTON, L"", xColorButton, yOffset * 15 - 20, 100, 15, CID_BACKGROUND_COLOR, BS_OWNERDRAW);
 
 	// Initialize exit controls
 	HWND hwndOkButton = createControl(WC_BUTTON, L"OK", SIZE_SETTINGS_WIDTH - 160, SIZE_SETTINGS_HEIGHT - 80, 50, 25, CID_OK);
@@ -172,6 +174,7 @@ void SettingsWindow::initializeButtonControls()
 	}
 
 	// Apply currently set options
+	SendMessage(hCbStartOnChange, BM_SETCHECK, appSettings.optionStartOnChange, 0);
 	SendMessage(hCbTransparentBg, BM_SETCHECK, appSettings.optionTransparent, 0);
 	SendMessage(hCbClickthrough, BM_SETCHECK, appSettings.clickthrough, 0);
 }
@@ -238,6 +241,11 @@ void SettingsWindow::handleControlCommand(const LPARAM lParam)
 		SetWindowText(hActiveControl_, L"...");
 		break;
 	}
+
+	// Start on change checkbox
+	case CID_STARTONCHANGE_CB:
+		tempSettings_.optionStartOnChange = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
+		break;
 
 	// Transparent background checkbox
 	case CID_TRANSPARENT_CB: 
