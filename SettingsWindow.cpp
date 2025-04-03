@@ -99,7 +99,7 @@ void SettingsWindow::initializeTextControls() const
 	const HWND hwndTextTimer2 = createControl(WC_STATIC, L"Timer 2", xTitle, yOffset * 4, 150, 20);
 
 	// Checkbox titles
-	const HWND hwndTextStartOnChange = createControl(WC_STATIC, L"Start On Change", xTitle, yOffset * 7 - 20, 150, 20);
+	const HWND hwndTextStartOnChange = createControl(WC_STATIC, L"Start Timer On Change", xTitle, yOffset * 7 - 20, 150, 20);
 	const HWND hwndTextTransparentBackground = createControl(WC_STATIC, L"Transparent Background", xTitle, yOffset * 8 - 20, 150, 20);
 	const HWND hwndTextCheckboxClickthrough = createControl(WC_STATIC, L"Clickthrough (resets when app is closed)", xTitle, yOffset * 9 - 20, 150, 40);
 

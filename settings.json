@@ -4,11 +4,11 @@
       "background" : 20,
       "last seconds" : 1,
       "selected timer" : 6,
-      "timer" : 8
+      "timer" : 9
    },
-   "optionStartOnChange" : true,
+   "optionStartOnChange" : false,
    "optionTransparent" : false,
    "start" : 70,
-   "timer1" : 219,
-   "timer2" : 221
+   "timer1" : 112,
+   "timer2" : 113
 }
