@@ -123,7 +123,7 @@ public:
 	// Public fields
 	Timer timer1 = Timer();
 	Timer timer2 = Timer();
-	SettingsWindow* pSettingsWindow;
+	SettingsWindow* pSettingsWindow = nullptr;
 
 	// Constructor
 	MainWindow();
@@ -162,13 +162,19 @@ public:
 	*/
 	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
-	/*
+	/**
 	@brief Handle hotkey inputs from the user.
 
 	@param code The code of the hotkey that the user hit.
 	*/
 	void handleHotKey(int code);
 
+	/**
+	@brief Handle controller button input.
+
+	@param buttons The buttons that had a state change.
+	*/
+	void handleControllerInput(WORD buttons) const;
 	/*
 	@brief The function that is called when a WM_PAINT event is registered to the window. This method forwards the task to handlePainting().
 	*/

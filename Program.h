@@ -39,3 +39,10 @@ LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam);
 @return Forwards to the next hook.
 */
 LRESULT CALLBACK mouseHook(int nCode, WPARAM wParam, LPARAM lParam);
+
+/**
+ * @brief A method to be called for controller input events.
+ * 
+ * @param buttons The buttons that had a state change.
+ */
+void controllerInputCallback(WORD buttons);

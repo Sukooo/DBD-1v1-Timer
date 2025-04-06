@@ -6,6 +6,9 @@
       "selected timer" : 6,
       "timer" : 9
    },
+   "conStart" : 5014,
+   "conTimer1" : 5003,
+   "conTimer2" : 5002,
    "optionStartOnChange" : false,
    "optionTransparent" : false,
    "start" : 70,

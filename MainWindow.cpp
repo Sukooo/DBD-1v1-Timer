@@ -1,9 +1,11 @@
 #include "MainWindow.h"
 #include <windowsx.h>
 #include "Globals.h"
+#include "HotkeyManager.h"
 #include "ResourceUtils.h"
 #include "SettingsUtils.h"
 #include "Program.h"
+
 
 MainWindow::MainWindow() = default;
 
@@ -556,7 +558,7 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 				if (pSettingsWindow->window() == nullptr) // dont create multiple settings windows
 				{
 					// Create and show settings window
-					if (!pSettingsWindow->create(L"Settings - Version 1.2", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, nullptr	, nullptr, nullptr)) {
+					if (!pSettingsWindow->create(L"Settings - Version 1.3", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, nullptr	, nullptr, nullptr)) {
 						return 0;
 					}
 
@@ -597,10 +599,13 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			refreshBrushes();
 			break;
 		case HOTKEY_HIT:
-			{
-				const int key = (int)wParam;
-				handleHotKey(key);
-			}
+		{
+			const int key = (int)wParam;
+			handleHotKey(key);
+		}
+			break;
+		case CONTROLLER_INPUT:
+			handleControllerInput(wParam);
 			break;
 		default:
 			break;
@@ -645,6 +650,17 @@ void MainWindow::handleHotKey(const int code)
 			activeTimer_->resetTimer();
 		}
 	}
+}
+
+void MainWindow::handleControllerInput(const WORD buttons) const
+{
+	if (pSettingsWindow->window() != nullptr)
+	{
+		SendMessage(pSettingsWindow->window(), CONTROLLER_INPUT, buttons, NULL);
+		return;
+	}
+
+	HotkeyManager::execute(buttons);
 }
 
 void MainWindow::draw() {

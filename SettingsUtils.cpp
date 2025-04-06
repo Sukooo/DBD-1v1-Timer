@@ -16,11 +16,16 @@ SettingsStruct getSafeSettingsStruct()
 	reader.parse(file, actualJson);
 
 	// hotkeys
-	if (actualJson["start"].isInt() && actualJson["timer1"].isInt() && actualJson["timer2"].isInt())
+	if (actualJson["start"].isInt() && actualJson["timer1"].isInt() && actualJson["timer2"].isInt() &&
+		actualJson["conStart"].isInt() && actualJson["conTimer1"].isInt() && actualJson["conTimer2"].isInt())
 	{
 		settings.startKey = actualJson["start"].asInt();
 		settings.timer1Key = actualJson["timer1"].asInt();
 		settings.timer2Key = actualJson["timer2"].asInt();
+
+		settings.conStartKey = actualJson["conStart"].asInt();
+		settings.conTimer1Key = actualJson["conTimer1"].asInt();
+		settings.conTimer2Key = actualJson["conTimer2"].asInt();
 	}
 
 	// options
@@ -67,8 +72,14 @@ void setSettingsStruct(const SettingsStruct& settings)
 	settingsJson["start"] = settings.startKey;
 	settingsJson["timer1"] = settings.timer1Key;
 	settingsJson["timer2"] = settings.timer2Key;
+
+	settingsJson["conStart"] = settings.conStartKey;
+	settingsJson["conTimer1"] = settings.conTimer1Key;
+	settingsJson["conTimer2"] = settings.conTimer2Key;
+
 	settingsJson["optionTransparent"] = settings.optionTransparent;
 	settingsJson["optionStartOnChange"] = settings.optionStartOnChange;
+
 	settingsJson["colors"]["timer"] = settings.colors.timerColor;
 	settingsJson["colors"]["selected timer"] = settings.colors.selectedTimerColor;
 	settingsJson["colors"]["last seconds"] = settings.colors.lastSecondsColor;
@@ -98,8 +109,14 @@ void createSettingsFile()
 	settingsJson["start"] = defaultSettings.startKey;
 	settingsJson["timer1"] = defaultSettings.timer1Key;
 	settingsJson["timer2"] = defaultSettings.timer2Key;
+
+	settingsJson["conStart"] = defaultSettings.conStartKey;
+	settingsJson["conTimer1"] = defaultSettings.conTimer1Key;
+	settingsJson["conTimer2"] = defaultSettings.conTimer2Key;
+
 	settingsJson["optionTransparent"] = defaultSettings.optionTransparent;
 	settingsJson["optionStartOnChange"] = defaultSettings.optionStartOnChange;
+
 	settingsJson["colors"]["timer"] = defaultSettings.colors.timerColor;
 	settingsJson["colors"]["selected timer"] = defaultSettings.colors.selectedTimerColor;
 	settingsJson["colors"]["last seconds"] = defaultSettings.colors.lastSecondsColor;

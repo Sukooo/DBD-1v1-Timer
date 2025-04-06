@@ -86,7 +86,7 @@ private:
 	void handleControlCommand(LPARAM lParam);
 
 	/*
-	@brief Called from a WM_KEYDOWN event. Saves the hit key to the tempSettings_ struct (as the currently selected control).
+	@brief Saves the key to the temp SettingsStruct (as the currently selected control).
 
 	@param key The key that the user hit.
 	*/
@@ -273,6 +273,25 @@ private:
 		{VK_ZOOM, L"Zoom"},
 		{VK_PA1, L"PA1"},
 		{VK_OEM_CLEAR, L"Clear"},
+	};
+
+	std::map<UINT, LPCWSTR> controllerMap_ = {
+		{5000, L"D-Up"},
+		{5001, L"D-Down"},
+		{5002, L"D-Right"},
+		{5003, L"D-Left"},
+		{5004, L"Start"},
+		{5005, L"Back"},
+		{5006, L"L3"},
+		{5007, L"R3"},
+		{5008, L"LB"},
+		{5009, L"RB"},
+		{5010, L"A"},
+		{5011, L"B"},
+		{5012, L"X"},
+		{5013, L"Y"},
+		{5014, L"LT"},
+		{5015, L"RT"},
 	};
 
 public:

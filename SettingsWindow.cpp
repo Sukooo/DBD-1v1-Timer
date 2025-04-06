@@ -8,7 +8,6 @@
 #include <windowsx.h>
 #include <exception>
 
-
 void SettingsWindow::initializeWindow()
 {
 	// retrieve settings
@@ -149,9 +148,9 @@ void SettingsWindow::initializeButtonControls()
 	hotkeys[2] = createControl(WC_BUTTON, L"", xHotkey, tileHeight_ * 4, widthHotkey, heightHotkey, CID_TIMER2, BS_FLAT); // Timer 2 key
 
 		// Controller
-	hotkeys[3] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 2, widthHotkey, heightHotkey, 0, BS_FLAT); // Start key
-	hotkeys[4] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 3, widthHotkey, heightHotkey, 0, BS_FLAT); // Timer 1 key
-	hotkeys[5] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 4, widthHotkey, heightHotkey, 0, BS_FLAT); // Timer 2 key
+	hotkeys[3] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 2, widthHotkey, heightHotkey, CID_CON_START, BS_FLAT); // Start key
+	hotkeys[4] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 3, widthHotkey, heightHotkey, CID_CON_TIMER1, BS_FLAT); // Timer 1 key
+	hotkeys[5] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 4, widthHotkey, heightHotkey, CID_CON_TIMER2, BS_FLAT); // Timer 2 key
 
 	// Checkbox buttons
 	const HWND hCbStartOnChange = createControl(WC_BUTTON, L"", xCheckbox, tileHeight_ * 6, sizeCheckbox, sizeCheckbox, CID_STARTONCHANGE_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
@@ -233,12 +232,10 @@ void SettingsWindow::handleControlCommand(const LPARAM lParam)
 	case CID_START:
 	case CID_TIMER1:
 	case CID_TIMER2:
+	case CID_CON_START:
+	case CID_CON_TIMER1:
+	case CID_CON_TIMER2:
 	{
-		if (hActiveControl_) { // Reset currently selected control (before this control was clicked)
-			applyHotkeySavedKey(hActiveControl_);
-			hActiveControl_ = nullptr;
-		}
-
 		SetFocus(hwnd_);
 		hActiveControl_ = hwndCtrl;
 		SetWindowText(hActiveControl_, L"...");
@@ -319,8 +316,26 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 
 void SettingsWindow::applyTempHotkey(const UINT key) {
 	const int controlId = GetDlgCtrlID(hActiveControl_); // retrieve control ID
+	const bool isControllerControl = controlId == CID_CON_START || controlId == CID_CON_TIMER1 || controlId == CID_CON_TIMER2;
 
-	switch (controlId) {
+	if ((isControllerControl && key < 5000) || (!isControllerControl && key >= 5000)) 
+	{
+		applyHotkeySavedKey(hActiveControl_);
+		hActiveControl_ = nullptr;
+		return;
+	}
+
+	switch (controlId)
+	{
+	case CID_CON_START:
+		tempSettings_.conStartKey = key;
+		break;
+	case CID_CON_TIMER1:
+		tempSettings_.conTimer1Key = key;
+		break;
+	case CID_CON_TIMER2:
+		tempSettings_.conTimer2Key = key;
+		break;
 	case CID_START:
 		tempSettings_.startKey = key;
 		break;
@@ -334,7 +349,11 @@ void SettingsWindow::applyTempHotkey(const UINT key) {
 		break;
 	}
 
-	SetWindowText(hActiveControl_, keyboardMap_[key]);
+	if (isControllerControl)
+		SetWindowText(hActiveControl_, controllerMap_[key]);
+	else
+		SetWindowText(hActiveControl_, keyboardMap_[key]);
+
 	hActiveControl_ = nullptr;
 }
 
@@ -355,6 +374,21 @@ void SettingsWindow::applyHotkeySavedKey(const HWND hCtrl) {
 	case CID_TIMER2:
 		if (keyboardMap_.count(tempSettings_.timer2Key)) { // Verify key exists
 			SetWindowText(hCtrl, keyboardMap_[tempSettings_.timer2Key]);
+		}
+		break;
+	case CID_CON_START:
+		if (controllerMap_.count(tempSettings_.conStartKey)) { // Verify key exists
+			SetWindowText(hCtrl, controllerMap_[tempSettings_.conStartKey]);
+		}
+		break;
+	case CID_CON_TIMER1:
+		if (controllerMap_.count(tempSettings_.conTimer1Key)) { // Verify key exists
+			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer1Key]);
+		}
+		break;
+	case CID_CON_TIMER2:
+		if (controllerMap_.count(tempSettings_.conTimer2Key)) { // Verify key exists
+			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer2Key]);
 		}
 		break;
 	default:
@@ -422,6 +456,14 @@ LRESULT SettingsWindow::handleMessage(const UINT wMsg, const WPARAM wParam, cons
 				const UINT key = (UINT)wParam;
 				applyTempHotkey(key);
 			}
+			break;
+		case CONTROLLER_INPUT:
+		{
+			if (hActiveControl_) {
+				const UINT key = (UINT)wParam;
+				applyTempHotkey(key);
+			}
+		}
 			break;
 		default:
 			break;

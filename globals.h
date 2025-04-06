@@ -11,6 +11,9 @@ constexpr byte CID_TIMER2 = 105;
 constexpr byte CID_TRANSPARENT_CB = 106;
 constexpr byte CID_CLICKTHROUGH_CB = 107;
 constexpr byte CID_STARTONCHANGE_CB = 112;
+constexpr byte CID_CON_START = 113;
+constexpr byte CID_CON_TIMER1 = 114;
+constexpr byte CID_CON_TIMER2 = 115;
 constexpr byte MENU_QUIT = 1;
 constexpr byte MENU_SETTINGS = 0;
 constexpr byte KEY_START = 0;
@@ -26,6 +29,24 @@ constexpr byte CID_LAST_SECONDS_COLOR = 110;
 constexpr byte CID_BACKGROUND_COLOR = 111;
 constexpr byte CID_COLOR_PREVIEW = 25;
 
+// Controller Iinput Buttons
+constexpr USHORT CONTROLLER_UP = 5000;
+constexpr USHORT CONTROLLER_DOWN = 5001;
+constexpr USHORT CONTROLLER_RIGHT = 5002;
+constexpr USHORT CONTROLLER_LEFT = 5003;
+constexpr USHORT CONTROLLER_START = 5004;
+constexpr USHORT CONTROLLER_BACK = 5005;
+constexpr USHORT CONTROLLER_LEFT_THUMB = 5006;
+constexpr USHORT CONTROLLER_RIGHT_THUMB = 5007;
+constexpr USHORT CONTROLLER_LEFT_SHOULDER = 5008;
+constexpr USHORT CONTROLLER_RIGHT_SHOULDER = 5009;
+constexpr USHORT CONTROLLER_A = 5010;
+constexpr USHORT CONTROLLER_B = 5011;
+constexpr USHORT CONTROLLER_X = 5012;
+constexpr USHORT CONTROLLER_Y = 5013;
+constexpr USHORT CONTROLLER_LEFT_TRIGGER = 5014;
+constexpr USHORT CONTROLLER_RIGHT_TRIGGER = 5015;
+
 // Global Sizes
 constexpr UINT16 SIZE_SETTINGS_WIDTH = 400;
 constexpr UINT16 SIZE_SETTINGS_HEIGHT = 640;
@@ -39,6 +60,7 @@ constexpr byte IDB_CONTROLLER = 111;
 // Custom HWND messages
 constexpr int REFRESH_BRUSHES(WM_APP + 1);
 constexpr int HOTKEY_HIT(WM_APP + 2);
+constexpr int CONTROLLER_INPUT(WM_APP + 3);
 
 // Configuration File Names
 #define SETTINGS_FILE_NAME "Settings.json"
@@ -57,6 +79,9 @@ struct SettingsStruct // With default values
 	int startKey = 70;
 	int timer1Key = 112;
 	int timer2Key = 113;
+	int conStartKey = CONTROLLER_A;
+	int conTimer1Key = CONTROLLER_LEFT;
+	int conTimer2Key = CONTROLLER_RIGHT;
 	bool optionStartOnChange = false;
 	bool optionTransparent = false;
 	bool optionClickThrough = false;

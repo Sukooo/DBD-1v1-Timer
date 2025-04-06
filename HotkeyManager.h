@@ -24,7 +24,7 @@ public:
 
 	@param startKey A virtual key for switching to timer 2
 	*/
-	static void setHotkeysMap(int startKey, int timer1Key, int timer2Key);
+	static void setHotkeysMap(int startKey, int timer1Key, int timer2Key, int conStartKey, int conTimer1Key, int conTimer2Key);
 
 	/*
 	@brief If the keyCode is linked to a hotkey, post a message to MainWindow activate it.

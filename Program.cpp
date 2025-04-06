@@ -14,10 +14,14 @@
 #include "MainWindow.h"
 #include "Program.h"
 
+#include "ControllerManager.h"
 #include "HotkeyManager.h"
 
 #pragma comment(lib, "Msimg32.lib")
 #pragma comment (lib, "d2d1")
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "Xinput.lib")
 
 using std::thread; using std::wstring;
 
@@ -106,11 +110,15 @@ LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lPara
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
+void controllerInputCallback(const WORD buttons)
+{
+	SendMessage(hwndMainWindow, CONTROLLER_INPUT ,(WPARAM)buttons, NULL);
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd)
 {
 	// Create the main window
 	MainWindow win;
-
 	try
 	{
 		// Global hInstance variable (declared in globals.h)
@@ -131,9 +139,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		if (!win.create(L"Timer", 0, 0, 285, 40, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
 			return 0;
 		}
+
 		SetLayeredWindowAttributes(win.window(), 1, 255, LWA_COLORKEY | LWA_ALPHA);
 
 		ShowWindow(win.window(), nShowCmd);
+
 
 		// Create variables for settings and color picker windows
 		SettingsWindow settings;
@@ -141,6 +151,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		settings.pColorPicker = &colorPicker;
 
 		win.pSettingsWindow = &settings;
+
+
 
 		// global variables for timer
 		pGlobalTimerWindow = &win;
@@ -153,17 +165,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
 		SetWindowsHookEx(WH_MOUSE_LL, &mouseHook, nullptr, NULL);
 
-		// Create a thread for the app loop (ticks)
-		thread t1(appLoop, &win);
+		// Controller support
+		std::unique_ptr<ControllerManager> controllerManager(std::make_unique<ControllerManager>());
+		controllerManager->setInputCallback(controllerInputCallback);
+		controllerManager->start();
 
-		// Handle messages
-		MSG msg = { };
-		while (GetMessage(&msg, nullptr, 0, 0)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+		// Create a thread for the app loop (ticks)
+		thread appLoopThread(appLoop, &win);
+
+		while (win.appRunning)
+		{
+			// Handle messages
+			MSG msg = { };
+			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 
-		t1.join();
+		appLoopThread.join();
+		controllerManager->stop();
 		return 0;
 	}
 	catch (const std::exception& e)

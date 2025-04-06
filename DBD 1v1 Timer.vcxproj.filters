@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Resources">
       <UniqueIdentifier>{d2ab2e0e-53e4-4990-b3bb-897f079da8cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{1c094235-a961-4db1-8f31-91d5ef9d6e8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{3c46b243-eb40-485b-96f1-6bccd441078a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -62,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="HotkeyManager.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="HotkeyManager.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerManager.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
