@@ -19,32 +19,32 @@ private:
 	int tileHeight_ = SIZE_SETTINGS_HEIGHT / rows_;
 	int tileWidth_ = SIZE_SETTINGS_WIDTH / cols_;
 
-	/*
+	/**
 	@brief Calls required methods to initialize the settings window.
 	*/
 	void initializeWindow();
 
-	/*
+	/**
 	@brief Initializes the bitmaps for the settings window.
 	*/
 	void initializeBitmaps();
 
-	/*
+	/**
 	@brief Displays the bitmaps of the settings window. (controller & mouse images)
 	*/
 	void displayBitmaps() const;
 
-	/*
+	/**
 	@brief Initializes all the text controls in the settings window.
 	*/
 	void initializeTextControls() const;
 	
-	/*
+	/**
 	@brief Initializes all the interactable controls in the settings window.
 	*/
 	void initializeButtonControls();
 
-	/*
+	/**
 	@brief Creates a control and returns it.
 
 	@param className The LPCWSTR representing the control's class name.
@@ -71,36 +71,36 @@ private:
 		int id = NULL, long additionalStyle = 0
 	) const;
 
-	/*
+	/**
 	@brief Sets the "copyright" font to a given control.
 
 	@param hControl The handle to the control to set the font of.
 	*/
 	static void setCopyrightFont(HWND hControl);
 
-	/*
+	/**
 	@brief Method that handles interaction with controls.
 
 	@param lParam should be forwarded from a message handling method.
 	*/
 	void handleControlCommand(LPARAM lParam);
 
-	/*
+	/**
 	@brief Saves the key to the temp SettingsStruct (as the currently selected control).
 
 	@param key The key that the user hit.
 	*/
 	void applyTempHotkey(UINT key);
 
-	/*
+	/**
 	@brief Set the text of the given control to it's saved value in the tempSettings_ struct.
 
 	@param hCtrl The HWND instance to set the text of.
 	*/
 	void applyHotkeySavedKey(HWND hCtrl);
 
-	/*
-	 @brief WindowProcedure for CommonControls controls.
+	/**
+	@brief WindowProcedure for CommonControls controls.
 
 	@param uMsg The WindowMessage
 
@@ -297,14 +297,14 @@ private:
 public:
 	ColorPickerWindow* pColorPicker; // Reference to a Color Picker window
 
-	/*
+	/**
 	@brief Sets the preview colors of the color selection controls.
 
 	@param lParam should be forwarded from a message handling method.
 	*/
 	void colorHandles(LPARAM lParam) const;
 
-	/*
+	/**
 	@brief Implements an inherited method responsible for handling messages sent to the window.
 
 	@param uMsg The message to handle. should be forwarded from a message handling method.
@@ -317,7 +317,7 @@ public:
 	*/
 	LRESULT handleMessage(UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
-	/*
+	/**
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/

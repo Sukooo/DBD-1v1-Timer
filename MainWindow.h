@@ -42,45 +42,45 @@ private:
 	int dir_ = -1;
 	int spaceOffset_ = 8;
 	
-	/*
+	/**
 	@brief Creates the graphic resources for the main window.
 
 	@return HRESULT representing the success of the operation.
 	*/
 	HRESULT createGraphicsResources();
 
-	/*
+	/**
 	@brief Creates the device independent resources for the main window.
 
 	@return HRESULT representing the success of the operation.
 	*/
 	HRESULT createDeviceIndependentResources();
 
-	/*
+	/**
 	@brief Set a new font size for the timers.
 
 	@return HRESULT representing the success of the operation.
 	*/
 	HRESULT changeFontSize(float fontSize);
 
-	/*
+	/**
 	@return The largest font size that can fit the window in it's current proportions.
 	*/
 	float getLargestFontsizeFit() const;
 
-	/*
+	/**
 	@brief Dispose of graphic resources.
 	*/
 	void discardGraphicsResources();
 
-	/*
+	/**
 	@brief Adjust the render target's size after the window has been resized.
 
 	@return HRESULT representing the success of the operation.
 	*/
 	HRESULT adjustRendertargetSize() const;
 
-	/*
+	/**
 	@brief Get the MousePos enum value of the mouse's direction.
 
 	@param lParam Contains information on the mouse's state. Should be forwarded from a message handler.
@@ -91,12 +91,12 @@ private:
 	*/
 	MousePos getMouseDir(LPARAM lParam, RECT windowPos) const;
 
-	/*
+	/**
 	@brief The method responsible for drawing to the main window and invoking the timer to draw to it aswell.
 	*/
 	void handlePainting();
 
-	/*
+	/**
 	@brief Handles mouse movements, including changing the cursor according to it's position in the window, 
 	and detecting clicks to apply resize logic.
 
@@ -105,7 +105,7 @@ private:
 	*/
 	void handleMouseMovement(LPARAM lParam) const;
 
-	/*
+	/**
 	@brief Get the COLORF value of an HBRUSH type.
 
 	@param hBrush The HBRUSH to retrieve a COLORF from.
@@ -114,7 +114,7 @@ private:
 	*/
 	static D2D1_COLOR_F hBrushToColorf(HBRUSH hBrush);
 	
-	/*
+	/**
 	@brief Retrieve and apply the colors from the settings file to the timer brushes.
 	*/
 	void refreshBrushes();
@@ -143,13 +143,13 @@ public:
 
 	// Methods
 
-	/*
+	/**
 	@brief Retrieves the window's class name.
 	@return LPCWSTR representing the window's class name.
 	*/
 	LPCWSTR className() const override { return L"Main Window"; }
 
-	/*
+	/**
 	@brief Implements an inherited method responsible for handling messages sent to the window.
 
 	@param uMsg The message to handle. should be forwarded from a message handling method.
@@ -175,7 +175,7 @@ public:
 	@param buttons The buttons that had a state change.
 	*/
 	void handleControllerInput(WORD buttons) const;
-	/*
+	/**
 	@brief The function that is called when a WM_PAINT event is registered to the window. This method forwards the task to handlePainting().
 	*/
 	void draw();

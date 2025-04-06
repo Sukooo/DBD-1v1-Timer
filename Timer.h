@@ -20,7 +20,7 @@ private:
 	SYSTEMTIME startTime_;
 	SYSTEMTIME updatingTime_;
 
-	/*
+	/**
 	@brief Calculates the difference between two SYSTEMTIMEs.
 
 	@param t1 The first SYSTEMTIME.
@@ -36,44 +36,44 @@ public:
 
 	// Getters and public methods
 
-	/*
+	/**
 	@return The TimerState enum value of the current state of the timer.
 	*/
 	TimerState getTimerState() const;
 
-	/*
+	/**
 	@brief Convert the time from the timer to a wstring format.
 
 	@return A wstring representing the timer's time.
 	*/
 	wstring getTimeAsText() const;
 
-	/*
+	/**
 	@return The time that the timer has kept track of in milliseconds.
 	*/
 	int getTimeInMillis() const;
 
-	/*
+	/**
 	@brief Start the timer.
 	*/
 	void startTimer();
 
-	/*
+	/**
 	@brief Stpo the timer.
 	*/
 	void stopTimer();
 
-	/*
+	/**
 	@brief Reset the timer.
 	*/
 	void resetTimer();
 
-	/*
+	/**
 	@brief Update the timer's saved time (Increment it).
 	*/
 	void updateTime();
 
-	/*
+	/**
 	@brief draws the wstring format of the timer's time to a render target.
 	Only call from within an active render target begin draw scope
 

@@ -4,17 +4,17 @@
 // Fields
 extern MainWindow* pGlobalTimerWindow;
 
-/*
+/**
 @brief A method Running an infinite loop, responsible for updating the timers.
 */
 extern void appLoop(MainWindow* win);
 
-/*
+/**
 @brief End the process of the program safely.
 */
 extern void exitApp();
 
-/*
+/**
 @brief The hook procedure to listen for key strokes of the active HOTKEYS.
 
 @param nCode Has no effect in this function but is part of the syntax.
@@ -27,7 +27,7 @@ extern void exitApp();
 */
 LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam);
 
-/*
+/**
 @brief The hook procedure to listen for key strokes of the active HOTKEYS.
 
 @param nCode Has no effect in this function but is part of the syntax.

@@ -10,7 +10,7 @@ template <class T> void safeRelease(T** ppT)
 	}
 }
 
-/*
+/**
 @brief Load a bitmap resource.
 
 @param bitmap The bitmap resource to load.
@@ -19,7 +19,7 @@ template <class T> void safeRelease(T** ppT)
 */
 HBITMAP loadBitmapResource(int bitmap);
 
-/*
+/**
 @brief Initialize the colors that can be chosen (as brushes).
 */
 void initializeBrushes();

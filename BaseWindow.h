@@ -7,7 +7,7 @@ template <class DERIVED_CLASS> class BaseWindow
 {
 public:
 	// public variables / methods
-	BaseWindow() : hwnd_(nullptr) { };
+	BaseWindow() : hwnd_(nullptr) { }
 
 	HWND window() const { return hwnd_; }
 
