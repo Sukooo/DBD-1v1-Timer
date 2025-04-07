@@ -31,7 +31,6 @@ TimerState Timer::getTimerState() const
 wstring Timer::getTimeAsText() const
 {
 	int millisInt = time_;
-
 	int secondsInt = millisInt / 1000;
 	const int minutesInt = secondsInt / 60;
 	millisInt = millisInt % 1000;
@@ -41,8 +40,14 @@ wstring Timer::getTimeAsText() const
 	const wstring minutesStr = std::to_wstring(minutesInt);
 	wstring millisStr = std::to_wstring(millisInt);
 
-	if (millisStr.size() == 1) {
-		millisStr += '0';
+	if (millisInt <= 10)
+	{
+		millisStr = L"00";
+	}
+	else if (millisInt % 1000 < 100)
+	{
+		millisStr[1] = millisStr[0];
+		millisStr[0] = '0';
 	}
 
 	wstring text = L"              ";
