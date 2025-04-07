@@ -4,11 +4,10 @@
 #include "SettingsUtils.h"
 #include "BaseWindow.h"
 #include "Program.h"
+#include "ControllerManager.h"
 #include <CommCtrl.h>
 #include <windowsx.h>
 #include <exception>
-
-#include "ControllerManager.h"
 
 void SettingsWindow::initializeWindow()
 {

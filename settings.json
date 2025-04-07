@@ -6,12 +6,12 @@
       "selected timer" : 6,
       "timer" : 9
    },
-   "conStart" : 5010,
+   "conStart" : 5015,
    "conTimer1" : 5003,
    "conTimer2" : 5002,
    "optionStartOnChange" : false,
    "optionTransparent" : false,
-   "start" : 32,
-   "timer1" : 112,
-   "timer2" : 113
+   "start" : 70,
+   "timer1" : 219,
+   "timer2" : 221
 }
