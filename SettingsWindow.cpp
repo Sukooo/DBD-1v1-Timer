@@ -319,6 +319,9 @@ void SettingsWindow::applyTempConHotkey(const UINT key)
 {
 	const int controlId = GetDlgCtrlID(hActiveControl_);
 
+	if (controlId == CID_START || controlId == CID_TIMER1 || controlId == CID_TIMER2)
+		return;
+
 	switch (controlId)
 	{
 	case CID_CON_START:
@@ -333,7 +336,7 @@ void SettingsWindow::applyTempConHotkey(const UINT key)
 	default: 
 		break;
 	}
-
+	
 	SetWindowText(hActiveControl_, controllerMap_[key]);
 	hActiveControl_ = nullptr;
 }
