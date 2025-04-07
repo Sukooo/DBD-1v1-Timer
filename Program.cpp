@@ -179,6 +179,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
+
+			Sleep(1);
 		}
 
 		appLoopThread.join();
