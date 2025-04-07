@@ -1,3 +1,4 @@
 add:
 - Make milliseconds text smaller
-- Add controller support
+- Add ability to select amount of timers
+- Add popup timers with countdown for user defined amounts of time
