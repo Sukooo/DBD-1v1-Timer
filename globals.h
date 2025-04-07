@@ -29,7 +29,7 @@ constexpr byte CID_LAST_SECONDS_COLOR = 110;
 constexpr byte CID_BACKGROUND_COLOR = 111;
 constexpr byte CID_COLOR_PREVIEW = 25;
 
-// Controller Iinput Buttons
+// Controller input Buttons
 constexpr USHORT CONTROLLER_UP = 5000;
 constexpr USHORT CONTROLLER_DOWN = 5001;
 constexpr USHORT CONTROLLER_RIGHT = 5002;
@@ -46,6 +46,19 @@ constexpr USHORT CONTROLLER_X = 5012;
 constexpr USHORT CONTROLLER_Y = 5013;
 constexpr USHORT CONTROLLER_LEFT_TRIGGER = 5014;
 constexpr USHORT CONTROLLER_RIGHT_TRIGGER = 5015;
+
+// Playstation controller input buttons
+constexpr USHORT PS_CONTROLLER_START = 16;
+constexpr USHORT PS_CONTROLLER_BACK = 32;
+constexpr USHORT PS_CONTROLLER_L3= 64;
+constexpr USHORT PS_CONTROLLER_R3 = 128;
+constexpr USHORT PS_CONTROLLER_LB = 256;
+constexpr USHORT PS_CONTROLLER_RB = 512;
+constexpr USHORT PS_CONTROLLER_A = 4096;
+constexpr USHORT PS_CONTROLLER_B = 8192;
+constexpr USHORT PS_CONTROLLER_X = 16384;
+constexpr USHORT PS_CONTROLLER_Y = 32768;
+
 
 // Global Sizes
 constexpr UINT16 SIZE_SETTINGS_WIDTH = 400;

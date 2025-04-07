@@ -18,24 +18,25 @@ void ControllerManager::poll()
 	{
 		const bool leftTriggerChanged = state_.Gamepad.bLeftTrigger / 255 != previousState_.Gamepad.bLeftTrigger / 255;
 		const bool rightTriggerChanged = state_.Gamepad.bRightTrigger / 255 != previousState_.Gamepad.bRightTrigger / 255;
+
+		const bool leftTriggerDown = leftTriggerChanged && state_.Gamepad.bLeftTrigger / 255 == 1;
+		const bool rightTriggerDown = rightTriggerChanged && state_.Gamepad.bRightTrigger / 255 == 1;
+
 		const bool buttonsChanged = state_.Gamepad.wButtons != 0 && state_.Gamepad.wButtons != previousState_.Gamepad.wButtons;
 
-		const bool isChange = buttonsChanged || (leftTriggerChanged || rightTriggerChanged);
-
-		if (isChange)
+		if (buttonsChanged)
 		{
 			WORD buttons = buttonsMap[state_.Gamepad.wButtons];
 
-			if (state_.Gamepad.bLeftTrigger / 255 == 1)
-			{
-				buttons = ControllerButtons::LeftTrigger;
-			}
-			else if (state_.Gamepad.bRightTrigger / 255 == 1)
-			{
-				buttons = ControllerButtons::RightTrigger;
-			}
-
-			inputCallback_(buttons);
+ 			inputCallback_(buttons);
+		}
+		else if (leftTriggerDown)
+		{
+			inputCallback_(ControllerButtons::LeftTrigger);
+		}
+		else if (rightTriggerDown)
+		{
+			inputCallback_(ControllerButtons::RightTrigger);
 		}
 
 		previousState_ = state_;

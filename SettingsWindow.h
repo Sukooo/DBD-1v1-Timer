@@ -90,6 +90,13 @@ private:
 
 	@param key The key that the user hit.
 	*/
+	void applyTempConHotkey(const UINT key);
+
+	/**
+	@brief Saves the key to the temp SettingsStruct (as the currently selected control).
+
+	@param key The key that the user hit.
+	*/
 	void applyTempHotkey(UINT key);
 
 	/**
@@ -140,6 +147,7 @@ private:
 		{VK_DOWN, L"Down"},
 		{VK_RETURN, L"Enter"},
 		{VK_BACK, L"Backspace"},
+		{VK_SPACE, L"Spacebar"},
 		{VK_CLEAR, L"Clear"},
 		{VK_PAUSE, L"Pause"},
 		{VK_PRIOR, L"Page Up"},

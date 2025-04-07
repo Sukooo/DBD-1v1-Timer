@@ -112,7 +112,7 @@ LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lPara
 
 void controllerInputCallback(const WORD buttons)
 {
-	SendMessage(hwndMainWindow, CONTROLLER_INPUT ,(WPARAM)buttons, NULL);
+	SendMessage(hwndMainWindow, CONTROLLER_INPUT ,buttons, NULL);
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd)
@@ -151,8 +151,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		settings.pColorPicker = &colorPicker;
 
 		win.pSettingsWindow = &settings;
-
-
 
 		// global variables for timer
 		pGlobalTimerWindow = &win;

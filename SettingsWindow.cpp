@@ -8,6 +8,8 @@
 #include <windowsx.h>
 #include <exception>
 
+#include "ControllerManager.h"
+
 void SettingsWindow::initializeWindow()
 {
 	// retrieve settings
@@ -148,9 +150,9 @@ void SettingsWindow::initializeButtonControls()
 	hotkeys[2] = createControl(WC_BUTTON, L"", xHotkey, tileHeight_ * 4, widthHotkey, heightHotkey, CID_TIMER2, BS_FLAT); // Timer 2 key
 
 		// Controller
-	hotkeys[3] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 2, widthHotkey, heightHotkey, CID_CON_START, BS_FLAT); // Start key
-	hotkeys[4] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 3, widthHotkey, heightHotkey, CID_CON_TIMER1, BS_FLAT); // Timer 1 key
-	hotkeys[5] = createControl(WC_BUTTON, L"test", xHotkeyCon, tileHeight_ * 4, widthHotkey, heightHotkey, CID_CON_TIMER2, BS_FLAT); // Timer 2 key
+	hotkeys[3] = createControl(WC_BUTTON, L"", xHotkeyCon, tileHeight_ * 2, widthHotkey, heightHotkey, CID_CON_START, BS_FLAT); // Start key
+	hotkeys[4] = createControl(WC_BUTTON, L"", xHotkeyCon, tileHeight_ * 3, widthHotkey, heightHotkey, CID_CON_TIMER1, BS_FLAT); // Timer 1 key
+	hotkeys[5] = createControl(WC_BUTTON, L"", xHotkeyCon, tileHeight_ * 4, widthHotkey, heightHotkey, CID_CON_TIMER2, BS_FLAT); // Timer 2 key
 
 	// Checkbox buttons
 	const HWND hCbStartOnChange = createControl(WC_BUTTON, L"", xCheckbox, tileHeight_ * 6, sizeCheckbox, sizeCheckbox, CID_STARTONCHANGE_CB, BS_CHECKBOX | BS_AUTOCHECKBOX);
@@ -314,16 +316,9 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 	}
 }
 
-void SettingsWindow::applyTempHotkey(const UINT key) {
-	const int controlId = GetDlgCtrlID(hActiveControl_); // retrieve control ID
-	const bool isControllerControl = controlId == CID_CON_START || controlId == CID_CON_TIMER1 || controlId == CID_CON_TIMER2;
-
-	if ((isControllerControl && key < 5000) || (!isControllerControl && key >= 5000)) 
-	{
-		applyHotkeySavedKey(hActiveControl_);
-		hActiveControl_ = nullptr;
-		return;
-	}
+void SettingsWindow::applyTempConHotkey(const UINT key)
+{
+	const int controlId = GetDlgCtrlID(hActiveControl_);
 
 	switch (controlId)
 	{
@@ -336,6 +331,33 @@ void SettingsWindow::applyTempHotkey(const UINT key) {
 	case CID_CON_TIMER2:
 		tempSettings_.conTimer2Key = key;
 		break;
+	default: 
+		break;
+	}
+
+	SetWindowText(hActiveControl_, controllerMap_[key]);
+	hActiveControl_ = nullptr;
+}
+
+void SettingsWindow::applyTempHotkey(const UINT key) {
+	const int controlId = GetDlgCtrlID(hActiveControl_); // retrieve control ID
+
+	if (controlId == CID_CON_START || controlId == CID_CON_TIMER1 || controlId == CID_CON_TIMER2) 
+	{
+		if (key == VK_ESCAPE)
+		{
+			applyTempConHotkey(ControllerButtons::Start);
+
+		}
+		else if (key == VK_LBUTTON)
+		{
+			applyTempConHotkey(ControllerButtons::RightTrigger);
+		}
+		return;
+	}
+
+	switch (controlId)
+	{
 	case CID_START:
 		tempSettings_.startKey = key;
 		break;
@@ -349,11 +371,7 @@ void SettingsWindow::applyTempHotkey(const UINT key) {
 		break;
 	}
 
-	if (isControllerControl)
-		SetWindowText(hActiveControl_, controllerMap_[key]);
-	else
-		SetWindowText(hActiveControl_, keyboardMap_[key]);
-
+	SetWindowText(hActiveControl_, keyboardMap_[key]);
 	hActiveControl_ = nullptr;
 }
 
@@ -362,32 +380,32 @@ void SettingsWindow::applyHotkeySavedKey(const HWND hCtrl) {
 
 	switch (controlId) {
 	case CID_START:
-		if (keyboardMap_.count(tempSettings_.startKey)) { // Verify key exists
+		if (keyboardMap_.count(tempSettings_.startKey)) {
 			SetWindowText(hCtrl, keyboardMap_[tempSettings_.startKey]);
 		}
 		break;
 	case CID_TIMER1:
-		if (keyboardMap_.count(tempSettings_.timer1Key)) { // Verify key exists
+		if (keyboardMap_.count(tempSettings_.timer1Key)) {
 			SetWindowText(hCtrl, keyboardMap_[tempSettings_.timer1Key]);
 		}
 		break;
 	case CID_TIMER2:
-		if (keyboardMap_.count(tempSettings_.timer2Key)) { // Verify key exists
+		if (keyboardMap_.count(tempSettings_.timer2Key)) {
 			SetWindowText(hCtrl, keyboardMap_[tempSettings_.timer2Key]);
 		}
 		break;
 	case CID_CON_START:
-		if (controllerMap_.count(tempSettings_.conStartKey)) { // Verify key exists
+		if (controllerMap_.count(tempSettings_.conStartKey)) {
 			SetWindowText(hCtrl, controllerMap_[tempSettings_.conStartKey]);
 		}
 		break;
 	case CID_CON_TIMER1:
-		if (controllerMap_.count(tempSettings_.conTimer1Key)) { // Verify key exists
+		if (controllerMap_.count(tempSettings_.conTimer1Key)) {
 			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer1Key]);
 		}
 		break;
 	case CID_CON_TIMER2:
-		if (controllerMap_.count(tempSettings_.conTimer2Key)) { // Verify key exists
+		if (controllerMap_.count(tempSettings_.conTimer2Key)) {
 			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer2Key]);
 		}
 		break;
@@ -459,9 +477,9 @@ LRESULT SettingsWindow::handleMessage(const UINT wMsg, const WPARAM wParam, cons
 			break;
 		case CONTROLLER_INPUT:
 		{
-			if (hActiveControl_) {
+ 			if (hActiveControl_) {
 				const UINT key = (UINT)wParam;
-				applyTempHotkey(key);
+				applyTempConHotkey(key);
 			}
 		}
 			break;
