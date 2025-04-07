@@ -175,12 +175,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		{
 			// Handle messages
 			MSG msg = { };
-			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			while (GetMessage(&msg, nullptr, 0, 0)) {
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-
-			Sleep(1);
 		}
 
 		appLoopThread.join();
