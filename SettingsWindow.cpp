@@ -85,7 +85,7 @@ void SettingsWindow::initializeTextControls() const
 {
 	constexpr int breaklineOffsetY = 25;
 
-	const int headerX = tileWidth_ * (cols_ / 2) - 5;
+	const int headerX = tileWidth_ * (cols_ / 2) - 10;
 	const int headerWidth = tileWidth_ + 10;
 	constexpr int headerHeight = 20;
 
