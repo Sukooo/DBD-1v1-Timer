@@ -8,20 +8,22 @@ std::unordered_map<int, int> HotkeyManager::hotkeysMap;
 void HotkeyManager::setHotkeysMap(const SettingsStruct& settings)
 {
 	setHotkeysMap(
-		settings.startKey, settings.timer1Key, settings.timer2Key,
-		settings.conStartKey, settings.conTimer1Key, settings.conTimer2Key
+		settings.startKey, settings.startNoResetKey, settings.timer1Key, settings.timer2Key,
+		settings.conStartKey, settings.conStartNoResetKey, settings.conTimer1Key, settings.conTimer2Key
 	);
 }
 
-void HotkeyManager::setHotkeysMap(int startKey, int timer1Key, int timer2Key, int conStartKey, int conTimer1Key, int conTimer2Key)
+void HotkeyManager::setHotkeysMap(int startKey, int startNoResetKey, int timer1Key, int timer2Key, int conStartKey, int conStartNoResetKey, int conTimer1Key, int conTimer2Key)
 {
 	hotkeysMap.clear();
 
 	hotkeysMap.insert({ startKey, KEY_START });
+	hotkeysMap.insert({ startNoResetKey, KEY_START_NO_RESET });
 	hotkeysMap.insert({ timer1Key, KEY_TIMER1 });
 	hotkeysMap.insert({ timer2Key, KEY_TIMER2 });
 
 	hotkeysMap.insert({ conStartKey, KEY_START });
+	hotkeysMap.insert({ conStartNoResetKey, KEY_START_NO_RESET });
 	hotkeysMap.insert({ conTimer1Key, KEY_TIMER1 });
 	hotkeysMap.insert({ conTimer2Key, KEY_TIMER2 });
 }

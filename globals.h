@@ -8,15 +8,18 @@ constexpr byte CID_CANCEL = 101;
 constexpr byte CID_START = 103;
 constexpr byte CID_TIMER1 = 104;
 constexpr byte CID_TIMER2 = 105;
+constexpr byte CID_START_NO_RESET = 116;
 constexpr byte CID_TRANSPARENT_CB = 106;
 constexpr byte CID_CLICKTHROUGH_CB = 107;
 constexpr byte CID_STARTONCHANGE_CB = 112;
 constexpr byte CID_CON_START = 113;
 constexpr byte CID_CON_TIMER1 = 114;
 constexpr byte CID_CON_TIMER2 = 115;
+constexpr byte CID_CON_START_NO_RESET = 117;
 constexpr byte MENU_QUIT = 1;
 constexpr byte MENU_SETTINGS = 0;
 constexpr byte KEY_START = 0;
+constexpr byte KEY_START_NO_RESET = 5;
 constexpr byte KEY_TIMER1 = 1;
 constexpr byte KEY_TIMER2 = 2;
 constexpr byte OPTION_TRANSPARENT = 3;
@@ -59,10 +62,9 @@ constexpr USHORT PS_CONTROLLER_B = 8192;
 constexpr USHORT PS_CONTROLLER_X = 16384;
 constexpr USHORT PS_CONTROLLER_Y = 32768;
 
-
 // Global Sizes
 constexpr UINT16 SIZE_SETTINGS_WIDTH = 400;
-constexpr UINT16 SIZE_SETTINGS_HEIGHT = 640;
+constexpr UINT16 SIZE_SETTINGS_HEIGHT = 660;
 constexpr UINT16 SIZE_COLORPICKER_WIDTH = 270;
 constexpr UINT16 SIZE_COLORPICKER_HEIGHT = 350;
 
@@ -92,9 +94,11 @@ struct SettingsStruct // With default values
 	int startKey = 70;
 	int timer1Key = 112;
 	int timer2Key = 113;
+	int startNoResetKey = 72;
 	int conStartKey = CONTROLLER_A;
 	int conTimer1Key = CONTROLLER_LEFT;
 	int conTimer2Key = CONTROLLER_RIGHT;
+	int conStartNoResetKey = CONTROLLER_B;
 	bool optionStartOnChange = false;
 	bool optionTransparent = false;
 	bool optionClickThrough = false;

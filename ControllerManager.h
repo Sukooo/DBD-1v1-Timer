@@ -88,7 +88,7 @@ public:
 
 private:
 	/**
-	 * Retreive controller input data.
+	 * @brief Retreive controller input data.
 	 */
 	void poll();
 };

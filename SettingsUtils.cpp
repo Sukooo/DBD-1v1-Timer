@@ -17,15 +17,18 @@ SettingsStruct getSafeSettingsStruct()
 
 	// hotkeys
 	if (actualJson["start"].isInt() && actualJson["timer1"].isInt() && actualJson["timer2"].isInt() &&
-		actualJson["conStart"].isInt() && actualJson["conTimer1"].isInt() && actualJson["conTimer2"].isInt())
+		actualJson["conStart"].isInt() && actualJson["conTimer1"].isInt() && actualJson["conTimer2"].isInt()
+		&& actualJson["startNoReset"].isInt() && actualJson["conStartNoReset"].isInt())
 	{
 		settings.startKey = actualJson["start"].asInt();
 		settings.timer1Key = actualJson["timer1"].asInt();
 		settings.timer2Key = actualJson["timer2"].asInt();
+		settings.startNoResetKey = actualJson["startNoReset"].asInt();
 
 		settings.conStartKey = actualJson["conStart"].asInt();
 		settings.conTimer1Key = actualJson["conTimer1"].asInt();
 		settings.conTimer2Key = actualJson["conTimer2"].asInt();
+		settings.conStartNoResetKey = actualJson["conStartNoReset"].asInt();
 	}
 
 	// options
@@ -72,10 +75,12 @@ void setSettingsStruct(const SettingsStruct& settings)
 	settingsJson["start"] = settings.startKey;
 	settingsJson["timer1"] = settings.timer1Key;
 	settingsJson["timer2"] = settings.timer2Key;
+	settingsJson["startNoReset"] = settings.startNoResetKey;
 
 	settingsJson["conStart"] = settings.conStartKey;
 	settingsJson["conTimer1"] = settings.conTimer1Key;
 	settingsJson["conTimer2"] = settings.conTimer2Key;
+	settingsJson["conStartNoReset"] = settings.conStartNoResetKey;
 
 	settingsJson["optionTransparent"] = settings.optionTransparent;
 	settingsJson["optionStartOnChange"] = settings.optionStartOnChange;
@@ -109,10 +114,12 @@ void createSettingsFile()
 	settingsJson["start"] = defaultSettings.startKey;
 	settingsJson["timer1"] = defaultSettings.timer1Key;
 	settingsJson["timer2"] = defaultSettings.timer2Key;
+	settingsJson["startNoReset"] = defaultSettings.startNoResetKey;
 
 	settingsJson["conStart"] = defaultSettings.conStartKey;
 	settingsJson["conTimer1"] = defaultSettings.conTimer1Key;
 	settingsJson["conTimer2"] = defaultSettings.conTimer2Key;
+	settingsJson["conStartNoReset"] = defaultSettings.conStartNoResetKey;
 
 	settingsJson["optionTransparent"] = defaultSettings.optionTransparent;
 	settingsJson["optionStartOnChange"] = defaultSettings.optionStartOnChange;
@@ -141,7 +148,7 @@ bool settingsFileExists() {
 
 void applySettings(const SettingsStruct& settings) {
 	setSettingsStruct(settings); // write to json file (settings.json)
-	appSettings = settings; // save static settings variable
+	appSettings = settings; // save global settings variable
 	HotkeyManager::setHotkeysMap(appSettings); // initialize hotkeys map
 
 	if (hwndMainWindow != nullptr) {

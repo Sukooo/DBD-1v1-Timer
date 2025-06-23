@@ -17,7 +17,8 @@ class Timer
 private:
 	TimerState timerState_;
 	int time_ = 0; // in milliseconds
-	SYSTEMTIME startTime_;
+	int runningTime_ = 0; // in milliseconds
+	SYSTEMTIME lastUpdateTime_;
 	SYSTEMTIME updatingTime_;
 
 	/**

@@ -20,7 +20,7 @@ int Timer::subtractTimes(const SYSTEMTIME t1, const SYSTEMTIME t2)
 Timer::Timer():
 	timerState_(TimerState::Zero),
 	time_(0),
-	startTime_(),
+	lastUpdateTime_(),
 	updatingTime_() { }
 
 TimerState Timer::getTimerState() const
@@ -30,7 +30,7 @@ TimerState Timer::getTimerState() const
 
 wstring Timer::getTimeAsText() const
 {
-	int millisInt = time_;
+	int millisInt = time_ + runningTime_;
 	int secondsInt = millisInt / 1000;
 	const int minutesInt = secondsInt / 60;
 	millisInt = millisInt % 1000;
@@ -108,7 +108,8 @@ int Timer::getTimeInMillis() const
 void Timer::startTimer()
 {
 	timerState_ = TimerState::Running;
-	GetSystemTime(&startTime_);
+	GetLocalTime(&lastUpdateTime_);
+	GetLocalTime(&updatingTime_);
 }
 
 void Timer::stopTimer()
@@ -119,9 +120,8 @@ void Timer::stopTimer()
 void Timer::resetTimer()
 {
 	timerState_ = TimerState::Zero;
-	GetLocalTime(&startTime_);
-	GetLocalTime(&updatingTime_);
-	time_ = subtractTimes(startTime_, updatingTime_);
+	time_ = 0;
+	runningTime_ = 0;
 }
 
 void Timer::updateTime()
@@ -129,7 +129,8 @@ void Timer::updateTime()
 	if (timerState_ == TimerState::Running)
 	{
 		GetSystemTime(&updatingTime_);
-		time_ = subtractTimes(startTime_, updatingTime_);
+		time_ += subtractTimes(lastUpdateTime_, updatingTime_);
+		GetSystemTime(&lastUpdateTime_);
 	}
 }
 

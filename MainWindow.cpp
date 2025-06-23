@@ -558,7 +558,7 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 				if (pSettingsWindow->window() == nullptr) // dont create multiple settings windows
 				{
 					// Create and show settings window
-					if (!pSettingsWindow->create(L"Settings - Version 1.3", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, nullptr	, nullptr, nullptr)) {
+					if (!pSettingsWindow->create(L"Settings - Version 1.4", 500, 200, SIZE_SETTINGS_WIDTH, SIZE_SETTINGS_HEIGHT, 0, WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX, hwnd_, nullptr	, nullptr, nullptr)) {
 						return 0;
 					}
 
@@ -633,6 +633,14 @@ void MainWindow::handleHotKey(const int code)
 		break;
 	case KEY_START: // start key
 		isActivateTimer = true;
+		break;
+	case KEY_START_NO_RESET: // start no reset key
+	{
+		if (activeTimer_->getTimerState() == TimerState::Running)
+			activeTimer_->stopTimer();
+		else
+			activeTimer_->startTimer();
+	}
 		break;
 	default:
 		break;

@@ -7,11 +7,13 @@
       "timer" : 9
    },
    "conStart" : 5010,
+   "conStartNoReset" : 5011,
    "conTimer1" : 5003,
    "conTimer2" : 5002,
    "optionStartOnChange" : false,
    "optionTransparent" : false,
    "start" : 70,
+   "startNoReset" : 72,
    "timer1" : 219,
    "timer2" : 221
 }
