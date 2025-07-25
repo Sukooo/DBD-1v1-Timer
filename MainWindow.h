@@ -35,7 +35,7 @@ private:
 	IDWriteTextFormat* pTextFormat_;
 
 	// Fields
-	Timer* activeTimer_;
+	Timer* activeTimer_ = &timer1;
 	BOOL mouseDown_ = false;
 	int clickMousePos_[2] = { 0, 0 };
 	bool isResizing_ = false;

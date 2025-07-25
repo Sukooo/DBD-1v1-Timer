@@ -636,6 +636,8 @@ void MainWindow::handleHotKey(const int code)
 		break;
 	case KEY_START_NO_RESET: // start no reset key
 	{
+		if (activeTimer_ == nullptr) return;
+
 		if (activeTimer_->getTimerState() == TimerState::Running)
 			activeTimer_->stopTimer();
 		else
