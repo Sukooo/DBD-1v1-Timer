@@ -16,6 +16,13 @@ constexpr byte CID_CON_START = 113;
 constexpr byte CID_CON_TIMER1 = 114;
 constexpr byte CID_CON_TIMER2 = 115;
 constexpr byte CID_CON_START_NO_RESET = 117;
+
+// NEW: Control IDs for new features
+constexpr byte CID_CLICKTHROUGH_HOTKEY = 118;
+constexpr byte CID_OPACITY_SLIDER = 119;
+constexpr byte CID_OPACITY_UP_HOTKEY = 120;
+constexpr byte CID_OPACITY_DOWN_HOTKEY = 121;
+
 constexpr byte MENU_QUIT = 1;
 constexpr byte MENU_SETTINGS = 0;
 constexpr byte KEY_START = 0;
@@ -24,6 +31,14 @@ constexpr byte KEY_TIMER1 = 1;
 constexpr byte KEY_TIMER2 = 2;
 constexpr byte OPTION_TRANSPARENT = 3;
 constexpr byte OPTION_CLICKTHROUGH = 4;
+
+// NEW: Additional key constants
+constexpr byte KEY_CLICKTHROUGH_TOGGLE = 6;
+constexpr byte KEY_OPACITY_UP = 7;
+constexpr byte KEY_OPACITY_DOWN = 8;
+
+// NEW: Timer ID for event-driven updates
+constexpr byte TIMER_UPDATE_ID = 1;
 
 // HWND Color Control IDs
 constexpr byte CID_TIMER_COLOR = 108;
@@ -99,9 +114,18 @@ struct SettingsStruct // With default values
 	int conTimer1Key = CONTROLLER_LEFT;
 	int conTimer2Key = CONTROLLER_RIGHT;
 	int conStartNoResetKey = CONTROLLER_B;
+	
+	// NEW: Additional hotkeys
+	int hotkeyClickThrough = 0;
+	int hotkeyOpacityUp = 0;
+	int hotkeyOpacityDown = 0;
+	
 	bool optionStartOnChange = false;
 	bool optionTransparent = false;
-	bool optionClickThrough = false;
+	
+	// NEW: Opacity setting
+	int opacity = 255;
+	
 	ColorsStruct colors;
 };
 
