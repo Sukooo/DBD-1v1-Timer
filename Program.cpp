@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <d2d1.h>
 #include <string>
-#include <thread>
 #include <dwrite.h>
 #include <commctrl.h>
 #include "Globals.h"
@@ -13,6 +12,9 @@
 #include "ColorPickerWindow.h"
 #include "MainWindow.h"
 #include "Program.h"
+#include "Configuration.h"
+#include "SettingsManager.h"
+#include "WindowStateManager.h"
 
 #include "ControllerManager.h"
 #include "HotkeyManager.h"
@@ -23,7 +25,7 @@
 #pragma comment(lib, "dwrite.lib")
 #pragma comment(lib, "Xinput.lib")
 
-using std::thread; using std::wstring;
+using std::wstring;
 
 // Global variable assignment (defined in MainWindow.h)
 SettingsStruct appSettings;
@@ -31,17 +33,6 @@ HBRUSH hBrushes[25];
 HWND hwndMainWindow = nullptr;
 HINSTANCE hInstanceGlobal;
 MainWindow* pGlobalTimerWindow = nullptr;
-
-void appLoop(MainWindow* win)
-{
-	while (win->appRunning)
-	{
-		Sleep(1);
-		win->timer1.updateTime();
-		win->timer2.updateTime();
-		win->draw();
-	}
-}
 
 void exitApp()
 {
@@ -125,9 +116,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		hInstanceGlobal = hInstance;
 
 		// Create settings file on program first run
-		if (!settingsFileExists())
+		if (!SettingsManager::getInstance().fileExists())
 		{
-			createSettingsFile();
+			SettingsManager::getInstance().createDefaultFile();
 		}
 
 		// Initiate common controls lib
@@ -135,28 +126,48 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 
 		// Initialize brushes
 		initializeBrushes();
+		
+		// Load window state (position, size, monitor)
+		WindowStateManager::WindowState savedState = WindowStateManager::getInstance().loadState();
+		int x = savedState.x;
+		int y = savedState.y;
+		int width = savedState.width;
+		int height = savedState.height;
+		
+		// Use defaults if no saved state (first run)
+		if (width <= 0 || height <= 0) {
+			x = 0;
+			y = 0;
+			width = Config::WindowDefaults::DEFAULT_WIDTH;
+			height = Config::WindowDefaults::DEFAULT_HEIGHT;
+		}
 
-		if (!win.create(L"Timer", 0, 0, 285, 40, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
+		if (!win.create(L"Timer", x, y, width, height, WS_EX_TOPMOST | WS_EX_LAYERED, WS_POPUP)) {
 			return 0;
 		}
 
-		SetLayeredWindowAttributes(win.window(), 1, 255, LWA_COLORKEY | LWA_ALPHA);
+		// Apply saved opacity from settings
+		SettingsManager::getInstance().loadFromFile();
+		const auto& settings = SettingsManager::getInstance().getSettings();
+		SetLayeredWindowAttributes(win.window(), 0, settings.opacity, LWA_ALPHA);
 
 		ShowWindow(win.window(), nShowCmd);
-
+		
+		// Validate and restore to correct monitor
+		WindowStateManager::getInstance().restoreWindowState(win.window());
 
 		// Create variables for settings and color picker windows
-		SettingsWindow settings;
+		SettingsWindow settingsWindow;
 		ColorPickerWindow colorPicker;
-		settings.pColorPicker = &colorPicker;
+		settingsWindow.pColorPicker = &colorPicker;
 
-		win.pSettingsWindow = &settings;
+		win.pSettingsWindow = &settingsWindow;
 
 		// global variables for timer
 		pGlobalTimerWindow = &win;
 		hwndMainWindow = win.window();
 
-		// Apply saved settings
+		// Apply saved settings (uses old SettingsUtils for backward compat)
 		applySettings(appSettings);
 
 		// Listen for hotkeys While Running in the background - Install a hook procedure
@@ -168,20 +179,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		controllerManager->setInputCallback(controllerInputCallback);
 		controllerManager->start();
 
-		// Create a thread for the app loop (ticks)
-		thread appLoopThread(appLoop, &win);
-
-		while (win.appRunning)
-		{
-			// Handle messages
-			MSG msg = { };
-			while (GetMessage(&msg, nullptr, 0, 0)) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+		// Main message loop
+		MSG msg = { };
+		while (GetMessage(&msg, nullptr, 0, 0)) {
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 
-		appLoopThread.join();
 		controllerManager->stop();
 		return 0;
 	}

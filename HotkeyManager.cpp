@@ -11,6 +11,17 @@ void HotkeyManager::setHotkeysMap(const SettingsStruct& settings)
 		settings.startKey, settings.startNoResetKey, settings.timer1Key, settings.timer2Key,
 		settings.conStartKey, settings.conStartNoResetKey, settings.conTimer1Key, settings.conTimer2Key
 	);
+	
+	// NEW: Add mappings for additional hotkeys
+	if (settings.hotkeyClickThrough != 0) {
+		hotkeysMap.insert({ settings.hotkeyClickThrough, KEY_CLICKTHROUGH_TOGGLE });
+	}
+	if (settings.hotkeyOpacityUp != 0) {
+		hotkeysMap.insert({ settings.hotkeyOpacityUp, KEY_OPACITY_UP });
+	}
+	if (settings.hotkeyOpacityDown != 0) {
+		hotkeysMap.insert({ settings.hotkeyOpacityDown, KEY_OPACITY_DOWN });
+	}
 }
 
 void HotkeyManager::setHotkeysMap(int startKey, int startNoResetKey, int timer1Key, int timer2Key, int conStartKey, int conStartNoResetKey, int conTimer1Key, int conTimer2Key)
