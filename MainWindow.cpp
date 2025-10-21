@@ -5,11 +5,26 @@
 #include "ResourceUtils.h"
 #include "SettingsUtils.h"
 #include "Program.h"
+#include "Configuration.h"
+#include "RenderManager.h"
+#include "SettingsManager.h"
+#include "WindowStateManager.h"
 
 
-MainWindow::MainWindow() = default;
+MainWindow::MainWindow() {
+	// Set up timer for periodic updates (100ms interval = 10 Hz)
+	// Will be initialized after window is created
+}
 
 MainWindow::~MainWindow() {
+	// Kill timer
+	if (hwnd_) {
+		KillTimer(hwnd_, TIMER_UPDATE_ID);
+	}
+	
+	// Unsubscribe from events
+	EventManager::getInstance().unsubscribe(EventType::SettingsChanged, this);
+	
 	discardGraphicsResources();
 }
 
@@ -470,6 +485,34 @@ void MainWindow::refreshBrushes()
 	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
 }
 
+void MainWindow::onEvent(const Event& event) {
+	switch (event.type) {
+		case EventType::SettingsChanged:
+		{
+			refreshBrushes();
+			// Apply new opacity
+			const auto& settings = SettingsManager::getInstance().getSettings();
+			SetLayeredWindowAttributes(hwnd_, 0, settings.opacity, LWA_ALPHA);
+			
+			// Mark for redraw
+			RenderManager::getInstance().markDirty();
+		}
+		break;
+		
+		case EventType::ThemeChanged:
+			refreshBrushes();
+			RenderManager::getInstance().markDirty();
+			break;
+			
+		case EventType::TimerStateChanged:
+			RenderManager::getInstance().markDirty();
+			break;
+			
+		default:
+			break;
+	}
+}
+
 LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LPARAM lParam)
 {
 	try
@@ -487,13 +530,58 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			createGraphicsResources();
 			createDeviceIndependentResources();
 
-			appSettings = getSafeSettingsStruct();
+			// Load settings from SettingsManager
+			if (!SettingsManager::getInstance().fileExists()) {
+				SettingsManager::getInstance().createDefaultFile();
+			}
+			SettingsManager::getInstance().loadFromFile();
+			appSettings = SettingsManager::getInstance().getSettings();
+			
+			// Set up timer for periodic updates
+			SetTimer(hwnd_, TIMER_UPDATE_ID, Config::RenderingConfig::TIMER_UPDATE_INTERVAL_MS, nullptr);
+			
+			// Set up render callback
+			RenderManager::getInstance().setRenderCallback([this]() {
+				this->draw();
+			});
+			
+			// Subscribe to events
+			EventManager::getInstance().subscribe(EventType::SettingsChanged, this);
+			
 			appRunning = true;
 			return 0;
 		}
 		case WM_DESTROY:
 		{
+			// Save window state before exit
+			WindowStateManager::getInstance().saveWindowState(hwnd_);
 			exitApp();
+			return 0;
+		}
+		case WM_TIMER:
+			if (wParam == TIMER_UPDATE_ID) {
+				// Update timers
+				timer1.updateTime();
+				timer2.updateTime();
+				
+				// Emit event if state changed (timers handle this internally)
+				Event evt{EventType::TimerStateChanged, nullptr};
+				EventManager::getInstance().emit(evt);
+				
+				// Check if render is needed
+				if (RenderManager::getInstance().shouldRender()) {
+					InvalidateRect(hwnd_, nullptr, FALSE);
+				}
+			}
+			return 0;
+			
+		case WM_PAINT:
+		{
+			if (RenderManager::getInstance().isDirty()) {
+				handlePainting();
+				RenderManager::getInstance().render();  // Clears dirty flag
+			}
+			ValidateRect(hwnd_, nullptr);
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
@@ -528,21 +616,38 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 		case WM_LBUTTONUP:
 		{
 			mouseDown_ = false;
-			isResizing_ = false;
-			dir_ = -1;
-			ReleaseCapture();
-
-			// update winSize_ var after isResizing_
+			
+			if (isResizing_) {
+				// Cache font size calculation - only recalculate if size changed
+				SIZE currentSize = {windowPos.right - windowPos.left, windowPos.bottom - windowPos.top};
+				if (currentSize.cx != cachedWindowSize_.cx || currentSize.cy != cachedWindowSize_.cy) {
+					cachedFontSize_ = getLargestFontsizeFit();
+					changeFontSize(cachedFontSize_);
+					cachedWindowSize_ = currentSize;
+				}
+				
+				isResizing_ = false;
+			}
+			
+			// Update winSize_ var after resize
 			if (windowPos.right - windowPos.left != winSize_[0]) {
 				winSize_[0] = windowPos.right - windowPos.left;
 				adjustRendertargetSize();
-				changeFontSize(getLargestFontsizeFit());
 			}
 			if (windowPos.bottom - windowPos.top != winSize_[1]) {
 				winSize_[1] = windowPos.bottom - windowPos.top;
 				adjustRendertargetSize();
-				changeFontSize(getLargestFontsizeFit());
 			}
+			
+			// Save window state after drag or resize
+			WindowStateManager::getInstance().saveWindowState(hwnd_);
+			
+			// Apply snapping
+			WindowStateManager::getInstance().applySnapping(hwnd_);
+			
+			dir_ = -1;
+			ReleaseCapture();
+			RenderManager::getInstance().markDirty();
 			return 0;
 		}
 		case WM_MOUSEMOVE:
@@ -621,7 +726,8 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 
 void MainWindow::handleHotKey(const int code)
 {
-	bool isActivateTimer = appSettings.optionStartOnChange;
+	const auto& settings = SettingsManager::getInstance().getSettings();
+	bool isActivateTimer = settings.optionStartOnChange;
 
 	switch (code)
 	{
@@ -644,6 +750,45 @@ void MainWindow::handleHotKey(const int code)
 			activeTimer_->startTimer();
 	}
 		break;
+		
+	// NEW: Click-through toggle
+	case KEY_CLICKTHROUGH_TOGGLE:
+	{
+		clickThroughActive_ = !clickThroughActive_;
+		
+		// Apply window style immediately
+		LONG style = GetWindowLong(hwnd_, GWL_EXSTYLE);
+		if (clickThroughActive_) {
+			style |= WS_EX_TRANSPARENT;
+		} else {
+			style &= ~WS_EX_TRANSPARENT;
+		}
+		SetWindowLong(hwnd_, GWL_EXSTYLE, style);
+	}
+		break;
+		
+	// NEW: Opacity up
+	case KEY_OPACITY_UP:
+	{
+		auto currentSettings = SettingsManager::getInstance().getSettings();
+		currentSettings.opacity = min(currentSettings.opacity + Config::OpacityConfig::OPACITY_STEP,
+		                              Config::OpacityConfig::MAX_OPACITY);
+		SettingsManager::getInstance().updateSettings(currentSettings);
+		SetLayeredWindowAttributes(hwnd_, 0, currentSettings.opacity, LWA_ALPHA);
+	}
+		break;
+		
+	// NEW: Opacity down
+	case KEY_OPACITY_DOWN:
+	{
+		auto currentSettings = SettingsManager::getInstance().getSettings();
+		currentSettings.opacity = max(currentSettings.opacity - Config::OpacityConfig::OPACITY_STEP,
+		                              Config::OpacityConfig::MIN_OPACITY);
+		SettingsManager::getInstance().updateSettings(currentSettings);
+		SetLayeredWindowAttributes(hwnd_, 0, currentSettings.opacity, LWA_ALPHA);
+	}
+		break;
+		
 	default:
 		break;
 	}
@@ -660,6 +805,8 @@ void MainWindow::handleHotKey(const int code)
 			activeTimer_->resetTimer();
 		}
 	}
+	
+	RenderManager::getInstance().markDirty();
 }
 
 void MainWindow::handleControllerInput(const WORD buttons) const
