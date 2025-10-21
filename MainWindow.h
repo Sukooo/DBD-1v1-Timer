@@ -4,6 +4,7 @@
 #include "BaseWindow.h"
 #include "Timer.h"
 #include "SettingsWindow.h"
+#include "EventManager.h"
 
 enum MousePos : uint8_t
 {
@@ -19,7 +20,7 @@ enum MousePos : uint8_t
 };
 
 // The class responsible for the main window of the app
-class MainWindow : public BaseWindow<MainWindow>
+class MainWindow : public BaseWindow<MainWindow>, public IEventListener
 {
 private:
 	// Resources
@@ -41,6 +42,13 @@ private:
 	bool isResizing_ = false;
 	int dir_ = -1;
 	int spaceOffset_ = 8;
+	
+	// NEW: Runtime state (never saved to JSON)
+	bool clickThroughActive_ = false;
+	
+	// NEW: Font caching for performance
+	float cachedFontSize_ = 0.0f;
+	SIZE cachedWindowSize_ = {0, 0};
 	
 	/**
 	@brief Creates the graphic resources for the main window.
@@ -175,8 +183,16 @@ public:
 	@param buttons The buttons that had a state change.
 	*/
 	void handleControllerInput(WORD buttons) const;
+	
 	/**
 	@brief The function that is called when a WM_PAINT event is registered to the window. This method forwards the task to handlePainting().
 	*/
 	void draw();
+	
+	/**
+	@brief Event listener implementation for responding to system events.
+	
+	@param event The event to handle.
+	*/
+	void onEvent(const Event& event) override;
 };
