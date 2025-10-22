@@ -444,6 +444,9 @@ LRESULT SettingsWindow::handleMessage(const UINT wMsg, const WPARAM wParam, cons
 		{
 		case WM_CREATE:
 		{
+			// Store this pointer for ctrlWndProc to access
+			SetWindowLongPtr(hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+			
 			initializeWindow();
 			return 0;
 		}
