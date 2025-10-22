@@ -1,5 +1,4 @@
 #pragma once
-#include "Globals.h"
 #include <Windows.h>
 
 // Template class for specific window's classes to inherit from
