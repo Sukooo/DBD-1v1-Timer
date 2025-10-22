@@ -1,14 +1,14 @@
 #include "MainWindow.h"
 #include <windowsx.h>
-#include "Globals.h"
 #include "HotkeyManager.h"
-#include "ResourceUtils.h"
-#include "SettingsUtils.h"
 #include "Program.h"
 #include "Configuration.h"
 #include "RenderManager.h"
 #include "SettingsManager.h"
+#include "ColorManager.h"
 #include "WindowStateManager.h"
+#include "WindowMessages.h"
+#include "UIConstants.h"
 
 
 MainWindow::MainWindow() {
@@ -56,12 +56,12 @@ HRESULT MainWindow::createGraphicsResources()
 
 		if (SUCCEEDED(hr)) {
 			// Extract ColorF from HBRUSH
-			const SettingsStruct settings = getSafeSettingsStruct();
+			const auto& settings = SettingsManager::getInstance().getSettings();
 
-			const D2D1_COLOR_F timerColor = hBrushToColorf(hBrushes[settings.colors.timerColor]);
-			const D2D1_COLOR_F selectedTimerColor = hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]);
-			const D2D1_COLOR_F lastSecondsColor = hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]);
-			backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
+			const D2D1_COLOR_F timerColor = hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.timerColor));
+			const D2D1_COLOR_F selectedTimerColor = hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.selectedTimerColor));
+			const D2D1_COLOR_F lastSecondsColor = hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.lastSecondsColor));
+			backgroundColor_ = hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.backgroundColor));
 
 			// timer color brush
 			hr = pRenderTarget_->CreateSolidColorBrush(timerColor, &pBrushTimer_);
@@ -288,7 +288,8 @@ void MainWindow::handlePainting()
 	pRenderTarget_->BeginDraw();
 
 	// workaround to visible edges issue while transparent
-	if (appSettings.optionTransparent) {
+	const auto& settings = SettingsManager::getInstance().getSettings();
+	if (settings.optionTransparent) {
 		pRenderTarget_->Clear(D2D1::ColorF(0, 0, 0));
 	}
 	else {
@@ -468,21 +469,21 @@ D2D1_COLOR_F MainWindow::hBrushToColorf(const HBRUSH hBrush) {
 void MainWindow::refreshBrushes()
 {
 	// retrieve brushes colors
-	const SettingsStruct settings = getSafeSettingsStruct();
+	const auto& settings = SettingsManager::getInstance().getSettings();
 
 	LOGBRUSH logBrush;
 
 	// timer color
-	pBrushTimer_->SetColor(hBrushToColorf(hBrushes[settings.colors.timerColor]));
+	pBrushTimer_->SetColor(hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.timerColor)));
 
 	// selected timer color
-	pBrushSelectedTimer_->SetColor(hBrushToColorf(hBrushes[settings.colors.selectedTimerColor]));
+	pBrushSelectedTimer_->SetColor(hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.selectedTimerColor)));
 
 	// last seconds color
-	pBrushLastSeconds_->SetColor(hBrushToColorf(hBrushes[settings.colors.lastSecondsColor]));
+	pBrushLastSeconds_->SetColor(hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.lastSecondsColor)));
 
 	// background color
-	backgroundColor_ = hBrushToColorf(hBrushes[settings.colors.backgroundColor]);
+	backgroundColor_ = hBrushToColorf(ColorManager::getInstance().getBrush(settings.colors.backgroundColor));
 }
 
 void MainWindow::onEvent(const Event& event) {
@@ -535,7 +536,6 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 				SettingsManager::getInstance().createDefaultFile();
 			}
 			SettingsManager::getInstance().loadFromFile();
-			appSettings = SettingsManager::getInstance().getSettings();
 			
 			// Set up timer for periodic updates
 			SetTimer(hwnd_, TIMER_UPDATE_ID, Config::RenderingConfig::TIMER_UPDATE_INTERVAL_MS, nullptr);
@@ -548,7 +548,6 @@ LRESULT MainWindow::handleMessage(const UINT wMsg, const WPARAM wParam, const LP
 			// Subscribe to events
 			EventManager::getInstance().subscribe(EventType::SettingsChanged, this);
 			
-			appRunning = true;
 			return 0;
 		}
 		case WM_DESTROY:
