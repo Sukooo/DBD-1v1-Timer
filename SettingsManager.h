@@ -1,5 +1,5 @@
 #pragma once
-#include "globals.h"
+#include "AppSettings.h"
 #include "EventManager.h"
 #include <string>
 
@@ -13,12 +13,14 @@ public:
     void createDefaultFile();
     bool fileExists();
 
-    const SettingsStruct& getSettings() const;
-    void updateSettings(const SettingsStruct& settings);  // Emits SettingsChanged event
+    const AppSettings& getSettings() const;
+    void updateSettings(const AppSettings& settings);  // Emits SettingsChanged event
 
     void onEvent(const Event& event) override;
 
 private:
     SettingsManager() = default;
-    SettingsStruct currentSettings_;
+    AppSettings currentSettings_;
+    
+    static constexpr const char* SETTINGS_FILE_NAME = "Settings.json";
 };

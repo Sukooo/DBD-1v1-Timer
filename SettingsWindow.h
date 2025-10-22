@@ -1,14 +1,23 @@
 #pragma once
 #include "ColorPickerWindow.h"
-#include "Globals.h"
+#include "AppSettings.h"
+#include "UIConstants.h"
+#include "ControlBindingManager.h"
 #include <map>
+#include <memory>
+
+// Forward declaration
+class MainWindow;
 
 // The class responsible for the settings window
 class SettingsWindow : public BaseWindow<SettingsWindow>
 {
 private:
 	// Fields
-	SettingsStruct tempSettings_ = {};
+	AppSettings tempSettings_ = {};
+	MainWindow* mainWindow_ = nullptr;
+	std::unique_ptr<ControlBindingManager> bindings_;
+	
 	HBITMAP mouseBitmap_ = nullptr;
 	HBITMAP controllerBitmap_ = nullptr;
 	HWND hActiveControl_ = nullptr;
@@ -23,6 +32,11 @@ private:
 	@brief Calls required methods to initialize the settings window.
 	*/
 	void initializeWindow();
+	
+	/**
+	@brief Register all control bindings with the ControlBindingManager.
+	*/
+	void registerBindings();
 
 	/**
 	@brief Initializes the bitmaps for the settings window.
@@ -303,6 +317,9 @@ private:
 	};
 
 public:
+	// Constructor
+	explicit SettingsWindow(MainWindow* mainWindow) : mainWindow_(mainWindow) {}
+	
 	ColorPickerWindow* pColorPicker; // Reference to a Color Picker window
 
 	/**

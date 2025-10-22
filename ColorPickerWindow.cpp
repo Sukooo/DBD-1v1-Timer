@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <CommCtrl.h>
-#include "Globals.h"
+#include "ColorManager.h"
+#include "UIConstants.h"
 #include "CommCtrlUtils.h"
 #include "ColorPickerWindow.h"
 #include "Program.h"
@@ -40,19 +41,19 @@ void ColorPickerWindow::initializeColorButtons()
 	switch (controlId)
 	{
 	case CID_TIMER_COLOR:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.timerColor];
+		hPreviewColor_ = ColorManager::getInstance().getBrush(pTempSettings->colors.timerColor);
 		previewColorIndex_ = pTempSettings->colors.timerColor;
 		break;
 	case CID_SELECTED_TIMER_COLOR:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.selectedTimerColor];
+		hPreviewColor_ = ColorManager::getInstance().getBrush(pTempSettings->colors.selectedTimerColor);
 		previewColorIndex_ = pTempSettings->colors.selectedTimerColor;
 		break;
 	case CID_LAST_SECONDS_COLOR:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.lastSecondsColor];
+		hPreviewColor_ = ColorManager::getInstance().getBrush(pTempSettings->colors.lastSecondsColor);
 		previewColorIndex_ = pTempSettings->colors.lastSecondsColor;
 		break;
 	case CID_BACKGROUND_COLOR:
-		hPreviewColor_ = hBrushes[pTempSettings->colors.backgroundColor];
+		hPreviewColor_ = ColorManager::getInstance().getBrush(pTempSettings->colors.backgroundColor);
 		previewColorIndex_ = pTempSettings->colors.backgroundColor;
 		break;
 	default:
@@ -114,7 +115,7 @@ void ColorPickerWindow::handleControlCommand(const LPARAM lParam)
 	// clicked a color
 	if (cid >= 0 && cid < 25)
 	{
-		hPreviewColor_ = hBrushes[cid];
+		hPreviewColor_ = ColorManager::getInstance().getBrush(cid);
 		previewColorIndex_ = cid;
 		RedrawWindow(hwnd_, nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
 		return;
@@ -161,7 +162,7 @@ LRESULT ColorPickerWindow::handleMessage(const UINT wMsg, const WPARAM wParam, c
 			}
 			else
 			{
-				FillRect(pDis->hDC, &pDis->rcItem, hBrushes[pDis->CtlID]);
+				FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(pDis->CtlID));
 			}
 
 			return 0;

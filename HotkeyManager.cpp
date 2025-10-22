@@ -1,18 +1,22 @@
-#include "Globals.h"
 #include "HotkeyManager.h"
-
-#include "Program.h"
+#include "MainWindow.h"
+#include "WindowMessages.h"
 
 std::unordered_map<int, int> HotkeyManager::hotkeysMap;
+MainWindow* HotkeyManager::targetWindow_ = nullptr;
 
-void HotkeyManager::setHotkeysMap(const SettingsStruct& settings)
+void HotkeyManager::setTargetWindow(MainWindow* window) {
+	targetWindow_ = window;
+}
+
+void HotkeyManager::setHotkeysMap(const AppSettings& settings)
 {
 	setHotkeysMap(
 		settings.startKey, settings.startNoResetKey, settings.timer1Key, settings.timer2Key,
 		settings.conStartKey, settings.conStartNoResetKey, settings.conTimer1Key, settings.conTimer2Key
 	);
 	
-	// NEW: Add mappings for additional hotkeys
+	// Add mappings for additional hotkeys
 	if (settings.hotkeyClickThrough != 0) {
 		hotkeysMap.insert({ settings.hotkeyClickThrough, KEY_CLICKTHROUGH_TOGGLE });
 	}
@@ -41,10 +45,10 @@ void HotkeyManager::setHotkeysMap(int startKey, int startNoResetKey, int timer1K
 
 void HotkeyManager::execute(const int keyCode)
 {
-	if (hotkeysMap.count(keyCode) && pGlobalTimerWindow->window() != nullptr)
+	if (hotkeysMap.count(keyCode) && targetWindow_ && targetWindow_->window() != nullptr)
 	{
 		const int action = hotkeysMap[keyCode];
-		PostMessage(pGlobalTimerWindow->window(), HOTKEY_HIT, action, 0);
+		PostMessage(targetWindow_->window(), HOTKEY_HIT, action, 0);
 	}
 }
 

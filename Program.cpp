@@ -3,9 +3,6 @@
 #include <string>
 #include <dwrite.h>
 #include <commctrl.h>
-#include "Globals.h"
-#include "ResourceUtils.h"
-#include "SettingsUtils.h"
 #include "BaseWindow.h"
 #include "Timer.h"
 #include "SettingsWindow.h"
@@ -15,9 +12,11 @@
 #include "Configuration.h"
 #include "SettingsManager.h"
 #include "WindowStateManager.h"
-
-#include "ControllerManager.h"
+#include "ColorManager.h"
 #include "HotkeyManager.h"
+#include "WindowMessages.h"
+#include "UIConstants.h"
+#include "ControllerManager.h"
 
 #pragma comment(lib, "Msimg32.lib")
 #pragma comment (lib, "d2d1")
@@ -27,16 +26,8 @@
 
 using std::wstring;
 
-// Global variable assignment (defined in MainWindow.h)
-SettingsStruct appSettings;
-HBRUSH hBrushes[25];
-HWND hwndMainWindow = nullptr;
-HINSTANCE hInstanceGlobal;
-MainWindow* pGlobalTimerWindow = nullptr;
-
 void exitApp()
 {
-	if (pGlobalTimerWindow) pGlobalTimerWindow->appRunning = false;
 	PostQuitMessage(0);
 }
 
@@ -101,20 +92,12 @@ LRESULT CALLBACK kbHook(const int nCode, const WPARAM wParam, const LPARAM lPara
 	return CallNextHookEx(nullptr, nCode, wParam, lParam);
 }
 
-void controllerInputCallback(const WORD buttons)
-{
-	SendMessage(hwndMainWindow, CONTROLLER_INPUT ,buttons, NULL);
-}
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd)
 {
 	// Create the main window
 	MainWindow win;
 	try
 	{
-		// Global hInstance variable (declared in globals.h)
-		hInstanceGlobal = hInstance;
-
 		// Create settings file on program first run
 		if (!SettingsManager::getInstance().fileExists())
 		{
@@ -124,8 +107,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		// Initiate common controls lib
 		InitCommonControls();
 
-		// Initialize brushes
-		initializeBrushes();
+		// Initialize ColorManager (replaces initializeBrushes)
+		ColorManager::getInstance().initialize();
 		
 		// Load window state (position, size, monitor)
 		WindowStateManager::WindowState savedState = WindowStateManager::getInstance().loadState();
@@ -157,26 +140,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		WindowStateManager::getInstance().restoreWindowState(win.window());
 
 		// Create variables for settings and color picker windows
-		SettingsWindow settingsWindow;
+		SettingsWindow settingsWindow(&win);
 		ColorPickerWindow colorPicker;
 		settingsWindow.pColorPicker = &colorPicker;
 
 		win.pSettingsWindow = &settingsWindow;
 
-		// global variables for timer
-		pGlobalTimerWindow = &win;
-		hwndMainWindow = win.window();
-
-		// Apply saved settings (uses old SettingsUtils for backward compat)
-		applySettings(appSettings);
+		// Set HotkeyManager target window
+		HotkeyManager::setTargetWindow(&win);
+		HotkeyManager::setHotkeysMap(settings);
 
 		// Listen for hotkeys While Running in the background - Install a hook procedure
 		SetWindowsHookEx(WH_KEYBOARD_LL, &kbHook, nullptr, NULL);
 		SetWindowsHookEx(WH_MOUSE_LL, &mouseHook, nullptr, NULL);
 
-		// Controller support
+		// Controller support with lambda callback that captures window pointer
 		std::unique_ptr<ControllerManager> controllerManager(std::make_unique<ControllerManager>());
-		controllerManager->setInputCallback(controllerInputCallback);
+		controllerManager->setInputCallback([&win](WORD buttons) {
+			SendMessage(win.window(), CONTROLLER_INPUT, buttons, NULL);
+		});
 		controllerManager->start();
 
 		// Main message loop
@@ -187,6 +169,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
 		}
 
 		controllerManager->stop();
+		
+		// Cleanup
+		ColorManager::getInstance().cleanup();
+		
 		return 0;
 	}
 	catch (const std::exception& e)

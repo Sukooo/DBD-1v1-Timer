@@ -1,13 +1,4 @@
 #pragma once
-#include "MainWindow.h"
-
-// Fields
-extern MainWindow* pGlobalTimerWindow;
-
-/**
-@brief A method Running an infinite loop, responsible for updating the timers.
-*/
-extern void appLoop(MainWindow* win);
 
 /**
 @brief End the process of the program safely.
@@ -39,10 +30,3 @@ LRESULT CALLBACK kbHook(int nCode, WPARAM wParam, LPARAM lParam);
 @return Forwards to the next hook.
 */
 LRESULT CALLBACK mouseHook(int nCode, WPARAM wParam, LPARAM lParam);
-
-/**
- * @brief A method to be called for controller input events.
- * 
- * @param buttons The buttons that had a state change.
- */
-void controllerInputCallback(WORD buttons);
