@@ -18,8 +18,3 @@ template <class T> void safeRelease(T** ppT)
 @return A handle to the bitmap loaded.
 */
 HBITMAP loadBitmapResource(int bitmap);
-
-/**
-@brief Initialize the colors that can be chosen (as brushes).
-*/
-void initializeBrushes();
