@@ -1,18 +1,27 @@
 #include "SettingsWindow.h"
-#include "ResourceUtils.h"
 #include "CommCtrlUtils.h"
-#include "SettingsUtils.h"
 #include "BaseWindow.h"
-#include "Program.h"
 #include "ControllerManager.h"
+#include "SettingsManager.h"
+#include "ColorManager.h"
+#include "MainWindow.h"
+#include "WindowMessages.h"
+#include "HotkeyManager.h"
+#include "Program.h"
 #include <CommCtrl.h>
 #include <windowsx.h>
 #include <exception>
 
 void SettingsWindow::initializeWindow()
 {
-	// retrieve settings
-	tempSettings_ = getSafeSettingsStruct();
+	// retrieve settings from SettingsManager
+	tempSettings_ = SettingsManager::getInstance().getSettings();
+
+	// Initialize binding manager
+	bindings_ = std::make_unique<ControlBindingManager>(hwnd_);
+	
+	// Register all bindings
+	registerBindings();
 
 	// Set up text
 	initializeTextControls();
@@ -22,6 +31,55 @@ void SettingsWindow::initializeWindow()
 
 	// Set up bitmaps
 	initializeBitmaps();
+}
+
+void SettingsWindow::registerBindings() {
+	// Keyboard hotkey bindings
+	bindings_->bindKeybind(CID_START,
+		[this]() { return tempSettings_.startKey; },
+		[this](int key) { tempSettings_.startKey = key; });
+	
+	bindings_->bindKeybind(CID_TIMER1,
+		[this]() { return tempSettings_.timer1Key; },
+		[this](int key) { tempSettings_.timer1Key = key; });
+	
+	bindings_->bindKeybind(CID_TIMER2,
+		[this]() { return tempSettings_.timer2Key; },
+		[this](int key) { tempSettings_.timer2Key = key; });
+	
+	bindings_->bindKeybind(CID_START_NO_RESET,
+		[this]() { return tempSettings_.startNoResetKey; },
+		[this](int key) { tempSettings_.startNoResetKey = key; });
+
+	// Controller hotkey bindings
+	bindings_->bindKeybind(CID_CON_START,
+		[this]() { return tempSettings_.conStartKey; },
+		[this](int key) { tempSettings_.conStartKey = key; });
+	
+	bindings_->bindKeybind(CID_CON_TIMER1,
+		[this]() { return tempSettings_.conTimer1Key; },
+		[this](int key) { tempSettings_.conTimer1Key = key; });
+	
+	bindings_->bindKeybind(CID_CON_TIMER2,
+		[this]() { return tempSettings_.conTimer2Key; },
+		[this](int key) { tempSettings_.conTimer2Key = key; });
+	
+	bindings_->bindKeybind(CID_CON_START_NO_RESET,
+		[this]() { return tempSettings_.conStartNoResetKey; },
+		[this](int key) { tempSettings_.conStartNoResetKey = key; });
+
+	// Checkbox bindings
+	bindings_->bindCheckbox(CID_STARTONCHANGE_CB,
+		[this]() { return tempSettings_.optionStartOnChange; },
+		[this](bool val) { tempSettings_.optionStartOnChange = val; });
+	
+	bindings_->bindCheckbox(CID_TRANSPARENT_CB,
+		[this]() { return tempSettings_.optionTransparent; },
+		[this](bool val) { tempSettings_.optionTransparent = val; });
+	
+	bindings_->bindCheckbox(CID_CLICKTHROUGH_CB,
+		[this]() { return tempSettings_.optionClickThrough; },
+		[this](bool val) { tempSettings_.optionClickThrough = val; });
 }
 
 void SettingsWindow::initializeBitmaps()
@@ -331,6 +389,15 @@ void SettingsWindow::applyTempConHotkey(const UINT key)
 	{
 	case CID_CON_START:
 		tempSettings_.conStartKey = key;
+		break;
+	case CID_CON_TIMER1:
+		tempSettings_.conTimer1Key = key;
+		break;
+	case CID_CON_TIMER2:
+		tempSettings_.conTimer2Key = key;
+		break;
+	case CID_CON_START_NO_RESET:
+		tempSettings_.conStartNoResetKey = key;
 		break;
 	case CID_CON_TIMER1:
 		tempSettings_.conTimer1Key = key;
