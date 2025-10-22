@@ -317,6 +317,9 @@ private:
 	};
 
 public:
+	// Constructor
+	explicit SettingsWindow(MainWindow* mainWindow) : mainWindow_(mainWindow) {}
+	
 	ColorPickerWindow* pColorPicker; // Reference to a Color Picker window
 
 	/**
