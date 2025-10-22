@@ -237,10 +237,8 @@ void SettingsWindow::initializeButtonControls()
 		applyHotkeySavedKey(hCtrl);
 	}
 
-	// Apply currently set options
-	SendMessage(hCbStartOnChange, BM_SETCHECK, appSettings.optionStartOnChange, 0);
-	SendMessage(hCbTransparentBg, BM_SETCHECK, appSettings.optionTransparent, 0);
-	SendMessage(hCbClickthrough, BM_SETCHECK, appSettings.optionClickThrough, 0);
+	// Apply currently set options using bindings
+	bindings_->updateAllControls();
 }
 
 HWND SettingsWindow::createControl(
@@ -280,8 +278,11 @@ void SettingsWindow::handleControlCommand(const LPARAM lParam)
 	switch (controlId) {
 	// OK
 	case CID_OK:
-		applySettings(tempSettings_);
-		SendMessage(GetWindow(hwnd_, GW_OWNER), REFRESH_BRUSHES, 0, 0);
+		SettingsManager::getInstance().updateSettings(tempSettings_);
+		if (mainWindow_) {
+			SendMessage(mainWindow_->window(), REFRESH_BRUSHES, 0, 0);
+			HotkeyManager::setHotkeysMap(tempSettings_);
+		}
 		DestroyWindow(hwnd_);
 		break;
 		
@@ -308,17 +309,17 @@ void SettingsWindow::handleControlCommand(const LPARAM lParam)
 
 	// Start on change checkbox
 	case CID_STARTONCHANGE_CB:
-		tempSettings_.optionStartOnChange = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
+		bindings_->applyControlToValue(CID_STARTONCHANGE_CB);
 		break;
 
 	// Transparent background checkbox
 	case CID_TRANSPARENT_CB: 
-		tempSettings_.optionTransparent = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
+		bindings_->applyControlToValue(CID_TRANSPARENT_CB);
 		break;
 
 	// Clickthrough checkbox
 	case CID_CLICKTHROUGH_CB:
-		tempSettings_.optionClickThrough = (Button_GetCheck(hwndCtrl) == BST_CHECKED);
+		bindings_->applyControlToValue(CID_CLICKTHROUGH_CB);
 		break;
 
 	// Any color control clicked
@@ -354,7 +355,7 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 	const LPDRAWITEMSTRUCT pDis = (LPDRAWITEMSTRUCT)lParam;
 	// In case of invalid color index (to prevent index out of range)
 	if (tempSettings_.colors.timerColor > 24) {
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[0]);
+		FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(0));
 		return;
 	}
 
@@ -362,16 +363,16 @@ void SettingsWindow::colorHandles(const LPARAM lParam) const
 	switch (pDis->CtlID)
 	{
 	case CID_TIMER_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.timerColor]);
+		FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(tempSettings_.colors.timerColor));
 		break;
 	case CID_SELECTED_TIMER_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.selectedTimerColor]);
+		FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(tempSettings_.colors.selectedTimerColor));
 		break;
 	case CID_LAST_SECONDS_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.lastSecondsColor]);
+		FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(tempSettings_.colors.lastSecondsColor));
 		break;
 	case CID_BACKGROUND_COLOR:
-		FillRect(pDis->hDC, &pDis->rcItem, hBrushes[tempSettings_.colors.backgroundColor]);
+		FillRect(pDis->hDC, &pDis->rcItem, ColorManager::getInstance().getBrush(tempSettings_.colors.backgroundColor));
 		break;
 	default:
 		break;
@@ -385,33 +386,8 @@ void SettingsWindow::applyTempConHotkey(const UINT key)
 	if (controlId == CID_START || controlId == CID_TIMER1 || controlId == CID_TIMER2)
 		return;
 
-	switch (controlId)
-	{
-	case CID_CON_START:
-		tempSettings_.conStartKey = key;
-		break;
-	case CID_CON_TIMER1:
-		tempSettings_.conTimer1Key = key;
-		break;
-	case CID_CON_TIMER2:
-		tempSettings_.conTimer2Key = key;
-		break;
-	case CID_CON_START_NO_RESET:
-		tempSettings_.conStartNoResetKey = key;
-		break;
-	case CID_CON_TIMER1:
-		tempSettings_.conTimer1Key = key;
-		break;
-	case CID_CON_TIMER2:
-		tempSettings_.conTimer2Key = key;
-		break;
-	case CID_CON_START_NO_RESET:
-		tempSettings_.conStartNoResetKey = key;
-		break;
-	default: 
-		break;
-	}
-	
+	// Use binding system
+	bindings_->applyControlToValue(controlId, key);
 	SetWindowText(hActiveControl_, controllerMap_[key]);
 	hActiveControl_ = nullptr;
 }
@@ -424,7 +400,6 @@ void SettingsWindow::applyTempHotkey(const UINT key) {
 		if (key == VK_ESCAPE)
 		{
 			applyTempConHotkey(ControllerButtons::Start);
-
 		}
 		else if (key == VK_LBUTTON)
 		{
@@ -433,74 +408,31 @@ void SettingsWindow::applyTempHotkey(const UINT key) {
 		return;
 	}
 
-	switch (controlId)
-	{
-	case CID_START:
-		tempSettings_.startKey = key;
-		break;
-	case CID_TIMER1:
-		tempSettings_.timer1Key = key;
-		break;
-	case CID_TIMER2:
-		tempSettings_.timer2Key = key;
-		break;
-	case CID_START_NO_RESET:
-		tempSettings_.startNoResetKey = key;
-		break;
-	default:
-		break;
-	}
-
+	// Use binding system
+	bindings_->applyControlToValue(controlId, key);
 	SetWindowText(hActiveControl_, keyboardMap_[key]);
 	hActiveControl_ = nullptr;
 }
 
 void SettingsWindow::applyHotkeySavedKey(const HWND hCtrl) {
 	const int controlId = GetDlgCtrlID(hCtrl); // retrieve control ID
-
-	switch (controlId) {
-	case CID_START:
-		if (keyboardMap_.count(tempSettings_.startKey)) {
-			SetWindowText(hCtrl, keyboardMap_[tempSettings_.startKey]);
+	
+	// Get value from bindings
+	if (!bindings_->hasKeybindBinding(controlId)) {
+		return;
+	}
+	
+	int keyValue = bindings_->getKeybindValue(controlId);
+	
+	// Controller or keyboard?
+	if (controlId >= CID_CON_START) {
+		if (controllerMap_.count(keyValue)) {
+			SetWindowText(hCtrl, controllerMap_[keyValue]);
 		}
-		break;
-	case CID_TIMER1:
-		if (keyboardMap_.count(tempSettings_.timer1Key)) {
-			SetWindowText(hCtrl, keyboardMap_[tempSettings_.timer1Key]);
+	} else {
+		if (keyboardMap_.count(keyValue)) {
+			SetWindowText(hCtrl, keyboardMap_[keyValue]);
 		}
-		break;
-	case CID_TIMER2:
-		if (keyboardMap_.count(tempSettings_.timer2Key)) {
-			SetWindowText(hCtrl, keyboardMap_[tempSettings_.timer2Key]);
-		}
-		break;
-	case CID_START_NO_RESET:
-		if (keyboardMap_.count(tempSettings_.startNoResetKey)) {
-			SetWindowText(hCtrl, keyboardMap_[tempSettings_.startNoResetKey]);
-		}
-		break;
-	case CID_CON_START:
-		if (controllerMap_.count(tempSettings_.conStartKey)) {
-			SetWindowText(hCtrl, controllerMap_[tempSettings_.conStartKey]);
-		}
-		break;
-	case CID_CON_TIMER1:
-		if (controllerMap_.count(tempSettings_.conTimer1Key)) {
-			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer1Key]);
-		}
-		break;
-	case CID_CON_TIMER2:
-		if (controllerMap_.count(tempSettings_.conTimer2Key)) {
-			SetWindowText(hCtrl, controllerMap_[tempSettings_.conTimer2Key]);
-		}
-		break;
-	case CID_CON_START_NO_RESET:
-		if (controllerMap_.count(tempSettings_.conStartNoResetKey)) {
-			SetWindowText(hCtrl, controllerMap_[tempSettings_.conStartNoResetKey]);
-		}
-		break;
-	default:
-		break;
 	}
 }
 
@@ -599,11 +531,13 @@ LRESULT CALLBACK SettingsWindow::ctrlWndProc(
 	case WM_MBUTTONDOWN:
 	case WM_XBUTTONDOWN:
 		{
-			const HWND settingsHwnd = pGlobalTimerWindow->pSettingsWindow->window();
-			const bool isCtrlActive = pGlobalTimerWindow->pSettingsWindow->hActiveControl_ != nullptr;
-			if (settingsHwnd != nullptr && isCtrlActive)
+			// Get parent settings window
+			HWND parentHwnd = GetParent(hwnd);
+			SettingsWindow* settingsWindow = reinterpret_cast<SettingsWindow*>(GetWindowLongPtr(parentHwnd, GWLP_USERDATA));
+			
+			if (settingsWindow && settingsWindow->hActiveControl_ != nullptr)
 			{
-				SendMessage(settingsHwnd, uMsg, wParam, lParam);
+				SendMessage(parentHwnd, uMsg, wParam, lParam);
 				return 0;
 			}
 		}
